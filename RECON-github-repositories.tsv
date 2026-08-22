@@ -1,0 +1,20 @@
+get-convex/resend	The Convex Resend Component	https://github.com/get-convex/resend
+resend/react-email	💌 Build and send emails using React	https://github.com/resend/react-email
+resend/resend-node	Resend's Official Node.js SDK	https://github.com/resend/resend-node
+resend/resend-mcp	The official MCP server to send emails and interact with Resend	https://github.com/resend/resend-mcp
+resend/resend-cli	The official CLI for Resend	https://github.com/resend/resend-cli
+resend/resend-go	Resend's Official Go SDK	https://github.com/resend/resend-go
+resend/resend-examples	Resend examples	https://github.com/resend/resend-examples
+resend/resend-skills	Agent Skills for working with Resend to send and receive emails.	https://github.com/resend/resend-skills
+resend/resend-python	Resend's official python sdk	https://github.com/resend/resend-python
+resend/resend-laravel	Resend's Official Laravel SDK	https://github.com/resend/resend-laravel
+resend/resend-node-example	This example shows how to use Resend with Node.js	https://github.com/resend/resend-node-example
+resend/resend-vercel-example	This example shows how to use Resend with React Email + Vercel + Next.js	https://github.com/resend/resend-vercel-example
+resend/resend-nextjs-app-router-example	This example shows how to use Resend with Next.js (App Router)	https://github.com/resend/resend-nextjs-app-router-example
+CloudCatch/resend	Resend for WordPress seamlessly integrates the Resend.com API with your WordPress site, replacing the default PHPMailer.	https://github.com/CloudCatch/resend
+resend/resend-rust	Resend's Official Rust SDK	https://github.com/resend/resend-rust
+resend/resend-ruby	Resend's Ruby SDK	https://github.com/resend/resend-ruby
+jiang111/ReSend-SMS	将手机接收到的短信以邮件的形式发送至指定邮箱	https://github.com/jiang111/ReSend-SMS
+resend/resend-dotnet	 Resend's Official .NET SDK, written in C#	https://github.com/resend/resend-dotnet
+resend/resend-php	Resend's Official PHP SDK	https://github.com/resend/resend-php
+resend/resend-dmarc-analyzer	A ready-to-deploy repo to analyze DMARC reports and/or get a beautiful emails with your reports analyzed	https://github.com/resend/resend-dmarc-analyzer
