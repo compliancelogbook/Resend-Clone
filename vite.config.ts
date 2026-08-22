@@ -2,6 +2,7 @@ import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
@@ -13,6 +14,7 @@ import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 const PROJECT_ROOT = import.meta.dirname;
 const LOG_DIR = path.join(PROJECT_ROOT, ".manus-logs");
+const LOCAL_ASSETS_DIR = path.resolve(process.env.RESEND_ASSETS_DIR || path.join(os.homedir(), ".resend-clone-assets"));
 const MAX_LOG_SIZE_BYTES = 1 * 1024 * 1024; // 1MB per log file
 const TRIM_TARGET_BYTES = Math.floor(MAX_LOG_SIZE_BYTES * 0.6); // Trim to 60% to avoid constant re-trimming
 
@@ -159,6 +161,14 @@ function vitePluginStorageProxy(): Plugin {
         if (!key) {
           res.writeHead(400, { "Content-Type": "text/plain" });
           res.end("Missing storage key");
+          return;
+        }
+
+        const localAssetPath = path.resolve(LOCAL_ASSETS_DIR, "manus-storage", key);
+        const localAssetRoot = path.resolve(LOCAL_ASSETS_DIR, "manus-storage") + path.sep;
+        if (localAssetPath.startsWith(localAssetRoot) && fs.existsSync(localAssetPath)) {
+          res.writeHead(200, { "Cache-Control": "public, max-age=31536000, immutable" });
+          fs.createReadStream(localAssetPath).pipe(res);
           return;
         }
 

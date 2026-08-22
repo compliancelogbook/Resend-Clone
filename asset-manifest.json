@@ -1,0 +1,26 @@
+{
+  "bundle": {
+    "repository": "compliancelogbook/Resend-Clone",
+    "releaseTag": "resend-clone-assets-v1",
+    "archive": "resend-clone-assets-v1.zip",
+    "targetDirectory": "~/.resend-clone-assets"
+  },
+  "assets": [
+    { "path": "manus-storage/abc-favorit-book_e608c48a.woff2", "sha256": "86093e7522605f0a62257fa662095c0a9febf4423e17d25628747af617fa2b57" },
+    { "path": "manus-storage/abc-favorit-medium_5253ffa8.woff2", "sha256": "5c0d337882cc3318e0a794ab3fbd5ea7a86611cafeed29ab1255d842161c09d8" },
+    { "path": "manus-storage/bg-hero-1_70d280af.jpg", "sha256": "d1d4782fa35aa49491c498ad93594e52650e24be740e726fba3d33de6d694f29" },
+    { "path": "manus-storage/bg-light_280ddaa3.png", "sha256": "aeedfcc12b987136cb3545c9ba1d33a79fc899a4592431a66a5b834dcff154f3" },
+    { "path": "manus-storage/broadcast-email-header_9491a1e4.jpg", "sha256": "eb84412cbca38999bd346d1c82f4626a9061c469f238f091c805ae6990a53769" },
+    { "path": "manus-storage/commit-mono-regular_2c9ce43c.woff2", "sha256": "c98cc59ceaadf02caffa1e61395d20c888e92dc00d557e7f90e1cd7c715240a1" },
+    { "path": "manus-storage/domaine-regular_96798b33.woff2", "sha256": "6f6884ed8477e3d189a54c750d4ec4561ffff39acfa8808a3bf35398bc2ed2ce" },
+    { "path": "manus-storage/resend-clone-editor-tile_0f74d98b.png", "sha256": "3d1522e0f56bdd23e6bd2c42e2d778084ffb8c1483bfdb3d59431224fe17dca0" },
+    { "path": "manus-storage/resend-clone-envelope-tile_51f62758.png", "sha256": "31e37b3f67443fdfadf185b3623c5aab66915e49c9cdfc2e667421cbed417ca6" },
+    { "path": "manus-storage/resend-clone-hero-object_8f7bed89.png", "sha256": "7548381953e797b3fd8525195f78086c9c164af58d86f652414c4a59d0a67880" },
+    { "path": "manus-storage/resend-clone-mark_105e07a8.png", "sha256": "a152fc9112a4c9cc05e6a33c5fa6f0a22913de62e18b642c091bbba184ceb29e" },
+    { "path": "manus-storage/resend-clone-react-tile_963db5d1.png", "sha256": "a0e7ac571542e050ee30e6a1b9696974c150792f2c3563b904c6ba636af6f4f8" },
+    { "path": "manus-storage/resend-reference-cube_13a0743b.splinecode", "sha256": "2fbf480d437842f66fdba2132664b622d1b0b4fce04e8ff24966f045094c1297" },
+    { "path": "manus-storage/screenshot-metrics_95f656ab.png", "sha256": "bf1672a871e29b7f1d81bc00bc2f6922f12ae2f439b3fe7084233d92552534b3" },
+    { "path": "manus-storage/screenshot-zoom-analytics_362794c2.png", "sha256": "7b589deaa116490a29b6ee43e277209cf6d5851356548a33d0d8e5624c64a8d7" },
+    { "path": "manus-storage/screenshot-zoom-audience_24a264c7.png", "sha256": "052f429ec095cfa4cc202ca5a594a5c915bc226f62cfb13cd01e83523b4dfd8d" }
+  ]
+}
