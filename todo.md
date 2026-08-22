@@ -16,3 +16,9 @@
 - [x] Audit every managed-storage asset reference and recoverable source URL.
 - [x] Add a version-controlled manifest and deterministic local asset recovery script.
 - [x] Validate the workflow, checkpoint the documentation, and push it to GitHub.
+
+# Hero Cube Positioning Correction
+
+- [x] Raise the desktop cube and move it slightly right to clear the divider.
+- [x] Verify the revised composition across desktop and mobile layouts.
+- [ ] Checkpoint and push the corrected positioning to GitHub.
