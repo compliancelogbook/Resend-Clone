@@ -5,6 +5,7 @@
  * reference screenshots; do not reimagine structure, copy, or page rhythm.
  */
 import { motion } from "framer-motion";
+import HeroCube3D from "@/components/HeroCube3D";
 import {
   type LucideIcon,
   Activity,
@@ -54,7 +55,6 @@ import {
 import { type ComponentType, useState } from "react";
 
 const MARK = "/manus-storage/resend-clone-mark_105e07a8.png";
-const HERO_OBJECT = "/manus-storage/resend-clone-hero-object_8f7bed89.png";
 const ENVELOPE_TILE = "/manus-storage/resend-clone-envelope-tile_51f62758.png";
 const EDITOR_TILE = "/manus-storage/resend-clone-editor-tile_0f74d98b.png";
 const REACT_TILE = "/manus-storage/resend-clone-react-tile_963db5d1.png";
@@ -209,7 +209,9 @@ export default function Home() {
             <a className="text-link" href="#docs">Documentation</a>
           </div>
         </motion.div>
-        <motion.img className="hero-object" src={HERO_OBJECT} alt="Abstract black technical hardware" initial={{ opacity: 0, scale: 0.98, x: 22 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }} />
+        <motion.div className="hero-object" initial={{ opacity: 0, scale: 0.98, x: 22 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
+          <HeroCube3D />
+        </motion.div>
       </section>
 
       <section className="logo-cloud section-rule">
