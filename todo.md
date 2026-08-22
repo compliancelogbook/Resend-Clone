@@ -9,4 +9,4 @@
 - [x] Identify the reference hero object’s public 3D runtime and interaction model.
 - [x] Implement a stable draggable 3D hero object with mouse and touch input.
 - [x] Validate drag behaviour, responsiveness, and production compilation.
-- [ ] Checkpoint the enhancement and push the update to GitHub.
+- [x] Checkpoint the enhancement and push the update to GitHub.
