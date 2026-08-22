@@ -22,3 +22,9 @@
 - [x] Raise the desktop cube and move it slightly right to clear the divider.
 - [x] Verify the revised composition across desktop and mobile layouts.
 - [x] Checkpoint and push the corrected positioning to GitHub.
+
+# Screenshot-Calibrated Cube Alignment
+
+- [x] Compare the live reference and supplied screenshots at the matching desktop viewport.
+- [x] Raise and right-align the cube’s rendered centre to the reference composition.
+- [ ] Validate the corrected boundary on desktop and mobile, then checkpoint and push it.
