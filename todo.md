@@ -15,4 +15,4 @@
 
 - [x] Audit every managed-storage asset reference and recoverable source URL.
 - [x] Add a version-controlled manifest and deterministic local asset recovery script.
-- [ ] Validate the workflow, checkpoint the documentation, and push it to GitHub.
+- [x] Validate the workflow, checkpoint the documentation, and push it to GitHub.
