@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 
 const SCENE_URL = "/manus-storage/resend-reference-cube_13a0743b.splinecode";
-const FALLBACK_URL = "/manus-storage/resend-clone-hero-object_8f7bed89.png";
+const FALLBACK_URL = "/hero-cube-fallback.png";
 
 type Rotation = { x: number; y: number; z: number };
 type SplineNode = { name?: string; type?: string; rotation?: Rotation };

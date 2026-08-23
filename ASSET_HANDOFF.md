@@ -2,7 +2,7 @@
 
 ## Guarantee for Local IDE Use
 
-All 16 required binary assets are preserved in the private GitHub release [`resend-clone-assets-v1`](https://github.com/compliancelogbook/Resend-Clone/releases/tag/resend-clone-assets-v1). The archive contains the fonts, page imagery, generated feature tiles, logo mark, the live Spline cube scene, and the dashboard imagery in the exact paths expected by the application.
+All 15 required binary assets are preserved in the private GitHub release [`resend-clone-assets-v1`](https://github.com/compliancelogbook/Resend-Clone/releases/tag/resend-clone-assets-v1). The archive contains the fonts, page imagery, generated feature tiles, logo mark, the live Spline cube scene, and the dashboard imagery in the exact paths expected by the application.
 
 The repository deliberately does not place those 21 MB of binaries under `client/` or `public/`, because that would make the managed build unreliable. Instead, `asset-manifest.json` version-controls every expected path and SHA-256 checksum, while the release holds the binary archive.
 
