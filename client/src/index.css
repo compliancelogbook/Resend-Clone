@@ -62,7 +62,9 @@ h1, h2, h3, p { margin-top: 0; }
 .spline-hero:hover .spline-drag-hint, .spline-hero.is-dragging .spline-drag-hint { opacity: 1; transform: translateY(0); }
 
 .section-rule { border-top: 1px solid var(--soft-line); }
-.logo-cloud { position: relative; min-height: 675px; padding: 146px 24px 118px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+.logo-cloud { position: relative; min-height: 675px; max-width: 1280px; margin: 0 auto; padding: 146px 24px 118px; display: flex; flex-direction: column; align-items: center; overflow: hidden; border-radius: 24px; }
+.logo-cloud::before { content: ""; pointer-events: none; position: absolute; z-index: 1; top: 0; left: 50%; width: min(300px, 60%); height: 1px; transform: translate(-50%, -50%); background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.5) 50%, transparent 100%); }
+.logo-cloud::after { content: ""; pointer-events: none; position: absolute; z-index: 0; top: -4px; left: 50%; width: min(400px, 90%); height: 200px; transform: translate(-50%, -50%); background: conic-gradient(from 90deg, transparent 50%, #000 50%), radial-gradient(rgba(200,200,200,.1) 0%, transparent 80%); }
 .light-ray { pointer-events: none; position: absolute; inset: -24% 0 auto; z-index: 0; width: 100%; opacity: .22; mix-blend-mode: screen; }
 .logo-cloud > p { position: relative; z-index: 1; margin-bottom: 76px; color: #aaa; text-align: center; font-size: clamp(17px,1.45vw,22px); line-height: 1.45; }
 .logo-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(6,minmax(90px,1fr)); width: min(1100px,84vw); row-gap: 62px; column-gap: 41px; align-items: center; }
