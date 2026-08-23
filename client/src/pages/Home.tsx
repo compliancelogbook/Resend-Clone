@@ -200,7 +200,7 @@ export default function Home() {
       <section className="hero" id="top">
         <img className="hero-floor" src="/manus-storage/bg-hero-1_70d280af.jpg" alt="" />
         <div className="hero-vignette" />
-        <motion.div className="hero-copy" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
+        <motion.div className="hero-copy" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "linear" }}>
           <a className="forward-pill" href="#forward">Join us at Resend Forward <ChevronRight size={14} /></a>
           <h1>Email for<br />developers</h1>
           <p>The best way to reach humans instead of spam folders.<br />Deliver transactional and marketing emails at scale.</p>
