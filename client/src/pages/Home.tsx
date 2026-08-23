@@ -306,7 +306,7 @@ export default function Home() {
 
       <section className="section control-section">
         <motion.div className="centre-heading" {...fadeUp}><div className="control-orb"><Globe2 size={58} strokeWidth={1.1} /></div><h2>Everything in your control</h2><p>All the features you need to manage your email sending, troubleshoot with<br />detailed logs, and protect your domain reputation – without the friction.</p></motion.div>
-        <div className="control-tabs" role="tablist">{([ ["Intuitive analytics", BarChart3], ["Full visibility", Mail], ["Domain authentication", Globe2] ] as [string, LucideIcon][]).map(([label, Icon]) => <button type="button" role="tab" aria-selected={metricTab === label} className={metricTab === label ? "active" : ""} onClick={() => setMetricTab(label)} key={label}><span><Icon size={20} /></span>{label}</button>)}</div>
+        <div className="control-tabs" role="tablist">{([ ["Intuitive analytics", BarChart3], ["Full visibility", Mail], ["Domain authentication", Globe2] ] as [string, LucideIcon][]).map(([label, Icon]) => <button type="button" role="tab" aria-selected={metricTab === label} className={metricTab === label ? "active" : ""} onClick={() => setMetricTab(label)} key={label}><span className="tab-glow" aria-hidden="true" /><span className="tab-mask" aria-hidden="true" /><span className="tab-content"><span className="tab-icon"><Icon size={20} /></span>{label}</span></button>)}</div>
         <motion.div className="metrics-frame" {...fadeUp}><img src="/manus-storage/screenshot-metrics_95f656ab.png" alt="Resend dashboard metrics" /></motion.div>
       </section>
 
