@@ -101,3 +101,16 @@
 }
 .cmp-excluded { margin: 10px 0 0; color: #8f8f8f; font-size: 12.5px; line-height: 1.5; }
 .cmp-winner .cmp-waiting { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.08); color: #f3cf96; font-size: 13.5px; }
+
+/* Match my profit */
+.cmp-results > .calc-field { margin-bottom: 2px; }
+.cmp-match-target { padding: 18px 22px; border: 1px solid var(--line); border-radius: 18px; background: #080808; }
+.cmp-match-target label { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: #e6e6e6; font-size: 18px; font-weight: 500; letter-spacing: -.02em; }
+.cmp-keep-input { display: inline-flex; align-items: center; gap: 4px; height: 44px; padding: 0 12px; border: 1px solid rgba(255,255,255,.18); border-radius: 11px; background: #0b0b0b; color: #8a8a8a; font-size: 18px; }
+.cmp-keep-input:focus-within { border-color: rgba(48,230,157,.55); box-shadow: 0 0 0 3px rgba(48,230,157,.1); }
+.cmp-keep-input input { width: 96px; border: 0; outline: 0; background: transparent; color: #f4f4f4; font: inherit; font-size: 18px; }
+.cmp-keep-input input[aria-invalid="true"] { color: #ff9baa; }
+.cmp-match-target p { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px 0 0; color: #8a8a8a; font-size: 13.5px; }
+.cmp-match-target p button { padding: 3px 9px; border: 1px solid rgba(255,255,255,.14); border-radius: 7px; background: none; color: #c9c9c9; font-size: 12.5px; cursor: pointer; }
+.cmp-row-stats dd.up { color: #f3cf96; }
+.cmp-row-stats dd.down { color: #8ff0c6; }

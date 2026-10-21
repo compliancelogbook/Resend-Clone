@@ -22,6 +22,10 @@ import {
 import {
   CALCULATOR_PATHS,
   linkedConfigs,
+  matchReference,
+  matchTargetFor,
+  runMatch,
+  type MatchRow,
   PLATFORM_LABELS,
   runComparison,
   scenarioOf,
@@ -69,6 +73,9 @@ export default function ComparePage() {
   }, [state]);
 
   const rows = useMemo(() => runComparison(state), [state]);
+  const matchTarget = matchTargetFor(state, rows);
+  const matchRows = useMemo(() => (state.mode === "MATCH" ? runMatch(state, matchTarget) : null), [state, matchTarget]);
+  const shown: (CompareRow | MatchRow)[] = matchRows ?? rows;
 
   function updateConfig<P extends ComparePlatform>(platform: P, patch: Partial<CompareConfigs[P]>) {
     setState((s) => ({
@@ -97,10 +104,26 @@ export default function ComparePage() {
         <SalePanel state={state} setState={setState} />
 
         <div className="cmp-results">
-          <Winner rows={rows} sale={state.sale.soldPrice} />
+          <Segmented
+            label="What do you want to know?"
+            value={state.mode}
+            onChange={(mode) => setState((s) => ({ ...s, mode }))}
+            options={[
+              { value: "KEEP", label: "What I keep at my price" },
+              { value: "MATCH", label: "Price to keep the same" },
+            ]}
+          />
+          {matchRows ? (
+            <>
+              <MatchTargetPanel state={state} setState={setState} target={matchTarget} rows={rows} />
+              <MatchWinner rows={matchRows} target={matchTarget} sale={state.sale.soldPrice} />
+            </>
+          ) : (
+            <Winner rows={rows} sale={state.sale.soldPrice} />
+          )}
           <ol className="cmp-rows">
-            {rows.map((row, i) => (
-              <RowCard key={row.platform} row={row} rank={i + 1} best={rows[0]} state={state} updateConfig={updateConfig} />
+            {shown.map((row, i) => (
+              <RowCard key={row.platform} row={row} rank={i + 1} best={shown[0]} state={state} updateConfig={updateConfig} />
             ))}
           </ol>
           <Differences state={state} />
@@ -186,6 +209,96 @@ function SalePanel({ state, setState }: { state: CompareState; setState: (fn: (s
   );
 }
 
+/* ---------- Match my profit ---------- */
+
+function MatchTargetPanel({
+  state,
+  setState,
+  target,
+  rows,
+}: {
+  state: CompareState;
+  setState: (fn: (s: CompareState) => CompareState) => void;
+  target: number;
+  rows: CompareRow[];
+}) {
+  const ref = matchReference(state, rows);
+  const [raw, setRaw] = useState(target.toFixed(2));
+  const [editing, setEditing] = useState(false);
+  const shownValue = editing ? raw : target.toFixed(2);
+  const parsed = Number(shownValue);
+  const invalid = shownValue.trim() === "" || !Number.isFinite(parsed);
+
+  return (
+    <div className="cmp-match-target">
+      <label htmlFor="cmp-keep">
+        Keep
+        <span className="cmp-keep-input">
+          £
+          <input
+            id="cmp-keep"
+            type="text"
+            inputMode="decimal"
+            value={shownValue}
+            aria-invalid={invalid || undefined}
+            onFocus={(e) => {
+              setEditing(true);
+              setRaw(target.toFixed(2));
+              e.target.select();
+            }}
+            onBlur={() => setEditing(false)}
+            onChange={(e) => {
+              setRaw(e.target.value);
+              const n = Number(e.target.value);
+              if (e.target.value.trim() !== "" && Number.isFinite(n)) setState((s) => ({ ...s, matchTarget: Math.round(n * 100) / 100 }));
+            }}
+          />
+        </span>
+        on this order
+      </label>
+      <p>
+        {state.matchTarget === null && ref
+          ? `Starting from what ${PLATFORM_LABELS[ref.platform]} leaves you at ${formatGBP(state.sale.soldPrice)}. Type any amount to change it.`
+          : "Your own target."}
+        {state.matchTarget !== null && (
+          <button type="button" onClick={() => setState((s) => ({ ...s, matchTarget: null }))}>Reset</button>
+        )}
+      </p>
+    </div>
+  );
+}
+
+function MatchWinner({ rows, target, sale }: { rows: MatchRow[]; target: number; sale: number }) {
+  const priced = rows.filter((r) => r.price !== null);
+  const waiting = rows.filter((r) => r.missing).map((r) => PLATFORM_LABELS[r.platform]);
+  if (priced.length === 0) return null;
+  const low = priced[0].price!;
+  const tied = priced.filter((r) => Math.abs(r.price! - low) < 0.005);
+  const next = priced.find((r) => Math.abs(r.price! - low) >= 0.005);
+  const names = tied.map((r) => PLATFORM_LABELS[r.platform]);
+  const joined = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
+
+  return (
+    <motion.div className="cmp-winner" key={joined + low.toFixed(2)} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease }}>
+      <p className="calc-eyebrow">Lowest price to keep {formatGBP(target)}</p>
+      <h2>
+        {joined} <span>· list at {formatGBP(low)}</span>
+      </h2>
+      <p>
+        {next
+          ? `${formatGBP(next.price! - low)} cheaper for your buyer than ${PLATFORM_LABELS[next.platform]}, and you keep the same.`
+          : "Every marketplace needs the same price for you to keep this amount."}
+        {Math.abs(low - sale) >= 0.005 && ` That's ${low < sale ? "below" : "above"} your current ${formatGBP(sale)}.`}
+      </p>
+      {waiting.length > 0 && (
+        <p className="cmp-waiting">
+          {waiting.join(" and ")} {waiting.length > 1 ? "aren't" : "isn't"} included yet. Choose {waiting.length > 1 ? "their categories" : "a category"} below.
+        </p>
+      )}
+    </motion.div>
+  );
+}
+
 /* ---------- Ranking ---------- */
 
 function Winner({ rows, sale }: { rows: CompareRow[]; sale: number }) {
@@ -226,9 +339,9 @@ function RowCard({
   state,
   updateConfig,
 }: {
-  row: CompareRow;
+  row: CompareRow | MatchRow;
   rank: number;
-  best: CompareRow;
+  best: CompareRow | MatchRow;
   state: CompareState;
   updateConfig: <P extends ComparePlatform>(platform: P, patch: Partial<CompareConfigs[P]>) => void;
 }) {
@@ -236,18 +349,27 @@ function RowCard({
   const { platform, result } = row;
   const label = PLATFORM_LABELS[platform];
   const isOwn = state.customised.includes(platform);
+  const matchPrice = "price" in row ? row.price : undefined;
+  const isMatch = matchPrice !== undefined;
+  const bestPrice = "price" in best ? best.price : null;
   const top = best.result ? Math.max(best.result.estimatedProfit, 0) : 0;
-  const width = result && top > 0 ? Math.max(0, (result.estimatedProfit / top) * 100) : 0;
-  const isBest = result && best.result && Math.abs(result.estimatedProfit - best.result.estimatedProfit) < 0.005;
+  // KEEP: bar shows profit against the best. MATCH: bar shows how close the price is to the lowest.
+  const width = isMatch
+    ? matchPrice && bestPrice ? (bestPrice / matchPrice) * 100 : 0
+    : result && top > 0 ? Math.max(0, (result.estimatedProfit / top) * 100) : 0;
+  const isBest = isMatch
+    ? matchPrice !== null && bestPrice !== null && Math.abs(matchPrice - bestPrice) < 0.005
+    : result && best.result && Math.abs(result.estimatedProfit - best.result.estimatedProfit) < 0.005;
+  const currentPrice = state.sale.soldPrice;
 
   const breakEven = useMemo(() => {
-    if (!result) return null;
+    if (!result || isMatch) return null;
     try {
       return suggestBreakEvenPrice(platform, scenarioOf(state.sale), linkedConfigs(state)[platform] as never);
     } catch {
       return null;
     }
-  }, [platform, state, result]);
+  }, [platform, state, result, isMatch]);
 
   return (
     <li className={`cmp-row ${isBest ? "is-best" : ""}`}>
@@ -261,7 +383,12 @@ function RowCard({
           </p>
         </div>
         <div className="cmp-row-profit">
-          {result ? (
+          {result && isMatch && matchPrice !== null ? (
+            <>
+              <strong>{formatGBP(matchPrice)}</strong>
+              <span>list price each</span>
+            </>
+          ) : result ? (
             <>
               <strong className={result.estimatedProfit < 0 ? "negative" : ""}>{formatGBP(result.estimatedProfit)}</strong>
               <span>you keep</span>
@@ -274,7 +401,19 @@ function RowCard({
 
       <div className="cmp-bar" aria-hidden="true"><i style={{ width: `${width}%` }} /></div>
 
-      {result && (
+      {result && isMatch && matchPrice !== null && (
+        <dl className="cmp-row-stats">
+          <div>
+            <dt>vs your {formatGBP(currentPrice)}</dt>
+            <dd className={matchPrice > currentPrice + 0.004 ? "up" : matchPrice < currentPrice - 0.004 ? "down" : ""}>
+              {Math.abs(matchPrice - currentPrice) < 0.005 ? "same price" : `${matchPrice > currentPrice ? "+" : "−"}${formatGBP(Math.abs(matchPrice - currentPrice))}`}
+            </dd>
+          </div>
+          <div><dt>{label} takes</dt><dd>{formatGBP(result.totalCashFees)}</dd></div>
+          <div><dt>You keep</dt><dd>{formatGBP(result.estimatedProfit)}</dd></div>
+        </dl>
+      )}
+      {result && !isMatch && (
         <dl className="cmp-row-stats">
           <div><dt>{label} takes</dt><dd>{formatGBP(result.totalCashFees)}{result.grossRevenue > 0 && <small> ({((result.totalCashFees / result.grossRevenue) * 100).toFixed(1)}%)</small>}</dd></div>
           <div><dt>Margin</dt><dd>{result.marginPct === null ? "–" : `${result.marginPct.toFixed(1)}%`}</dd></div>
@@ -286,7 +425,7 @@ function RowCard({
         <p className="cmp-excluded">Not included: {result.exclusions.map((e) => e.split(/ — |\. /)[0].replace(/\.$/, "")).join("; ")}</p>
       )}
       {row.missing && <p className="cmp-check"><TriangleAlert size={14} /> {row.missing} We won't rank {label} until you do.</p>}
-      {row.error && <p className="cmp-check"><TriangleAlert size={14} /> Open the settings to finish this one.</p>}
+      {row.error && <p className="cmp-check"><TriangleAlert size={14} /> {isMatch ? row.error : "Open the settings to finish this one."}</p>}
 
       <div className="cmp-row-actions">
         <button type="button" className={open === "settings" ? "active" : ""} onClick={() => setOpen(open === "settings" ? null : "settings")} aria-expanded={open === "settings"}>

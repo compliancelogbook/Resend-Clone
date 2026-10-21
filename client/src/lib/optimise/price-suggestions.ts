@@ -3,6 +3,7 @@ import { calculateMarketplace, type MarketplaceConfigMap, type SharedComparisonS
 import type { CalculationResult } from "../types";
 import { findBreakEvenUnitPrice } from "./break-even";
 import { findTargetMarginUnitPrice } from "./target-margin";
+import { findTargetProfitUnitPrice } from "./target-profit";
 
 /**
  * Turns a solver price (accurate to within half a penny) into the lowest
@@ -60,4 +61,23 @@ export function suggestTargetMarginPrice<P extends Platform>(
   const price = snapToPenny(platform, scenario, config, found.unitPrice, (r) => r.marginPct !== null && r.marginPct >= targetMarginPct);
   const atPrice = calculateMarketplace(platform, { ...scenario, soldPrice: price }, config);
   return { price, marginPct: atPrice.marginPct ?? targetMarginPct };
+}
+
+/**
+ * Lowest whole-penny unit price that keeps at least `targetProfit` on the whole order,
+ * with the exact profit it gives. Never falls short of the target. Null if unreachable.
+ */
+export function suggestTargetProfitPrice<P extends Platform>(
+  platform: P,
+  scenario: SharedComparisonScenario,
+  config: MarketplaceConfigMap[P],
+  targetProfit: number,
+): { price: number; profit: number } | null {
+  const found = findTargetProfitUnitPrice(platform, scenario, config, targetProfit);
+  if (!found) return null;
+  // A millionth of a penny's tolerance absorbs floating-point dust (19.149999…) without letting a real shortfall through.
+  const meets = (r: CalculationResult) => r.estimatedProfit >= targetProfit - 1e-6;
+  const price = snapToPenny(platform, scenario, config, found.unitPrice, meets);
+  const atPrice = calculateMarketplace(platform, { ...scenario, soldPrice: price }, config);
+  return { price, profit: atPrice.estimatedProfit };
 }

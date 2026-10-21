@@ -4,7 +4,9 @@ import {
   compareHrefFromCalculator,
   defaultCompareState,
   linkedConfigs,
+  matchTargetFor,
   missingRequirement,
+  runMatch,
   runComparison,
   scenarioOf,
   stateFromSearch,
@@ -73,6 +75,8 @@ describe("compare state", () => {
     state.configs.VINTED = { ...state.configs.VINTED, visibilityServiceCost: 1.95 };
     state.customised = ["SHOPIFY", "EBAY", "ETSY", "TIKTOK", "VINTED"];
     state.from = "EBAY";
+    state.mode = "MATCH";
+    state.matchTarget = 19.15;
 
     const back = stateFromSearch(stateToSearch(state));
     expect(back).toEqual(state);
@@ -127,5 +131,31 @@ describe("compare state", () => {
     expect(s.configs.EBAY.categoryId).toBe("");
     expect(s.configs.EBAY.region).toBe("US_CANADA");
     expect(missingRequirement("EBAY", s)).toMatch(/category/);
+  });
+  it("match mode finds the price each marketplace needs to keep the same amount, lowest first", () => {
+    const state = withCategories();
+    const target = matchTargetFor(state, runComparison(state));
+    expect(target).toBe(20); // best-ranked (Vinted) keeps £20.00 at £30
+
+    const rows = runMatch(state, 19.15);
+    const prices = rows.map((r) => r.price!);
+    expect([...prices].sort((a, b) => a - b)).toEqual(prices);
+    const byPlatform = Object.fromEntries(rows.map((r) => [r.platform, r]));
+    expect(byPlatform.SHOPIFY.price).toBe(30); // Shopify keeps exactly £19.15 at £30
+    expect(byPlatform.VINTED.price).toBe(29.15);
+    for (const r of rows) expect(r.result!.estimatedProfit).toBeGreaterThanOrEqual(19.15 - 1e-6);
+  });
+
+  it("match mode uses the calculator you came from as the default target", () => {
+    const state = withCategories();
+    state.from = "SHOPIFY";
+    expect(matchTargetFor(state, runComparison(state))).toBe(19.15);
+    state.matchTarget = 25;
+    expect(matchTargetFor(state, runComparison(state))).toBe(25);
+  });
+
+  it("match mode still waits for required categories", () => {
+    const rows = runMatch(defaultCompareState(), 10);
+    expect(rows.filter((r) => r.missing).map((r) => r.platform).sort()).toEqual(["EBAY", "TIKTOK"]);
   });
 });

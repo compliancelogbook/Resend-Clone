@@ -13,6 +13,7 @@ import type { VatProfile } from "../../data/vat";
 import type { ShopifyCardType } from "../engines/shopify";
 import type { CalculationResult } from "../types";
 import { calculateMarketplace, type MarketplaceConfigMap, type SharedComparisonScenario } from "./adapters";
+import { suggestTargetProfitPrice } from "../optimise/price-suggestions";
 
 export type ComparePlatform = Exclude<Platform, "AMAZON">;
 export const COMPARE_PLATFORMS: ComparePlatform[] = ["SHOPIFY", "EBAY", "ETSY", "TIKTOK", "VINTED"];
@@ -52,6 +53,10 @@ export interface CompareState {
   customised: ComparePlatform[];
   /** The calculator the person came from, if any. */
   from: ComparePlatform | null;
+  /** KEEP: what you keep at your price. MATCH: the price each marketplace needs for you to keep a set amount. */
+  mode: "KEEP" | "MATCH";
+  /** MATCH mode target profit for the whole order. Null = use the reference marketplace's profit. */
+  matchTarget: number | null;
 }
 
 export const DEFAULT_SALE: CompareSale = {
@@ -75,7 +80,7 @@ export function defaultConfigs(): CompareConfigs {
 }
 
 export function defaultCompareState(): CompareState {
-  return { sale: { ...DEFAULT_SALE }, configs: defaultConfigs(), customised: [], from: null };
+  return { sale: { ...DEFAULT_SALE }, configs: defaultConfigs(), customised: [], from: null, mode: "KEEP", matchTarget: null };
 }
 
 /**
@@ -136,6 +141,51 @@ export function runComparison(state: CompareState): CompareRow[] {
     if (!a.result) return 1;
     if (!b.result) return -1;
     return b.result.estimatedProfit - a.result.estimatedProfit;
+  });
+}
+
+/* ---------- Match my profit ---------- */
+
+export interface MatchRow extends CompareRow {
+  /** Lowest whole-penny unit price that keeps at least the target on this marketplace. */
+  price: number | null;
+}
+
+/**
+ * The marketplace whose profit is the default target: the calculator the person came
+ * from if it could be calculated, otherwise the best-ranked marketplace.
+ */
+export function matchReference(state: CompareState, rows: CompareRow[]): CompareRow | null {
+  const calculated = rows.filter((r) => r.result);
+  return (state.from && calculated.find((r) => r.platform === state.from)) || calculated[0] || null;
+}
+
+export function matchTargetFor(state: CompareState, rows: CompareRow[]): number {
+  if (state.matchTarget !== null) return state.matchTarget;
+  const ref = matchReference(state, rows);
+  return ref?.result ? Math.round(ref.result.estimatedProfit * 100) / 100 : 0;
+}
+
+/** For each marketplace, the price you'd need to list at to keep `target` on this order. Lowest price first. */
+export function runMatch(state: CompareState, target: number): MatchRow[] {
+  const configs = linkedConfigs(state);
+  const scenario = scenarioOf(state.sale);
+  const rows = COMPARE_PLATFORMS.map((platform): MatchRow => {
+    const missing = missingRequirement(platform, state);
+    if (missing) return { platform, result: null, error: null, missing, price: null };
+    try {
+      const found = suggestTargetProfitPrice(platform, scenario, configs[platform] as never, target);
+      if (!found) return { platform, result: null, error: "Can't reach this amount at any sensible price.", missing: null, price: null };
+      const result = calculateMarketplace(platform, { ...scenario, soldPrice: found.price }, configs[platform] as never);
+      return { platform, result, error: null, missing: null, price: found.price };
+    } catch (e) {
+      return { platform, result: null, error: e instanceof Error ? e.message : "Couldn't calculate this marketplace.", missing: null, price: null };
+    }
+  });
+  return rows.sort((a, b) => {
+    if (a.price === null) return 1;
+    if (b.price === null) return -1;
+    return a.price - b.price;
   });
 }
 
@@ -210,6 +260,8 @@ export function stateToSearch(state: CompareState): string {
   p.set("vat", sale.vatProfile === "REGISTERED" ? "R" : "N");
   p.set("seller", sale.sellerType === "PRIVATE" ? "P" : "B");
   if (state.from) p.set("from", state.from);
+  if (state.mode === "MATCH") p.set("mode", "match");
+  if (state.matchTarget !== null) p.set("keep", String(state.matchTarget));
   if (state.customised.length) p.set("set", state.customised.join(","));
 
   for (const platform of state.customised) {
@@ -278,6 +330,8 @@ export function stateFromSearch(search: string): CompareState {
   sale.vatProfile = p.get("vat") === "R" ? "REGISTERED" : "NOT_REGISTERED";
   sale.sellerType = p.get("seller") === "P" ? "PRIVATE" : "BUSINESS";
   state.from = oneOf(p.get("from"), COMPARE_PLATFORMS) ?? null;
+  state.mode = p.get("mode") === "match" ? "MATCH" : "KEEP";
+  state.matchTarget = num(p.get("keep"), (n) => n >= -1_000_000 && n <= 1_000_000) ?? null;
 
   const requested = (p.get("set") ?? "").split(",").filter((x): x is ComparePlatform => COMPARE_PLATFORMS.includes(x as ComparePlatform));
   const c = state.configs;
