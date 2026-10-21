@@ -222,3 +222,4 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
   .calc-result { padding: 24px 20px; }
   .calc-footnote { padding-bottom: 100px; }
 }
+.calc-pricing-exact { margin-top: 2px; text-align: right; }

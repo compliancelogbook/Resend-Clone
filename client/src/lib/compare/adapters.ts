@@ -5,6 +5,7 @@ import type { Platform } from "../../data/types";
 import type { VatProfile } from "../../data/vat";
 import { calculateAmazon, type AmazonSellerPlan } from "../engines/amazon";
 import { calculateEbay } from "../engines/ebay";
+import { calculateEbayPrivate } from "../engines/ebay-private";
 import { calculateEtsy } from "../engines/etsy";
 import { calculateShopify, type ShopifyCardType } from "../engines/shopify";
 import { calculateTikTok } from "../engines/tiktok";
@@ -40,6 +41,10 @@ export interface MarketplaceConfigMap {
     region: EbayInternationalRegion;
     currencyConversionSelected: boolean;
     topRatedPremiumService: boolean;
+    /** Added in EasyFeezy site: private sellers use the separate private-seller engine. Defaults to BUSINESS. */
+    sellerType?: "BUSINESS" | "PRIVATE";
+    /** Private sellers only: this listing went past the free monthly allowance (35p). */
+    privateInsertionFee?: boolean;
   };
   AMAZON: {
     sellerPlan: AmazonSellerPlan;
@@ -114,7 +119,18 @@ export function calculateMarketplace<P extends Platform>(
       });
     }
     case "EBAY": {
-      const value = config as MarketplaceConfigMap["EBAY"];
+      const { sellerType, privateInsertionFee, ...value } = config as MarketplaceConfigMap["EBAY"];
+      if (sellerType === "PRIVATE") {
+        return calculateEbayPrivate({
+          itemPrice: scenario.soldPrice,
+          itemCost: scenario.itemCost,
+          shippingCharged: scenario.shippingCharged,
+          shippingCost: scenario.shippingCost,
+          quantity: scenario.quantity,
+          buyerOutsideUk: value.region !== "DOMESTIC",
+          paidInsertionFee: privateInsertionFee ?? false,
+        });
+      }
       return calculateEbay({
         itemPrice: scenario.soldPrice,
         itemCost: scenario.itemCost,

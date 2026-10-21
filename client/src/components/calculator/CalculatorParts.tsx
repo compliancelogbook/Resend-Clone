@@ -12,9 +12,8 @@ import { CALCULATION_DISCLAIMER } from "@/lib/calculation-disclaimer";
 import { formatGBP } from "@/lib/format";
 import type { CalculationResult, ConfidenceLevel } from "@/lib/types";
 import type { Platform } from "@/data/types";
-import { calculateMarketplace, type MarketplaceConfigMap, type SharedComparisonScenario } from "@/lib/compare/adapters";
-import { findBreakEvenUnitPrice } from "@/lib/optimise/break-even";
-import { findTargetMarginUnitPrice } from "@/lib/optimise/target-margin";
+import type { MarketplaceConfigMap, SharedComparisonScenario } from "@/lib/compare/adapters";
+import { suggestBreakEvenPrice, suggestTargetMarginPrice } from "@/lib/optimise/price-suggestions";
 import "./calculator.css";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -609,39 +608,25 @@ function PricingAdvice({ pricing, platform }: { pricing: PricingContext; platfor
   const [target, setTarget] = useState("30");
   const targetPct = Number(target);
   const targetValid = target.trim() !== "" && Number.isFinite(targetPct) && targetPct > 0 && targetPct < 100;
+  const typedDecimals = (target.trim().split(".")[1] ?? "").length;
   const currentPrice = pricing.scenario.soldPrice;
 
-  const breakEven = useMemo(() => {
+  const breakEvenPrice = useMemo(() => {
     try {
-      return findBreakEvenUnitPrice(pricing.platform, pricing.scenario, pricing.config as never);
+      return suggestBreakEvenPrice(pricing.platform, pricing.scenario, pricing.config as never);
     } catch {
       return null;
     }
   }, [pricing]);
 
-  const targetPrice = useMemo(() => {
-    if (!targetValid) return undefined;
+  const targetPriceSnapped = useMemo(() => {
+    if (!targetValid) return null;
     try {
-      return findTargetMarginUnitPrice(pricing.platform, pricing.scenario, pricing.config as never, targetPct);
+      return suggestTargetMarginPrice(pricing.platform, pricing.scenario, pricing.config as never, targetPct, typedDecimals);
     } catch {
       return null;
     }
-  }, [pricing, targetPct, targetValid]);
-
-  // The solvers stop within half a penny. Turn that into the lowest whole-penny price
-  // that the engine confirms meets the goal.
-  const snapToPenny = (unitPrice: number, meets: (r: CalculationResult) => boolean) => {
-    let pennies = Math.max(0, Math.floor((unitPrice - 0.01) * 100));
-    for (let i = 0; i < 4; i++, pennies++) {
-      const price = pennies / 100;
-      if (meets(calculateMarketplace(pricing.platform, { ...pricing.scenario, soldPrice: price }, pricing.config as never))) return price;
-    }
-    return Math.ceil(unitPrice * 100) / 100;
-  };
-  const breakEvenPrice = breakEven ? snapToPenny(breakEven.unitPrice, (r) => r.estimatedProfit >= 0) : null;
-  const targetPriceSnapped = targetPrice
-    ? snapToPenny(targetPrice.unitPrice, (r) => r.marginPct !== null && r.marginPct >= targetPct)
-    : null;
+  }, [pricing, targetPct, targetValid, typedDecimals]);
 
   return (
     <div className="calc-pricing">
@@ -671,10 +656,13 @@ function PricingAdvice({ pricing, platform }: { pricing: PricingContext; platfor
           margin, sell at
         </span>
         <strong>
-          {!targetValid ? "Enter 1–99%" : targetPriceSnapped !== null ? `${formatGBP(targetPriceSnapped)} each` : "Not reachable"}
+          {!targetValid ? "Enter 1–99%" : targetPriceSnapped !== null ? `${formatGBP(targetPriceSnapped.price)} each` : "Not reachable"}
         </strong>
       </div>
-      {targetValid && targetPrice === null && (
+      {targetValid && targetPriceSnapped !== null && (
+        <p className="calc-fine calc-pricing-exact">Gives a {targetPriceSnapped.marginPct.toFixed(2)}% margin</p>
+      )}
+      {targetValid && targetPriceSnapped === null && (
         <p className="calc-pricing-warn">{platform}'s percentage fees mean a {targetPct}% margin can't be reached at any price.</p>
       )}
       <p className="calc-fine">Keeps your other costs and delivery the same, and only changes the selling price.</p>
