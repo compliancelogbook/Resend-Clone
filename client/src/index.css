@@ -1,12 +1,11 @@
 /*
  * Reference-locked global skin: black-space precision, low-contrast grey rules,
- * Domaine display headings, ABC Favorit interface copy, Commit Mono code, and
+ * ABC Favorit headings and interface copy, Commit Mono code, and
  * discreet spectral colour. Every value supports the supplied Resend reference.
  */
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@font-face { font-family: "Domaine"; src: url("/manus-storage/domaine-regular_96798b33.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "ABCFavorit"; src: url("/manus-storage/abc-favorit-book_e608c48a.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "ABCFavorit"; src: url("/manus-storage/abc-favorit-medium_5253ffa8.woff2") format("woff2"); font-weight: 500 800; font-display: swap; }
 @font-face { font-family: "CommitMono"; src: url("/manus-storage/commit-mono-regular_2c9ce43c.woff2") format("woff2"); font-display: swap; }
@@ -57,7 +56,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid rgba(255,255,255,.86)
 .forward-pill { display: inline-flex; align-items: center; gap: 9px; padding: 8px 13px; border: 1px solid rgba(133,247,255,.3); border-radius: 100px; color: #d5d5d5; font-size: 14px; background: linear-gradient(100deg,rgba(146,81,226,.13),rgba(27,160,166,.08)); box-shadow: inset 0 0 13px rgba(132,101,246,.06); transition: border-color 180ms var(--ease-out), color 180ms var(--ease-out); }
 .forward-pill:hover { color: white; border-color: rgba(128,239,255,.64); }
 h1, h2, h3, p { margin-top: 0; }
-.hero h1 { margin: 46px 0 24px; font-family: "Domaine", Georgia, serif; font-size: clamp(62px, 6.35vw, 108px); line-height: .985; letter-spacing: -.042em; font-weight: 400; }
+.hero h1 { margin: 46px 0 24px; font-family: "ABCFavorit", Arial, sans-serif; letter-spacing: -.055em; font-size: clamp(62px, 6.35vw, 108px); line-height: .985; letter-spacing: -.042em; font-weight: 400; }
 .hero-copy > p { margin-bottom: 34px; color: #aaa; font-size: clamp(16px, 1.22vw, 20px); line-height: 1.47; }
 .hero-actions { display: flex; align-items: center; gap: 39px; }
 .hero-object { position: absolute; width: min(50vw, 638px); height: min(43vw, 550px); right: clamp(19px, 1.5vw, 35px); top: 50%; translate: 0 -50%; opacity: .98; z-index: -1; }
@@ -150,9 +149,9 @@ a.nav-entry:hover { background: rgba(255,255,255,.05); }
 /* ---------- EasyFeezy hero ---------- */
 .hero-ef { min-height: min(820px, calc(100vh - 68px)); }
 .hero-glow { position: absolute; z-index: -2; inset: 0; background: radial-gradient(ellipse 40% 55% at 74% 50%, rgba(48,230,157,.12), transparent 70%), radial-gradient(ellipse 50% 40% at 20% 0%, rgba(88,169,255,.06), transparent 70%); }
-.hero-ef .hero-copy { max-width: min(640px, 50vw); }
-.hero-ef h1 { font-size: clamp(50px, 5.2vw, 88px); }
-@media (max-width: 1180px) and (min-width: 861px) { .hero-ef .hero-copy { max-width: 42vw; } }
+.hero-ef .hero-copy { max-width: min(720px, 52vw); }
+.hero-ef h1 { font-size: clamp(42px, 4.4vw, 66px); line-height: 1.04; }
+@media (max-width: 1180px) and (min-width: 861px) { .hero-ef .hero-copy { max-width: 42vw; } .hero-ef h1 { font-size: 3.8vw; } }
 .hero-object.has-card { display: grid; place-items: center; height: auto; z-index: 1; opacity: 1; }
 .hero-card { width: min(440px, 100%); padding: 26px; border: 1px solid rgba(255,255,255,.16); border-radius: 22px; background: radial-gradient(circle at 50% -10%, rgba(48,230,157,.1), transparent 55%), linear-gradient(160deg, #121212, #060606 60%); box-shadow: 0 40px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); }
 .hero-card-top { display: flex; justify-content: space-between; align-items: center; color: #8d8d8d; font-size: 13px; }
@@ -188,3 +187,10 @@ a.nav-entry:hover { background: rgba(255,255,255,.05); }
 }
 .nav-badge { margin-left: 6px; padding: 2px 6px; border-radius: 6px; background: linear-gradient(100deg, rgba(48,230,157,.22), rgba(88,169,255,.18)); color: #b8f5d9; font-size: 10.5px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; box-shadow: inset 0 0 0 1px rgba(48,230,157,.35); }
 .nav-mobile h2 .nav-badge { margin-left: 8px; }
+.footer-links { grid-template-columns: repeat(4, 1fr); }
+.footer-intro > p { max-width: 280px; }
+.footer-copy { color: #6a6a6a !important; font-size: 13px !important; }
+.footer-soon { color: #5e5e5e; font-size: 15px; }
+.footer-soon em { margin-left: 4px; padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.05); color: #7a7a7a; font-size: 10.5px; font-style: normal; }
+.site-footer { min-height: 0; padding-top: 80px; padding-bottom: 64px; }
+@media (max-width: 760px) { .site-footer { padding-top: 64px; padding-bottom: 48px; } }

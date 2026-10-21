@@ -1,23 +1,66 @@
-import { Github } from "lucide-react";
-import { useLocation } from "wouter";
-import FooterWatermark from "@/components/FooterWatermark";
+import { Link, useLocation } from "wouter";
+import { CALCULATOR_LINKS } from "@/lib/calculator-links";
 
-const footerColumns = [
-  { title: "Features", links: ["Automations", "Audiences", "Broadcasts", "Inbound", "Templates", "Webhooks", "Dedicated IPs"] },
-  { title: "Resources", links: ["Changelog", "Pricing", "Enterprise", "Security", "SOC 2", "GDPR", "Brand"] },
-  { title: "Company", links: ["About", "Blog", "Careers", "Clubs", "Customers", "Humans", "Philosophy"] },
-  { title: "Help", links: ["Contact", "Support", "Status", "Migrate", "Knowledge base", "Legal policies"] },
-  { title: "Community", links: ["Events", "Insiders", "Open source", "Wallpapers"] },
+type FooterLink = { label: string; href?: string };
+
+const COLUMNS: { title: string; links: FooterLink[] }[] = [
+  {
+    title: "Products",
+    links: [
+      { label: "Fees", href: "/shopify-fee-calculator" },
+      { label: "Compare", href: "/compare" },
+      { label: "Scan" },
+      { label: "Readiness" },
+      { label: "Alt Text" },
+    ],
+  },
+  { title: "Calculators", links: CALCULATOR_LINKS.map((c) => ({ label: c.name, href: c.href })) },
+  {
+    title: "Solutions",
+    links: [
+      { label: "Agentic commerce", href: "/early-access" },
+      { label: "Cross-listing", href: "/compare" },
+      { label: "Pricing for profit", href: "/compare?mode=match" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "Early access", href: "/early-access" },
+      { label: "Pricing", href: "/early-access#pricing" },
+      { label: "Privacy" },
+      { label: "Terms" },
+    ],
+  },
 ];
 
 export default function SiteFooter() {
   const [location] = useLocation();
   return (
     <footer className="site-footer">
-      <FooterWatermark />
       <div className="footer-main">
-        <div className="footer-intro"><a className="wordmark footer-wordmark" href={location === "/" ? "#top" : "/"}><span className="wordmark-dot" aria-hidden="true" /><span>EasyFeezy</span></a><p>2261 Market Street #5039<br />San Francisco, CA 94114</p><div className="socials"><a href="#x">𝕏</a><a href="#github"><Github size={17} /></a><a href="#linkedin">in</a><a href="#youtube">▶</a></div><span className="system-status"><i /> All systems operational</span></div>
-        <div className="footer-links">{footerColumns.map((column) => <section key={column.title}><h3>{column.title}</h3>{column.links.map(link => <a href={`#${link.toLowerCase().replaceAll(" ", "-")}`} key={link}>{link}</a>)}</section>)}</div>
+        <div className="footer-intro">
+          <a className="wordmark footer-wordmark" href={location === "/" ? "#top" : "/"}>
+            <span className="wordmark-dot" aria-hidden="true" />
+            <span>EasyFeezy</span>
+          </a>
+          <p>Commerce intelligence for online sellers. Fee calculations are estimates based on each marketplace's published rates.</p>
+          <p className="footer-copy">© {new Date().getFullYear()} EasyFeezy</p>
+        </div>
+        <div className="footer-links">
+          {COLUMNS.map((column) => (
+            <section key={column.title}>
+              <h3>{column.title}</h3>
+              {column.links.map((link) =>
+                link.href ? (
+                  <Link href={link.href} key={link.label}>{link.label}</Link>
+                ) : (
+                  <span className="footer-soon" key={link.label}>{link.label} <em>Soon</em></span>
+                ),
+              )}
+            </section>
+          ))}
+        </div>
       </div>
     </footer>
   );
