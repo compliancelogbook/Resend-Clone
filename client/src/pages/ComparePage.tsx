@@ -14,6 +14,7 @@ import {
   MoneyField,
   OptionCards,
   QuantityField,
+  ROUNDING_NOTE,
   SearchablePicker,
   Segmented,
   TextField,
@@ -21,6 +22,7 @@ import {
 } from "@/components/calculator/CalculatorParts";
 import {
   CALCULATOR_PATHS,
+  calculatorHref,
   linkedConfigs,
   matchReference,
   matchTargetFor,
@@ -436,7 +438,7 @@ function RowCard({
             <ChevronDown size={14} /> Fee breakdown
           </button>
         )}
-        <Link href={CALCULATOR_PATHS[platform]} className="cmp-row-link">Full calculator <ArrowUpRight size={13} /></Link>
+        <Link href={calculatorHref(platform, state)} className="cmp-row-link">Full calculator <ArrowUpRight size={13} /></Link>
       </div>
 
       <AnimatePresence initial={false}>
@@ -478,6 +480,7 @@ function FeeBreakdown({ result }: { result: NonNullable<CompareRow["result"]> })
           <ul className="calc-notes">{result.exclusions.map((e) => <li key={e}>{e}</li>)}</ul>
         </>
       )}
+      <p className="calc-fine calc-rounding">{ROUNDING_NOTE}</p>
     </div>
   );
 }

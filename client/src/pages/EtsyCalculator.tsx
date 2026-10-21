@@ -21,6 +21,7 @@ import {
   useCalculatorFlow,
 } from "@/components/calculator/CalculatorParts";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { readCalculatorLink } from "@/lib/compare/compare-state";
 import { DEFAULT_USD_TO_GBP_RATE, ETSY_OFFSITE_ADS_CAP_USD, ETSY_SOURCES, type EtsyOffsiteAdsRate } from "@/data/etsy.fees";
 import type { VatProfile } from "@/data/vat";
 import type { CalculationResult } from "@/lib/types";
@@ -37,21 +38,24 @@ const valueOf = <T,>(r: ValidationResult<T>, fallback: T) => (r.ok ? r.value : f
 type OffsiteAdsChoice = "NONE" | "0.15" | "0.12";
 
 export default function EtsyCalculator() {
+  // Opened from Compare (or a shared link)? Start from those figures instead of the defaults.
+  const [link] = useState(() => readCalculatorLink(window.location.search, "ETSY"));
+  const pct = (n: number | null | undefined) => (n ? String(+(n * 100).toFixed(4)) : "");
   useEffect(() => {
     document.title = "Etsy fee calculator · EasyFeezy";
     window.scrollTo(0, 0);
   }, []);
 
-  const [soldPrice, setSoldPrice] = useState("30");
-  const [itemCost, setItemCost] = useState("10");
-  const [shippingCharged, setShippingCharged] = useState("0");
-  const [shippingCost, setShippingCost] = useState("0");
-  const [quantity, setQuantity] = useState("1");
-  const [offsiteAds, setOffsiteAds] = useState<OffsiteAdsChoice>("NONE");
-  const [currencyConversion, setCurrencyConversion] = useState(false);
-  const [vatProfile, setVatProfile] = useState<VatProfile>("NOT_REGISTERED");
-  const [vatIdGiven, setVatIdGiven] = useState(true);
-  const [fxRate, setFxRate] = useState(String(DEFAULT_USD_TO_GBP_RATE));
+  const [soldPrice, setSoldPrice] = useState(link.hasLink ? String(link.sale.soldPrice) : "30");
+  const [itemCost, setItemCost] = useState(link.hasLink ? String(link.sale.itemCost) : "10");
+  const [shippingCharged, setShippingCharged] = useState(link.hasLink ? String(link.sale.shippingCharged) : "0");
+  const [shippingCost, setShippingCost] = useState(link.hasLink ? String(link.sale.shippingCost) : "0");
+  const [quantity, setQuantity] = useState(link.hasLink ? String(link.sale.quantity) : "1");
+  const [offsiteAds, setOffsiteAds] = useState<OffsiteAdsChoice>(link.hasSettings && link.config.offsiteAdsRate ? (String(link.config.offsiteAdsRate) as OffsiteAdsChoice) : "NONE");
+  const [currencyConversion, setCurrencyConversion] = useState(link.hasSettings && link.config.currencyConversionSelected);
+  const [vatProfile, setVatProfile] = useState<VatProfile>(link.hasLink ? link.sale.vatProfile : "NOT_REGISTERED");
+  const [vatIdGiven, setVatIdGiven] = useState(link.hasSettings ? link.config.vatIdSupplied : true);
+  const [fxRate, setFxRate] = useState(String(link.hasSettings && link.config.usdToGbpRate ? link.config.usdToGbpRate : DEFAULT_USD_TO_GBP_RATE));
 
   const sold = parseNonNegativeAmount(soldPrice, "Selling price");
   const cost = parseNonNegativeAmount(itemCost, "Item cost");
@@ -64,7 +68,7 @@ export default function EtsyCalculator() {
   const vatIdSupplied = vatProfile === "REGISTERED" && vatIdGiven;
 
   const hasErrors = [sold, cost, charged, shipping, qty, fx].some((r) => !r.ok);
-  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
+  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors, link.hasLink);
 
   let result: CalculationResult | null = null;
   let pricing: PricingContext | null = null;

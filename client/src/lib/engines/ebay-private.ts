@@ -40,9 +40,11 @@ export function calculateEbayPrivate(input: EbayPrivateInput): CalculationResult
     "On private sales the buyer pays eBay's Buyer Protection fee. It doesn't come out of your money, and this calculator doesn't estimate it.",
     'For selling your own belongings only. If you trade as a business, eBay requires a business account and business fees apply.',
   ];
-  const exclusions: string[] = [];
+  const exclusionsBase = [
+    "Optional listing upgrades (such as a £2 subtitle, reserve price, Gallery Plus or Promoted Listings), an eBay Shop subscription, and the dispute fee eBay charges only if you're found responsible for a chargeback.",
+  ];
+  const exclusions: string[] = [...exclusionsBase];
   const signals: ConfidenceLevel[] = [];
-  const vatUnstated: string[] = [];
 
   // The £0 selling fee is shown as a real, sourced line so the claim itself is auditable.
   feeLines.push(
@@ -71,10 +73,10 @@ export function calculateEbayPrivate(input: EbayPrivateInput): CalculationResult
         feeType: 'listing_fee',
         formula: `£${EBAY_PRIVATE_INSERTION_FEE.toFixed(2)} per listing after ${EBAY_PRIVATE_FREE_LISTINGS_PER_MONTH} free listings a month`,
         source: EBAY_PRIVATE_SOURCE,
-        vatUnconfirmed: true,
+        // eBay: "All fees displayed on this page are inclusive of VAT at 20%." Nothing is added on top.
+        vatInclusive: true,
       })
     );
-    vatUnstated.push('listing fee');
   }
 
   let internationalFee = ZERO;
@@ -90,17 +92,13 @@ export function calculateEbayPrivate(input: EbayPrivateInput): CalculationResult
         feeType: 'international_fee',
         formula: `${formatPercent(EBAY_PRIVATE_INTERNATIONAL_FEE_RATE, 0)} of the total sale (£${toRawNumber(totalSale).toFixed(2)}), buyer outside the UK`,
         source: EBAY_PRIVATE_SOURCE,
-        vatUnconfirmed: true,
+        vatInclusive: true,
       })
     );
-    vatUnstated.push('international fee');
   }
 
-  if (vatUnstated.length > 0) {
-    exclusions.push(
-      `VAT on the ${vatUnstated.join(' and ')} — eBay's private seller fee page doesn't say whether VAT is added, so these are shown as listed.`
-    );
-    signals.push('EXCLUDES_VARIABLE_FEES');
+  if (input.paidInsertionFee || input.buyerOutsideUk) {
+    assumptions.push("eBay's private seller fees already include VAT at 20%, so no VAT is added on top.");
   }
 
   return buildResult({

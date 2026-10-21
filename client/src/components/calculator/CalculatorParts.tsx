@@ -22,9 +22,10 @@ const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 /* ---------- Page flow: result appears after first "Calculate", then stays live ---------- */
 
-export function useCalculatorFlow(hasErrors: boolean) {
-  const [calculated, setCalculated] = useState(false);
-  const [showErrors, setShowErrors] = useState(false);
+export function useCalculatorFlow(hasErrors: boolean, startCalculated = false) {
+  // Opened from a link with figures already filled in: show the result straight away.
+  const [calculated, setCalculated] = useState(startCalculated);
+  const [showErrors, setShowErrors] = useState(startCalculated);
   const resultRef = useRef<HTMLDivElement>(null);
 
   function calculate() {
@@ -629,11 +630,16 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
               <ul className="calc-notes">{result.exclusions.map((e) => <li key={e}>{e}</li>)}</ul>
             </>
           )}
+          <p className="calc-fine calc-rounding">{ROUNDING_NOTE}</p>
         </div>
       </details>
     </div>
   );
 }
+
+/** Shown wherever fees are broken down. No marketplace publishes its penny-rounding rule, so we don't guess one. */
+export const ROUNDING_NOTE =
+  "Marketplaces round each fee to the penny on your statement, and none of them publish exactly how. We keep fees unrounded and only round what you see, so your payout may differ from this by a penny or two.";
 
 /** Break-even and target-margin prices, found by re-running the verified engine at other prices. */
 function PricingAdvice({ pricing, platform }: { pricing: PricingContext; platform: string }) {

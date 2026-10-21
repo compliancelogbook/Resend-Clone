@@ -23,6 +23,7 @@ import {
   useCalculatorFlow,
 } from "@/components/calculator/CalculatorParts";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { readCalculatorLink } from "@/lib/compare/compare-state";
 import { EBAY_CATEGORY_OPTIONS } from "@/lib/category-options";
 import {
   EBAY_CATEGORIES,
@@ -54,24 +55,27 @@ const REGION_OPTIONS: { value: EbayInternationalRegion; title: string; detail: s
 ];
 
 export default function EbayCalculator() {
+  // Opened from Compare (or a shared link)? Start from those figures instead of the defaults.
+  const [link] = useState(() => readCalculatorLink(window.location.search, "EBAY"));
+  const pct = (n: number | null | undefined) => (n ? String(+(n * 100).toFixed(4)) : "");
   useEffect(() => {
     document.title = "eBay fee calculator · EasyFeezy";
     window.scrollTo(0, 0);
   }, []);
 
-  const [soldPrice, setSoldPrice] = useState("30");
-  const [itemCost, setItemCost] = useState("10");
-  const [shippingCharged, setShippingCharged] = useState("0");
-  const [shippingCost, setShippingCost] = useState("0");
-  const [quantity, setQuantity] = useState("1");
-  const [categoryId, setCategoryId] = useState("");
-  const [manualRate, setManualRate] = useState("");
-  const [region, setRegion] = useState<EbayInternationalRegion>("DOMESTIC");
-  const [currencyConversion, setCurrencyConversion] = useState(false);
-  const [topRated, setTopRated] = useState(false);
-  const [vatProfile, setVatProfile] = useState<VatProfile>("NOT_REGISTERED");
-  const [sellerType, setSellerType] = useState<"BUSINESS" | "PRIVATE">("BUSINESS");
-  const [pastFreeListings, setPastFreeListings] = useState(false);
+  const [soldPrice, setSoldPrice] = useState(link.hasLink ? String(link.sale.soldPrice) : "30");
+  const [itemCost, setItemCost] = useState(link.hasLink ? String(link.sale.itemCost) : "10");
+  const [shippingCharged, setShippingCharged] = useState(link.hasLink ? String(link.sale.shippingCharged) : "0");
+  const [shippingCost, setShippingCost] = useState(link.hasLink ? String(link.sale.shippingCost) : "0");
+  const [quantity, setQuantity] = useState(link.hasLink ? String(link.sale.quantity) : "1");
+  const [categoryId, setCategoryId] = useState(link.hasSettings ? link.config.categoryId : "");
+  const [manualRate, setManualRate] = useState(link.hasSettings ? pct(link.config.manualCategoryRate) : "");
+  const [region, setRegion] = useState<EbayInternationalRegion>(link.hasSettings ? link.config.region : "DOMESTIC");
+  const [currencyConversion, setCurrencyConversion] = useState(link.hasSettings && link.config.currencyConversionSelected);
+  const [topRated, setTopRated] = useState(link.hasSettings && link.config.topRatedPremiumService);
+  const [vatProfile, setVatProfile] = useState<VatProfile>(link.hasLink ? link.sale.vatProfile : "NOT_REGISTERED");
+  const [sellerType, setSellerType] = useState<"BUSINESS" | "PRIVATE">(link.hasLink ? link.sale.sellerType : "BUSINESS");
+  const [pastFreeListings, setPastFreeListings] = useState(link.hasSettings && !!link.config.privateInsertionFee);
   const isPrivate = sellerType === "PRIVATE";
 
   const sold = parseNonNegativeAmount(soldPrice, "Selling price");
@@ -86,7 +90,7 @@ export default function EbayCalculator() {
 
   const categoryMissing = !isPrivate && categoryId === "";
   const hasErrors = [sold, cost, charged, shipping, qty].some((r) => !r.ok) || categoryMissing || (needsManualRate && !manual.ok);
-  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
+  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors, link.hasLink);
 
   let result: CalculationResult | null = null;
   let pricing: PricingContext | null = null;
@@ -169,7 +173,7 @@ export default function EbayCalculator() {
                   checked={pastFreeListings}
                   onChange={setPastFreeListings}
                   title={`I've used my ${EBAY_PRIVATE_FREE_LISTINGS_PER_MONTH} free listings this month`}
-                  detail="eBay then charges 35p for each new listing."
+                  detail="eBay then charges 35p for each new listing (400 free with an eBay Shop)."
                 />
               </Step>
             ) : (

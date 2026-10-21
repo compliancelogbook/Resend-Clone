@@ -436,3 +436,37 @@ export function compareHrefFromCalculator<P extends ComparePlatform>(
   state.from = platform;
   return `/compare?${stateToSearch(state)}`;
 }
+
+/* ---------- Compare → calculator ---------- */
+
+/** Link to a marketplace's full calculator carrying the sale and that marketplace's settings from Compare. */
+export function calculatorHref(platform: ComparePlatform, state: CompareState): string {
+  const s: CompareState = {
+    ...defaultCompareState(),
+    sale: { ...state.sale },
+    configs: { ...defaultConfigs(), [platform]: { ...linkedConfigs(state)[platform] } },
+    customised: [platform],
+  };
+  return `${CALCULATOR_PATHS[platform]}?${stateToSearch(s)}`;
+}
+
+export interface CalculatorLink<P extends ComparePlatform> {
+  /** False when the page was opened without a link: keep the page's own defaults. */
+  hasLink: boolean;
+  sale: CompareSale;
+  /** True when the link carried this marketplace's own settings. */
+  hasSettings: boolean;
+  config: CompareConfigs[P];
+}
+
+/** Reads a calculator page's link (as written by calculatorHref or a shared Compare link). */
+export function readCalculatorLink<P extends ComparePlatform>(search: string, platform: P): CalculatorLink<P> {
+  const state = stateFromSearch(search);
+  const hasLink = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search).has("price");
+  return {
+    hasLink,
+    sale: state.sale,
+    hasSettings: state.customised.includes(platform),
+    config: linkedConfigs(state)[platform] as CompareConfigs[P],
+  };
+}

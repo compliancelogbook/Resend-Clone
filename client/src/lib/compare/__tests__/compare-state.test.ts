@@ -159,3 +159,30 @@ describe("compare state", () => {
     expect(rows.filter((r) => r.missing).map((r) => r.platform).sort()).toEqual(["EBAY", "TIKTOK"]);
   });
 });
+
+describe("compare to calculator links", () => {
+  it("carries the sale and that marketplace's settings into its calculator", async () => {
+    const { calculatorHref, readCalculatorLink } = await import("../compare-state");
+    const state = defaultCompareState();
+    state.sale = { soldPrice: 18, itemCost: 4, shippingCharged: 2.5, shippingCost: 3.1, quantity: 3, vatProfile: "REGISTERED", sellerType: "PRIVATE" };
+    state.configs.EBAY = { ...state.configs.EBAY, region: "OTHER", privateInsertionFee: true };
+    state.configs.SHOPIFY = { ...state.configs.SHOPIFY, plan: "ADVANCED", cardType: "INTERNATIONAL_AMEX", expectedMonthlyOrders: 250 };
+    state.customised = ["EBAY", "SHOPIFY"];
+
+    const ebay = readCalculatorLink(calculatorHref("EBAY", state).split("?")[1], "EBAY");
+    expect(ebay.hasLink).toBe(true);
+    expect(ebay.hasSettings).toBe(true);
+    expect(ebay.sale).toEqual(state.sale);
+    expect(ebay.config.sellerType).toBe("PRIVATE");
+    expect(ebay.config.region).toBe("OTHER");
+    expect(ebay.config.privateInsertionFee).toBe(true);
+
+    const shopify = readCalculatorLink(calculatorHref("SHOPIFY", state).split("?")[1], "SHOPIFY");
+    expect(shopify.config).toEqual(state.configs.SHOPIFY);
+  });
+
+  it("a calculator opened without a link keeps its own defaults", async () => {
+    const { readCalculatorLink } = await import("../compare-state");
+    expect(readCalculatorLink("", "VINTED").hasLink).toBe(false);
+  });
+});

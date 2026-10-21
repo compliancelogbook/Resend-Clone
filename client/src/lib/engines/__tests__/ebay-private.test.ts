@@ -24,7 +24,7 @@ describe('eBay UK private seller', () => {
     const line = calculateEbayPrivate(base).feeLines.find((l) => l.id === 'ebay-private-selling-fee');
     expect(line?.amountExVat).toBe(0);
     expect(line?.sourceUrl).toContain('ebay.co.uk');
-    expect(line?.verificationStatus).toBe('AUTOMATED_UNVERIFIED');
+    expect(line?.verificationStatus).toBe('AUDIT_VERIFIED');
   });
 
   it('adds 3% of the total sale, including postage, for a buyer outside the UK', () => {
@@ -38,11 +38,14 @@ describe('eBay UK private seller', () => {
     expect(r.listingFee).toBeCloseTo(0.35, 10);
   });
 
-  it('flags VAT as unstated whenever a paid fee applies, and never adds VAT itself', () => {
-    const r = calculateEbayPrivate({ ...base, buyerOutsideUk: true });
+  it('treats the fees as already including VAT: nothing added on top, and the result is exact', () => {
+    // eBay: "All fees displayed on this page are inclusive of VAT at 20%."
+    const r = calculateEbayPrivate({ ...base, buyerOutsideUk: true, paidInsertionFee: true });
     expect(r.vatOnFees).toBe(0);
-    expect(r.exclusions.join(' ')).toMatch(/VAT/);
-    expect(r.confidence).toBe('EXCLUDES_VARIABLE_FEES');
+    expect(r.totalCashFees).toBeCloseTo(0.9 + 0.35, 10); // 3% of £30 + 35p
+    expect(r.feeLines.filter((l) => l.amountExVat > 0).every((l) => l.vatInclusive)).toBe(true);
+    expect(r.assumptions.join(' ')).toMatch(/include VAT/);
+    expect(r.confidence).toBe('EXACT_FOR_SELECTED_INPUTS');
   });
 
   it('is reachable through the compare adapter, and Business stays the default', () => {

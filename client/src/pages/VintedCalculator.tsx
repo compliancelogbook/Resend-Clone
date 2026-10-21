@@ -22,6 +22,7 @@ import {
   useCalculatorFlow,
 } from "@/components/calculator/CalculatorParts";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { readCalculatorLink } from "@/lib/compare/compare-state";
 import type { VintedSellerRoute } from "@/lib/engines/vinted";
 import { VINTED_ZERO_SELLING_FEE_SOURCE } from "@/data/vinted.fees";
 import type { CalculationResult } from "@/lib/types";
@@ -36,19 +37,22 @@ const errorOf = <T,>(r: ValidationResult<T>) => (r.ok ? undefined : r.error);
 const valueOf = <T,>(r: ValidationResult<T>, fallback: T) => (r.ok ? r.value : fallback);
 
 export default function VintedCalculator() {
+  // Opened from Compare (or a shared link)? Start from those figures instead of the defaults.
+  const [link] = useState(() => readCalculatorLink(window.location.search, "VINTED"));
+  const pct = (n: number | null | undefined) => (n ? String(+(n * 100).toFixed(4)) : "");
   useEffect(() => {
     document.title = "Vinted fee calculator · EasyFeezy";
     window.scrollTo(0, 0);
   }, []);
 
-  const [soldPrice, setSoldPrice] = useState("30");
-  const [itemCost, setItemCost] = useState("10");
-  const [shippingReceived, setShippingReceived] = useState("0");
-  const [shippingCost, setShippingCost] = useState("0");
-  const [quantity, setQuantity] = useState("1");
-  const [sellerRoute, setSellerRoute] = useState<VintedSellerRoute>("PRIVATE");
-  const [boughtVisibility, setBoughtVisibility] = useState(false);
-  const [visibilityCost, setVisibilityCost] = useState("");
+  const [soldPrice, setSoldPrice] = useState(link.hasLink ? String(link.sale.soldPrice) : "30");
+  const [itemCost, setItemCost] = useState(link.hasLink ? String(link.sale.itemCost) : "10");
+  const [shippingReceived, setShippingReceived] = useState(link.hasLink ? String(link.sale.shippingCharged) : "0");
+  const [shippingCost, setShippingCost] = useState(link.hasLink ? String(link.sale.shippingCost) : "0");
+  const [quantity, setQuantity] = useState(link.hasLink ? String(link.sale.quantity) : "1");
+  const [sellerRoute, setSellerRoute] = useState<VintedSellerRoute>(link.hasLink ? (link.sale.sellerType === "PRIVATE" ? "PRIVATE" : "PRO") : "PRIVATE");
+  const [boughtVisibility, setBoughtVisibility] = useState(link.hasSettings && !!link.config.visibilityServiceCost);
+  const [visibilityCost, setVisibilityCost] = useState(link.hasSettings && link.config.visibilityServiceCost ? String(link.config.visibilityServiceCost) : "");
 
   const sold = parseNonNegativeAmount(soldPrice, "Selling price");
   const cost = parseNonNegativeAmount(itemCost, "Item cost");
@@ -60,7 +64,7 @@ export default function VintedCalculator() {
     : ({ ok: true, value: 0 } as const);
 
   const hasErrors = [sold, cost, received, shipping, qty, visibility].some((r) => !r.ok);
-  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
+  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors, link.hasLink);
 
   let result: CalculationResult | null = null;
   let pricing: PricingContext | null = null;

@@ -24,6 +24,7 @@ import {
 } from "@/components/calculator/CalculatorParts";
 import type { ShopifyCardType } from "@/lib/engines/shopify";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { readCalculatorLink } from "@/lib/compare/compare-state";
 import { SHOPIFY_PLANS, SHOPIFY_SOURCE, type ShopifyPaymentProcessor, type ShopifyPlan } from "@/data/shopify.fees";
 import type { CalculationResult } from "@/lib/types";
 import {
@@ -46,24 +47,27 @@ const PAYMENT_OPTIONS: { value: ShopifyPaymentProcessor; title: string; extra: s
 ];
 
 export default function ShopifyCalculator() {
+  // Opened from Compare (or a shared link)? Start from those figures instead of the defaults.
+  const [link] = useState(() => readCalculatorLink(window.location.search, "SHOPIFY"));
+  const pct = (n: number | null | undefined) => (n ? String(+(n * 100).toFixed(4)) : "");
   useEffect(() => {
     document.title = "Shopify fee calculator · EasyFeezy";
     window.scrollTo(0, 0);
   }, []);
 
-  const [soldPrice, setSoldPrice] = useState("30");
-  const [itemCost, setItemCost] = useState("10");
-  const [shippingCharged, setShippingCharged] = useState("0");
-  const [shippingCost, setShippingCost] = useState("0");
-  const [quantity, setQuantity] = useState("1");
-  const [plan, setPlan] = useState<ShopifyPlan>("BASIC");
-  const [processor, setProcessor] = useState<ShopifyPaymentProcessor>("SHOPIFY_PAYMENTS");
-  const [cardType, setCardType] = useState<ShopifyCardType>("STANDARD");
-  const [includePlanCost, setIncludePlanCost] = useState(false);
-  const [monthlyOrders, setMonthlyOrders] = useState("");
-  const [useOwnRate, setUseOwnRate] = useState(false);
-  const [ownRate, setOwnRate] = useState("");
-  const [ownFixed, setOwnFixed] = useState("");
+  const [soldPrice, setSoldPrice] = useState(link.hasLink ? String(link.sale.soldPrice) : "30");
+  const [itemCost, setItemCost] = useState(link.hasLink ? String(link.sale.itemCost) : "10");
+  const [shippingCharged, setShippingCharged] = useState(link.hasLink ? String(link.sale.shippingCharged) : "0");
+  const [shippingCost, setShippingCost] = useState(link.hasLink ? String(link.sale.shippingCost) : "0");
+  const [quantity, setQuantity] = useState(link.hasLink ? String(link.sale.quantity) : "1");
+  const [plan, setPlan] = useState<ShopifyPlan>(link.hasSettings ? link.config.plan : "BASIC");
+  const [processor, setProcessor] = useState<ShopifyPaymentProcessor>(link.hasSettings ? link.config.processor : "SHOPIFY_PAYMENTS");
+  const [cardType, setCardType] = useState<ShopifyCardType>(link.hasSettings ? link.config.cardType : "STANDARD");
+  const [includePlanCost, setIncludePlanCost] = useState(link.hasSettings && !!link.config.expectedMonthlyOrders);
+  const [monthlyOrders, setMonthlyOrders] = useState(link.hasSettings && link.config.expectedMonthlyOrders ? String(link.config.expectedMonthlyOrders) : "");
+  const [useOwnRate, setUseOwnRate] = useState(link.hasSettings && !!link.config.thirdPartyProcessor);
+  const [ownRate, setOwnRate] = useState(link.hasSettings ? pct(link.config.thirdPartyProcessor?.rate) : "");
+  const [ownFixed, setOwnFixed] = useState(link.hasSettings && link.config.thirdPartyProcessor ? String(link.config.thirdPartyProcessor.fixed) : "");
 
   const sold = parseNonNegativeAmount(soldPrice, "Selling price");
   const cost = parseNonNegativeAmount(itemCost, "Item cost");
@@ -80,7 +84,7 @@ export default function ShopifyCalculator() {
   const hasErrors =
     [sold, cost, charged, shipping, qty, monthly].some((r) => !r.ok) || planOrdersMissing || (ownRateActive && !ownRateValid);
 
-  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
+  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors, link.hasLink);
 
   let result: CalculationResult | null = null;
   let pricing: PricingContext | null = null;

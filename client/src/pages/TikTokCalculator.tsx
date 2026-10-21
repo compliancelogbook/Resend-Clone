@@ -23,6 +23,7 @@ import {
   useCalculatorFlow,
 } from "@/components/calculator/CalculatorParts";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { readCalculatorLink } from "@/lib/compare/compare-state";
 import { TIKTOK_CATEGORY_OPTIONS } from "@/lib/category-options";
 import { DISCOUNTS_EXCEED_SUBTOTAL_MESSAGE } from "@/lib/engines/tiktok-resolve";
 import { TIKTOK_CATEGORIES, TIKTOK_SOURCE } from "@/data/tiktok.fees";
@@ -42,25 +43,28 @@ const valueOf = <T,>(r: ValidationResult<T>, fallback: T) => (r.ok ? r.value : f
 
 
 export default function TikTokCalculator() {
+  // Opened from Compare (or a shared link)? Start from those figures instead of the defaults.
+  const [link] = useState(() => readCalculatorLink(window.location.search, "TIKTOK"));
+  const pct = (n: number | null | undefined) => (n ? String(+(n * 100).toFixed(4)) : "");
   useEffect(() => {
     document.title = "TikTok Shop fee calculator · EasyFeezy";
     window.scrollTo(0, 0);
   }, []);
 
-  const [soldPrice, setSoldPrice] = useState("30");
-  const [itemCost, setItemCost] = useState("10");
-  const [shippingCharged, setShippingCharged] = useState("0");
-  const [shippingCost, setShippingCost] = useState("0");
-  const [quantity, setQuantity] = useState("1");
-  const [categoryId, setCategoryId] = useState("");
-  const [manualRate, setManualRate] = useState("");
-  const [promoEnabled, setPromoEnabled] = useState(false);
-  const [promoRate, setPromoRate] = useState("");
-  const [sellerDiscount, setSellerDiscount] = useState("0");
-  const [platformDiscount, setPlatformDiscount] = useState("0");
-  const [affiliateRate, setAffiliateRate] = useState("");
-  const [otherCosts, setOtherCosts] = useState("0");
-  const [vatProfile, setVatProfile] = useState<VatProfile>("NOT_REGISTERED");
+  const [soldPrice, setSoldPrice] = useState(link.hasLink ? String(link.sale.soldPrice) : "30");
+  const [itemCost, setItemCost] = useState(link.hasLink ? String(link.sale.itemCost) : "10");
+  const [shippingCharged, setShippingCharged] = useState(link.hasLink ? String(link.sale.shippingCharged) : "0");
+  const [shippingCost, setShippingCost] = useState(link.hasLink ? String(link.sale.shippingCost) : "0");
+  const [quantity, setQuantity] = useState(link.hasLink ? String(link.sale.quantity) : "1");
+  const [categoryId, setCategoryId] = useState(link.hasSettings ? link.config.categoryId : "");
+  const [manualRate, setManualRate] = useState(link.hasSettings ? pct(link.config.manualCategoryRate) : "");
+  const [promoEnabled, setPromoEnabled] = useState(link.hasSettings && !!link.config.promotionalRate);
+  const [promoRate, setPromoRate] = useState(link.hasSettings ? pct(link.config.promotionalRate) : "");
+  const [sellerDiscount, setSellerDiscount] = useState(link.hasSettings ? String(link.config.sellerDiscount) : "0");
+  const [platformDiscount, setPlatformDiscount] = useState(link.hasSettings ? String(link.config.platformDiscount) : "0");
+  const [affiliateRate, setAffiliateRate] = useState(link.hasSettings ? pct(link.config.affiliateCommissionRate) : "");
+  const [otherCosts, setOtherCosts] = useState(link.hasSettings ? String(link.config.otherActualCosts) : "0");
+  const [vatProfile, setVatProfile] = useState<VatProfile>(link.hasLink ? link.sale.vatProfile : "NOT_REGISTERED");
 
   const sold = parseNonNegativeAmount(soldPrice, "Selling price");
   const cost = parseNonNegativeAmount(itemCost, "Item cost");
@@ -86,7 +90,7 @@ export default function TikTokCalculator() {
     categoryId === "" ||
     (manualActive && !manual.ok) ||
     (promoEnabled && !promo.ok);
-  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
+  const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors, link.hasLink);
 
   let result: CalculationResult | null = null;
   let pricing: PricingContext | null = null;

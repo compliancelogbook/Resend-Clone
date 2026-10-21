@@ -228,3 +228,4 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
 .calc-picked.is-empty { border-style: dashed; border-color: rgba(255,255,255,.22); }
 .calc-picked.is-empty b { color: #a8a8a8; font-weight: 400; }
 .calc-field.has-error .calc-picked { border-color: rgba(255,120,140,.6); }
+.calc-rounding { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--soft-line); }
