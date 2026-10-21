@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { handleContact } from "./contact";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +16,12 @@ async function startServer() {
     process.env.NODE_ENV === "production"
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "dist", "public");
+
+  app.set("trust proxy", true);
+  app.post("/api/contact", express.json({ limit: "20kb" }), async (req, res) => {
+    const result = await handleContact(req.body, req.ip ?? "unknown", process.env);
+    res.status(result.status).json(result.json);
+  });
 
   app.use(express.static(staticPath));
 

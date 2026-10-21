@@ -80,6 +80,7 @@ const MENUS: NavMenu[] = [
         items: [
           { name: "How we calculate", desc: "Our sources, check dates and rounding" },
           { name: "UK seller tax guide", desc: "Plain-English HMRC guidance for online sellers" },
+          { name: "Contact", desc: "Feedback, questions and partnerships", href: "/contact" },
         ],
       },
     ],

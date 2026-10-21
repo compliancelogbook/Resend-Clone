@@ -4,7 +4,8 @@ import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { defineConfig, type Plugin, type ViteDevServer } from "vite";
+import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from "vite";
+import { handleContact } from "./server/contact";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 // =============================================================================
@@ -213,7 +214,36 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+/** Dev-only copy of the production /api/contact route, so the form works on localhost. */
+function vitePluginContactApi(): Plugin {
+  return {
+    name: "easyfeezy-contact-api",
+    configureServer(server: ViteDevServer) {
+      const env = { ...process.env, ...loadEnv(server.config.mode, PROJECT_ROOT, "") };
+      server.middlewares.use("/api/contact", (req, res, next) => {
+        if (req.method !== "POST") return next();
+        let raw = "";
+        req.on("data", (chunk) => {
+          raw += chunk;
+          if (raw.length > 20_000) req.destroy();
+        });
+        req.on("end", async () => {
+          let body: unknown = null;
+          try {
+            body = JSON.parse(raw);
+          } catch {
+            body = null;
+          }
+          const result = await handleContact(body, req.socket.remoteAddress ?? "local", env);
+          res.writeHead(result.status, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(result.json));
+        });
+      });
+    },
+  };
+}
+
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy(), vitePluginContactApi()];
 
 export default defineConfig({
   plugins,
