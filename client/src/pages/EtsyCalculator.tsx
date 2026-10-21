@@ -101,7 +101,7 @@ export default function EtsyCalculator() {
   return (
     <main className="site-shell">
       <SiteHeader />
-      <CalculatorHero marketplace="Etsy" title="Etsy fee calculator" intro="Find out what Etsy takes from a sale and what you keep. For UK sellers." />
+      <CalculatorHero marketplace="Etsy" title="Etsy fee calculator" intro="Calculate Etsy fees and net profit on any sale, for UK sellers." />
 
       <CalculatorLayout
         onCalculate={calculate}

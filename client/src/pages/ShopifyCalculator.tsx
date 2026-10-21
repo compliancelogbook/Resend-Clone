@@ -118,7 +118,7 @@ export default function ShopifyCalculator() {
   return (
     <main className="site-shell">
       <SiteHeader />
-      <CalculatorHero marketplace="Shopify" title="Shopify fee calculator" intro="Find out what Shopify takes from a sale and what you keep." />
+      <CalculatorHero marketplace="Shopify" title="Shopify fee calculator" intro="Calculate Shopify fees and net profit on any sale." />
 
       <CalculatorLayout
         onCalculate={calculate}

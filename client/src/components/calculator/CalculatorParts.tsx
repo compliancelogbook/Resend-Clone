@@ -472,13 +472,13 @@ export function ResultPanel({
 function EmptyResult({ platform, message, onCalculate }: { platform: string; message: string | null; onCalculate: () => void }) {
   return (
     <div className="calc-empty">
-      <p className="calc-eyebrow">Your profit</p>
+      <p className="calc-eyebrow">Net profit</p>
       <p className="calc-empty-figure" aria-hidden="true">£–</p>
       <div className="calc-bar is-ghost" aria-hidden="true"><i /><i /><i /><i /></div>
       <p className="calc-empty-copy" role="status">
         {message ?? (
           <>
-            Fill in your sale, then press <b>Calculate profit</b> to see what {platform} takes and what you keep.
+            Fill in your sale, then press <b>Calculate profit</b> to see {platform}'s fees and your net profit.
           </>
         )}
       </p>
@@ -503,7 +503,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
     { key: "cost", label: "Item cost", amount: result.cogs },
     { key: "delivery", label: "Delivery", amount: result.shippingCost },
     { key: "fees", label: `${platform} fees`, amount: result.totalCashFees },
-    { key: "profit", label: "Your profit", amount: Math.max(profit, 0) },
+    { key: "profit", label: "Net profit", amount: Math.max(profit, 0) },
   ];
   const scale = Math.max(result.grossRevenue, result.cogs + result.shippingCost + result.totalCashFees) || 1;
   const feeShare = result.grossRevenue > 0 ? (result.totalCashFees / result.grossRevenue) * 100 : null;
@@ -519,7 +519,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
   return (
     <div className="calc-result-body">
       <div className="calc-result-top">
-        <p className="calc-eyebrow">Your profit</p>
+        <p className="calc-eyebrow">Net profit</p>
         <button type="button" className={`calc-chip ${confidence.tone}`} onClick={openDetails}>
           {confidence.label}
         </button>
@@ -529,10 +529,10 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
       </p>
       {quantity > 1 && <p className="calc-per-item">{formatGBP(profit / quantity)} per item · {quantity} items</p>}
       <p className="calc-summary">
-        On a {formatGBP(result.grossRevenue)} sale, {platform} takes <b>{formatGBP(result.totalCashFees)}</b>
+        On a {formatGBP(result.grossRevenue)} sale, {platform} fees are <b>{formatGBP(result.totalCashFees)}</b>
         {feeShare !== null && <> ({feeShare.toFixed(1)}%)</>}
         {hasVat && <> including VAT</>}.{" "}
-        {positive ? "After your costs, that's what you keep." : "After your costs, this sale loses money."}
+        {positive ? "" : "After costs, this sale makes a loss."}
       </p>
 
       <div className="calc-bar" role="img" aria-label={segments.map((s) => `${s.label} ${formatGBP(s.amount)}`).join(", ")}>
@@ -553,7 +553,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
               <dd>{formatGBP(line.amount)}</dd>
             </div>
           ))}
-        <LegendRow className="seg-profit" label="Your profit" value={formatGBP(profit)} strong />
+        <LegendRow className="seg-profit" label="Net profit" value={formatGBP(profit)} strong />
       </dl>
       {hasVat && feeLines.length > 1 && <p className="calc-fine">Fee amounts include 20% VAT.</p>}
 
@@ -583,7 +583,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
         <Link href={compareHrefFromCalculator(pricing.platform, pricing.scenario, pricing.config as never)} className="calc-compare-link">
           <span>
             <b>Compare this sale</b>
-            <small>See what you'd keep on Shopify, eBay, Etsy, TikTok Shop and Vinted.</small>
+            <small>Rank Shopify, eBay, Etsy, TikTok Shop and Vinted by net profit.</small>
           </span>
           <ArrowRight size={18} />
         </Link>

@@ -261,7 +261,7 @@ export function stateToSearch(state: CompareState): string {
   p.set("seller", sale.sellerType === "PRIVATE" ? "P" : "B");
   if (state.from) p.set("from", state.from);
   if (state.mode === "MATCH") p.set("mode", "match");
-  if (state.matchTarget !== null) p.set("keep", String(state.matchTarget));
+  if (state.matchTarget !== null) p.set("target", String(state.matchTarget));
   if (state.customised.length) p.set("set", state.customised.join(","));
 
   for (const platform of state.customised) {
@@ -331,7 +331,7 @@ export function stateFromSearch(search: string): CompareState {
   sale.sellerType = p.get("seller") === "P" ? "PRIVATE" : "BUSINESS";
   state.from = oneOf(p.get("from"), COMPARE_PLATFORMS) ?? null;
   state.mode = p.get("mode") === "match" ? "MATCH" : "KEEP";
-  state.matchTarget = num(p.get("keep"), (n) => n >= -1_000_000 && n <= 1_000_000) ?? null;
+  state.matchTarget = num(p.get("target"), (n) => n >= -1_000_000 && n <= 1_000_000) ?? null;
 
   const requested = (p.get("set") ?? "").split(",").filter((x): x is ComparePlatform => COMPARE_PLATFORMS.includes(x as ComparePlatform));
   const c = state.configs;

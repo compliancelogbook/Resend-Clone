@@ -1,7 +1,6 @@
 import { Github } from "lucide-react";
 import { useLocation } from "wouter";
 import FooterWatermark from "@/components/FooterWatermark";
-import { MARK } from "@/components/SiteHeader";
 
 const footerColumns = [
   { title: "Features", links: ["Automations", "Audiences", "Broadcasts", "Inbound", "Templates", "Webhooks", "Dedicated IPs"] },
@@ -17,7 +16,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <FooterWatermark />
       <div className="footer-main">
-        <div className="footer-intro"><a className="wordmark footer-wordmark" href={location === "/" ? "#top" : "/"}><img className="wordmark-mark" src={MARK} alt="" /><span>EasyFeezy</span></a><p>2261 Market Street #5039<br />San Francisco, CA 94114</p><div className="socials"><a href="#x">𝕏</a><a href="#github"><Github size={17} /></a><a href="#linkedin">in</a><a href="#youtube">▶</a></div><span className="system-status"><i /> All systems operational</span></div>
+        <div className="footer-intro"><a className="wordmark footer-wordmark" href={location === "/" ? "#top" : "/"}><span className="wordmark-dot" aria-hidden="true" /><span>EasyFeezy</span></a><p>2261 Market Street #5039<br />San Francisco, CA 94114</p><div className="socials"><a href="#x">𝕏</a><a href="#github"><Github size={17} /></a><a href="#linkedin">in</a><a href="#youtube">▶</a></div><span className="system-status"><i /> All systems operational</span></div>
         <div className="footer-links">{footerColumns.map((column) => <section key={column.title}><h3>{column.title}</h3>{column.links.map(link => <a href={`#${link.toLowerCase().replaceAll(" ", "-")}`} key={link}>{link}</a>)}</section>)}</div>
       </div>
     </footer>

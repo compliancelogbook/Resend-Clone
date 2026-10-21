@@ -126,7 +126,7 @@ export default function TikTokCalculator() {
   return (
     <main className="site-shell">
       <SiteHeader />
-      <CalculatorHero marketplace="TikTok Shop" title="TikTok Shop fee calculator" intro="Find out what TikTok Shop takes from a sale and what you keep. For UK sellers." />
+      <CalculatorHero marketplace="TikTok Shop" title="TikTok Shop fee calculator" intro="Calculate TikTok Shop fees and net profit on any sale, for UK sellers." />
 
       <CalculatorLayout
         onCalculate={calculate}

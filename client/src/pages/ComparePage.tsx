@@ -100,19 +100,19 @@ export default function ComparePage() {
   return (
     <main className="site-shell">
       <SiteHeader />
-      <CalculatorHero marketplace="" title="Compare marketplaces" intro="One sale, five marketplaces. See where you keep the most." />
+      <CalculatorHero marketplace="" title="Compare marketplaces" intro="Rank every marketplace by net profit on the same sale." />
 
       <section className="cmp-layout" aria-label="Compare marketplaces">
         <SalePanel state={state} setState={setState} />
 
         <div className="cmp-results">
           <Segmented
-            label="What do you want to know?"
+            label="View"
             value={state.mode}
             onChange={(mode) => setState((s) => ({ ...s, mode }))}
             options={[
-              { value: "KEEP", label: "What I keep at my price" },
-              { value: "MATCH", label: "Price to keep the same" },
+              { value: "KEEP", label: "Net profit at my price" },
+              { value: "MATCH", label: "Price for a target profit" },
             ]}
           />
           {matchRows ? (
@@ -234,7 +234,7 @@ function MatchTargetPanel({
   return (
     <div className="cmp-match-target">
       <label htmlFor="cmp-keep">
-        Keep
+        Target net profit
         <span className="cmp-keep-input">
           £
           <input
@@ -256,11 +256,11 @@ function MatchTargetPanel({
             }}
           />
         </span>
-        on this order
+        per order
       </label>
       <p>
         {state.matchTarget === null && ref
-          ? `Starting from what ${PLATFORM_LABELS[ref.platform]} leaves you at ${formatGBP(state.sale.soldPrice)}. Type any amount to change it.`
+          ? `Starting from ${PLATFORM_LABELS[ref.platform]}'s net profit at ${formatGBP(state.sale.soldPrice)}. Type any amount to change it.`
           : "Your own target."}
         {state.matchTarget !== null && (
           <button type="button" onClick={() => setState((s) => ({ ...s, matchTarget: null }))}>Reset</button>
@@ -282,14 +282,14 @@ function MatchWinner({ rows, target, sale }: { rows: MatchRow[]; target: number;
 
   return (
     <motion.div className="cmp-winner" key={joined + low.toFixed(2)} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease }}>
-      <p className="calc-eyebrow">Lowest price to keep {formatGBP(target)}</p>
+      <p className="calc-eyebrow">Lowest price for {formatGBP(target)} net profit</p>
       <h2>
         {joined} <span>· list at {formatGBP(low)}</span>
       </h2>
       <p>
         {next
-          ? `${formatGBP(next.price! - low)} cheaper for your buyer than ${PLATFORM_LABELS[next.platform]}, and you keep the same.`
-          : "Every marketplace needs the same price for you to keep this amount."}
+          ? `${formatGBP(next.price! - low)} cheaper for your buyer than ${PLATFORM_LABELS[next.platform]}, for the same profit.`
+          : "Every marketplace needs the same price for this profit."}
         {Math.abs(low - sale) >= 0.005 && ` That's ${low < sale ? "below" : "above"} your current ${formatGBP(sale)}.`}
       </p>
       {waiting.length > 0 && (
@@ -320,9 +320,9 @@ function Winner({ rows, sale }: { rows: CompareRow[]; sale: number }) {
 
   return (
     <motion.div className="cmp-winner" key={joined + top.toFixed(2)} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease }}>
-      <p className="calc-eyebrow">{tied.length > 1 ? "Joint best for this sale" : "Best for this sale"}</p>
+      <p className="calc-eyebrow">{tied.length > 1 ? "Joint highest net profit" : "Highest net profit"}</p>
       <h2>
-        {joined} <span>· you keep {formatGBP(top)}</span>
+        {joined} <span>· {formatGBP(top)} net profit</span>
       </h2>
       <p>
         {next
@@ -393,7 +393,7 @@ function RowCard({
           ) : result ? (
             <>
               <strong className={result.estimatedProfit < 0 ? "negative" : ""}>{formatGBP(result.estimatedProfit)}</strong>
-              <span>you keep</span>
+              <span>net profit</span>
             </>
           ) : (
             <span className="cmp-row-error">{row.missing ? "Needs a category" : "Needs a setting"}</span>
@@ -411,13 +411,13 @@ function RowCard({
               {Math.abs(matchPrice - currentPrice) < 0.005 ? "same price" : `${matchPrice > currentPrice ? "+" : "−"}${formatGBP(Math.abs(matchPrice - currentPrice))}`}
             </dd>
           </div>
-          <div><dt>{label} takes</dt><dd>{formatGBP(result.totalCashFees)}</dd></div>
-          <div><dt>You keep</dt><dd>{formatGBP(result.estimatedProfit)}</dd></div>
+          <div><dt>{label} fees</dt><dd>{formatGBP(result.totalCashFees)}</dd></div>
+          <div><dt>Net profit</dt><dd>{formatGBP(result.estimatedProfit)}</dd></div>
         </dl>
       )}
       {result && !isMatch && (
         <dl className="cmp-row-stats">
-          <div><dt>{label} takes</dt><dd>{formatGBP(result.totalCashFees)}{result.grossRevenue > 0 && <small> ({((result.totalCashFees / result.grossRevenue) * 100).toFixed(1)}%)</small>}</dd></div>
+          <div><dt>{label} fees</dt><dd>{formatGBP(result.totalCashFees)}{result.grossRevenue > 0 && <small> ({((result.totalCashFees / result.grossRevenue) * 100).toFixed(1)}%)</small>}</dd></div>
           <div><dt>Margin</dt><dd>{result.marginPct === null ? "–" : `${result.marginPct.toFixed(1)}%`}</dd></div>
           <div><dt>Break even</dt><dd>{breakEven === null ? "–" : formatGBP(breakEven)}</dd></div>
         </dl>

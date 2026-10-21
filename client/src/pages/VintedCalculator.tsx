@@ -95,7 +95,7 @@ export default function VintedCalculator() {
   return (
     <main className="site-shell">
       <SiteHeader />
-      <CalculatorHero marketplace="Vinted" title="Vinted fee calculator" intro="Vinted doesn't charge sellers a selling fee. See what you actually keep after your costs." />
+      <CalculatorHero marketplace="Vinted" title="Vinted fee calculator" intro="Vinted charges sellers no selling fee. Calculate your net profit after costs." />
 
       <CalculatorLayout
         onCalculate={calculate}

@@ -5,7 +5,8 @@
  * reference screenshots; do not reimagine structure, copy, or page rhythm.
  */
 import { motion } from "framer-motion";
-import HeroCube3D from "@/components/HeroCube3D";
+import HeroResultCard from "@/components/HeroResultCard";
+import { Link } from "wouter";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import {
@@ -166,20 +167,19 @@ export default function Home() {
     <main className="site-shell">
       <SiteHeader />
 
-      <section className="hero" id="top">
-        <img className="hero-floor" src="/manus-storage/bg-hero-1_70d280af.jpg" alt="" />
-        <div className="hero-vignette" />
-        <motion.div className="hero-copy" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "linear" }}>
-          <a className="forward-pill" href="#forward">Join us at Resend Forward <ChevronRight size={14} /></a>
-          <h1>Email for<br />developers</h1>
-          <p>The best way to reach humans instead of spam folders.<br />Deliver transactional and marketing emails at scale.</p>
+      <section className="hero hero-ef" id="top">
+        <div className="hero-glow" aria-hidden="true" />
+        <motion.div className="hero-copy" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
+          <Link className="forward-pill" href="/early-access">Coming soon: Readiness for AI shopping agents <ChevronRight size={14} /></Link>
+          <h1>Commerce intelligence{" "}<br />to grow your margins</h1>
+          <p>Calculate marketplace fees, compare where to sell and get your products ready for AI shopping agents, from your first sale to your ten-thousandth.</p>
           <div className="hero-actions">
-            <a className="button" href="#get-started">Get started</a>
-            <a className="text-link" href="#docs">Documentation</a>
+            <Link className="button" href="/compare">Start for free</Link>
+            <Link className="text-link" href="/early-access">Get early access <ChevronRight size={15} /></Link>
           </div>
         </motion.div>
-        <motion.div className="hero-object" initial={{ opacity: 0, scale: 0.98, x: 22 }} animate={{ opacity: 1, scale: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
-          <HeroCube3D />
+        <motion.div className="hero-object has-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
+          <HeroResultCard />
         </motion.div>
       </section>
 

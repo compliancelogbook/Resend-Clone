@@ -128,7 +128,7 @@ export default function EbayCalculator() {
   return (
     <main className="site-shell">
       <SiteHeader />
-      <CalculatorHero marketplace="eBay" title="eBay fee calculator" intro="Find out what eBay takes from a sale and what you keep. For UK private and business sellers." />
+      <CalculatorHero marketplace="eBay" title="eBay fee calculator" intro="Calculate eBay fees and net profit on any sale, for UK private and business sellers." />
 
       <CalculatorLayout
         onCalculate={calculate}
