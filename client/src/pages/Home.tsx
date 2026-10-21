@@ -6,6 +6,8 @@
  */
 import { motion } from "framer-motion";
 import HeroResultCard from "@/components/HeroResultCard";
+import { AgentDemoSection } from "@/components/AgentDemo";
+import "@/components/agent-demo.css";
 import { Link } from "wouter";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
@@ -55,7 +57,7 @@ import {
   Wifi,
   X,
 } from "lucide-react";
-import { type ComponentType, useState } from "react";
+import { type ComponentType, useEffect, useState } from "react";
 
 const ENVELOPE_TILE = "/manus-storage/resend-clone-envelope-tile_51f62758.png";
 const EDITOR_TILE = "/manus-storage/resend-clone-editor-tile_0f74d98b.png";
@@ -158,6 +160,11 @@ export default function Home() {
   const [sendState, setSendState] = useState<"idle" | "sent">("idle");
   const code = codeByFramework[framework] ?? codeByFramework.default;
 
+  useEffect(() => {
+    document.title = "EasyFeezy";
+    if (window.location.hash) window.setTimeout(() => document.querySelector(window.location.hash)?.scrollIntoView({ behavior: "smooth" }), 120);
+  }, []);
+
   function copyCode() {
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1300);
@@ -183,13 +190,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section className="logo-cloud section-rule">
-        <img className="light-ray" src="/manus-storage/bg-light_280ddaa3.png" alt="" />
-        <motion.p {...fadeUp}>Companies of all sizes trust Resend<br />to deliver their most important emails.</motion.p>
-        <motion.div className="logo-grid" {...fadeUp}>
-          {["WB WARNER BROS.", "max", "Raycast", "MISTRAL AI_", "replit", "anghami", "gumroad", "DECATHLON", "supabase", "Leap", "Payload", "Paper"].map((logo, index) => <span className={`logo-company logo-${index}`} key={logo}>{logo}</span>)}
-        </motion.div>
-      </section>
+      <AgentDemoSection />
 
       <section className="section integration-section" id="docs">
         <motion.div className="centre-heading" {...fadeUp}>
