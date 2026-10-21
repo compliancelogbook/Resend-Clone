@@ -223,3 +223,8 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
   .calc-footnote { padding-bottom: 100px; }
 }
 .calc-pricing-exact { margin-top: 2px; text-align: right; }
+.calc-required { color: #ff9baa; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.calc-picked.is-empty { border-style: dashed; border-color: rgba(255,255,255,.22); }
+.calc-picked.is-empty b { color: #a8a8a8; font-weight: 400; }
+.calc-field.has-error .calc-picked { border-color: rgba(255,120,140,.6); }

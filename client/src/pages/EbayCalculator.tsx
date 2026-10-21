@@ -23,6 +23,7 @@ import {
   useCalculatorFlow,
 } from "@/components/calculator/CalculatorParts";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { EBAY_CATEGORY_OPTIONS } from "@/lib/category-options";
 import {
   EBAY_CATEGORIES,
   EBAY_INTERNATIONAL_FEE_RATES,
@@ -44,18 +45,6 @@ const errorOf = <T,>(r: ValidationResult<T>) => (r.ok ? undefined : r.error);
 const valueOf = <T,>(r: ValidationResult<T>, fallback: T) => (r.ok ? r.value : fallback);
 const pct = (rate: number) => `${+(rate * 100).toFixed(2)}%`;
 
-const CATEGORY_OPTIONS = [
-  ...[...EBAY_CATEGORIES]
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .map((c) => ({
-      value: c.id,
-      title: c.label,
-      detail: [c.officialCategoryId ? `#${c.officialCategoryId}` : null, c.schedule ? c.source.formula : "Rate not confirmed, enter your own"]
-        .filter(Boolean)
-        .join(" · "),
-    })),
-  { value: UNSUPPORTED_CATEGORY_ID, title: "Other (not listed)", detail: "Enter the final value fee rate yourself" },
-];
 
 const REGION_OPTIONS: { value: EbayInternationalRegion; title: string; detail: string }[] = [
   { value: "DOMESTIC", title: "UK", detail: "No international fee" },
@@ -75,7 +64,7 @@ export default function EbayCalculator() {
   const [shippingCharged, setShippingCharged] = useState("0");
   const [shippingCost, setShippingCost] = useState("0");
   const [quantity, setQuantity] = useState("1");
-  const [categoryId, setCategoryId] = useState("EVERYTHING_ELSE");
+  const [categoryId, setCategoryId] = useState("");
   const [manualRate, setManualRate] = useState("");
   const [region, setRegion] = useState<EbayInternationalRegion>("DOMESTIC");
   const [currencyConversion, setCurrencyConversion] = useState(false);
@@ -95,7 +84,8 @@ export default function EbayCalculator() {
   const needsManualRate = !isPrivate && (categoryId === UNSUPPORTED_CATEGORY_ID || (category !== undefined && !category.schedule));
   const manual = parseManualCategoryRate(manualRate);
 
-  const hasErrors = [sold, cost, charged, shipping, qty].some((r) => !r.ok) || (needsManualRate && !manual.ok);
+  const categoryMissing = !isPrivate && categoryId === "";
+  const hasErrors = [sold, cost, charged, shipping, qty].some((r) => !r.ok) || categoryMissing || (needsManualRate && !manual.ok);
   const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
 
   let result: CalculationResult | null = null;
@@ -185,7 +175,7 @@ export default function EbayCalculator() {
             ) : (
               <>
                 <Step number={3} title="What you sold" intro="eBay's main fee depends on the category.">
-                  <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={CATEGORY_OPTIONS} placeholder="Search 74 categories, e.g. trainers" />
+                  <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={EBAY_CATEGORY_OPTIONS} placeholder="Search 74 categories, e.g. trainers" required emptyText="Choose your category" error={err(categoryMissing ? "Choose a category to calculate eBay's fee." : undefined)} />
                   {needsManualRate && (
                     <TextField
                       label="Final value fee rate"

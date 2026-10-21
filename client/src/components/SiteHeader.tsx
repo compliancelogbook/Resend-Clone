@@ -39,6 +39,7 @@ export default function SiteHeader() {
                       </li>
                     ))}
                   </ul>
+                  <Link href="/compare" className="nav-popover-compare" onClick={() => setOpenMenu(null)}>Compare all marketplaces →</Link>
                 </>
               ) : (
                 <>

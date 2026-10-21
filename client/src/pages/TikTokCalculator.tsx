@@ -23,6 +23,7 @@ import {
   useCalculatorFlow,
 } from "@/components/calculator/CalculatorParts";
 import { calculateMarketplace } from "@/lib/compare/adapters";
+import { TIKTOK_CATEGORY_OPTIONS } from "@/lib/category-options";
 import { DISCOUNTS_EXCEED_SUBTOTAL_MESSAGE } from "@/lib/engines/tiktok-resolve";
 import { TIKTOK_CATEGORIES, TIKTOK_SOURCE } from "@/data/tiktok.fees";
 import { UNSUPPORTED_CATEGORY_ID } from "@/data/types";
@@ -39,18 +40,6 @@ import {
 const errorOf = <T,>(r: ValidationResult<T>) => (r.ok ? undefined : r.error);
 const valueOf = <T,>(r: ValidationResult<T>, fallback: T) => (r.ok ? r.value : fallback);
 
-const CATEGORY_OPTIONS = [
-  ...TIKTOK_CATEGORIES.map((c) => {
-    const sub = c.subcategoryDisplay ?? c.subcategory;
-    const isWhole = c.subcategory === "All";
-    return {
-      value: c.id,
-      title: isWhole ? c.category : sub,
-      detail: `${isWhole ? "Whole category" : c.category} · ${Math.round(c.rate * 100)}% commission`,
-    };
-  }).sort((a, b) => a.title.localeCompare(b.title)),
-  { value: UNSUPPORTED_CATEGORY_ID, title: "Other (not listed)", detail: "Enter the commission rate yourself" },
-];
 
 export default function TikTokCalculator() {
   useEffect(() => {
@@ -63,7 +52,7 @@ export default function TikTokCalculator() {
   const [shippingCharged, setShippingCharged] = useState("0");
   const [shippingCost, setShippingCost] = useState("0");
   const [quantity, setQuantity] = useState("1");
-  const [categoryId, setCategoryId] = useState("WOMENSWEAR_UNDERWEAR__ALL");
+  const [categoryId, setCategoryId] = useState("");
   const [manualRate, setManualRate] = useState("");
   const [promoEnabled, setPromoEnabled] = useState(false);
   const [promoRate, setPromoRate] = useState("");
@@ -94,6 +83,7 @@ export default function TikTokCalculator() {
   const hasErrors =
     [sold, cost, charged, shipping, qty, affiliate, sellerDisc, platformDisc, other].some((r) => !r.ok) ||
     discountsTooBig ||
+    categoryId === "" ||
     (manualActive && !manual.ok) ||
     (promoEnabled && !promo.ok);
   const { calculated, showErrors, calculate, err, resultRef } = useCalculatorFlow(hasErrors);
@@ -149,7 +139,7 @@ export default function TikTokCalculator() {
             </Step>
 
             <Step number={2} title="What you sold" intro="TikTok Shop charges 5% or 9% commission, depending on the category.">
-              <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={CATEGORY_OPTIONS} placeholder="Search 343 categories, e.g. toothbrush" />
+              <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={TIKTOK_CATEGORY_OPTIONS} placeholder="Search 343 categories, e.g. toothbrush" required emptyText="Choose your category" error={err(categoryId === "" ? "Choose a category to calculate TikTok Shop's commission." : undefined)} />
               {manualActive && (
                 <TextField label="Commission rate" note="from your TikTok Shop account" suffix="%" placeholder="e.g. 9" value={manualRate} onChange={setManualRate} error={err(errorOf(manual))} />
               )}

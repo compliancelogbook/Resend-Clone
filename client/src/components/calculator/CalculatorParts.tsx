@@ -14,7 +14,9 @@ import type { CalculationResult, ConfidenceLevel } from "@/lib/types";
 import type { Platform } from "@/data/types";
 import type { MarketplaceConfigMap, SharedComparisonScenario } from "@/lib/compare/adapters";
 import { suggestBreakEvenPrice, suggestTargetMarginPrice } from "@/lib/optimise/price-suggestions";
+import { compareHrefFromCalculator } from "@/lib/compare/compare-state";
 import "./calculator.css";
+import "./compare.css";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -27,8 +29,9 @@ export function useCalculatorFlow(hasErrors: boolean) {
 
   function calculate() {
     setShowErrors(true);
-    if (hasErrors) return;
+    // From the first press the result is live: it appears as soon as the highlighted fields are fixed.
     setCalculated(true);
+    if (hasErrors) return;
     if (window.matchMedia("(max-width: 960px)").matches) {
       window.setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
     }
@@ -289,12 +292,19 @@ export function SearchablePicker<T extends string>({
   onChange,
   options,
   placeholder = "Search",
+  required = false,
+  error,
+  emptyText = "Choose one",
 }: {
   label: string;
   value: T;
   onChange: (v: T) => void;
   options: { value: T; title: string; detail?: string }[];
   placeholder?: string;
+  /** Marks the field with * — nothing is picked for the person. */
+  required?: boolean;
+  error?: string;
+  emptyText?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -304,15 +314,26 @@ export function SearchablePicker<T extends string>({
   const filtered = q ? options.filter((o) => `${o.title} ${o.detail ?? ""}`.toLowerCase().includes(q)) : options;
 
   return (
-    <div className="calc-field">
-      <span className="calc-label">{label}</span>
+    <div className={`calc-field ${error ? "has-error" : ""}`}>
+      <span className="calc-label">
+        {label}
+        {required && <span className="calc-required" aria-hidden="true"> *</span>}
+        {required && <span className="sr-only"> (required)</span>}
+      </span>
       {!open ? (
-        <button type="button" className="calc-picked" onClick={() => setOpen(true)} aria-expanded={false}>
+        <button
+          type="button"
+          className={`calc-picked ${selected ? "" : "is-empty"}`}
+          onClick={() => setOpen(true)}
+          aria-expanded={false}
+          aria-required={required || undefined}
+          aria-invalid={error ? true : undefined}
+        >
           <span>
-            <b>{selected?.title ?? "Choose one"}</b>
+            <b>{selected?.title ?? emptyText}</b>
             {selected?.detail && <small>{selected.detail}</small>}
           </span>
-          <em>Change</em>
+          <em>{selected ? "Change" : "Choose"}</em>
         </button>
       ) : (
         <div className="calc-picker">
@@ -361,6 +382,7 @@ export function SearchablePicker<T extends string>({
           </ul>
         </div>
       )}
+      {error && !open && <small className="calc-error">{error}</small>}
     </div>
   );
 }
@@ -435,7 +457,7 @@ export function ResultPanel({
             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
               <EmptyResult
                 platform={platform}
-                message={calculated ? errorMessage ?? "Check the highlighted fields to update your result." : null}
+                message={calculated ? errorMessage ?? "Fill in the highlighted fields (marked * if required) and your result will appear here." : null}
                 onCalculate={onCalculate}
               />
             </motion.div>
@@ -555,6 +577,16 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
       )}
 
       <PricingAdvice pricing={pricing} platform={platform} />
+
+      {pricing.platform !== "AMAZON" && (
+        <Link href={compareHrefFromCalculator(pricing.platform, pricing.scenario, pricing.config as never)} className="calc-compare-link">
+          <span>
+            <b>Compare this sale</b>
+            <small>See what you'd keep on Shopify, eBay, Etsy, TikTok Shop and Vinted.</small>
+          </span>
+          <ArrowRight size={18} />
+        </Link>
+      )}
 
       <dl className="calc-metrics">
         <div><dt>Profit margin</dt><dd>{result.marginPct === null ? "–" : `${result.marginPct.toFixed(1)}%`}</dd></div>
