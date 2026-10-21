@@ -2,7 +2,7 @@
 export const CALCULATOR_LINKS: { name: string; href?: string }[] = [
   { name: "Shopify", href: "/shopify-fee-calculator" },
   { name: "eBay", href: "/ebay-fee-calculator" },
-  { name: "Etsy" },
-  { name: "TikTok Shop" },
-  { name: "Vinted" },
+  { name: "Etsy", href: "/etsy-fee-calculator" },
+  { name: "TikTok Shop", href: "/tiktok-shop-fee-calculator" },
+  { name: "Vinted", href: "/vinted-fee-calculator" },
 ];

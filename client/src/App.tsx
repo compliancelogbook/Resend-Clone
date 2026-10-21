@@ -11,7 +11,10 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import EbayCalculator from "./pages/EbayCalculator";
+import EtsyCalculator from "./pages/EtsyCalculator";
 import ShopifyCalculator from "./pages/ShopifyCalculator";
+import TikTokCalculator from "./pages/TikTokCalculator";
+import VintedCalculator from "./pages/VintedCalculator";
 
 function Router() {
   return (
@@ -19,6 +22,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/shopify-fee-calculator" component={ShopifyCalculator} />
       <Route path="/ebay-fee-calculator" component={EbayCalculator} />
+      <Route path="/etsy-fee-calculator" component={EtsyCalculator} />
+      <Route path="/tiktok-shop-fee-calculator" component={TikTokCalculator} />
+      <Route path="/vinted-fee-calculator" component={VintedCalculator} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -63,6 +63,8 @@
 .calc-option:hover { border-color: rgba(255,255,255,.26); }
 .calc-option:active { transform: scale(.985); }
 .calc-option b { font-size: 15px; font-weight: 500; }
+.calc-option b span { padding: 0; color: inherit; font-size: inherit; }
+.calc-pct { font-weight: 400; margin-left: 1px; }
 .calc-option span { color: #c9c9c9; font-size: 13.5px; }
 .calc-option small { color: #7c7c7c; font-size: 12.5px; line-height: 1.4; }
 .calc-option b, .calc-option span, .calc-option small { padding-right: 20px; }

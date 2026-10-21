@@ -208,7 +208,11 @@ export function SaleFields({
   values,
   setters,
   errors,
+  priceNote = "each",
+  deliveryLabels = { charged: ["Delivery charged", "to the buyer"], cost: ["Delivery cost", "what you paid"] },
 }: {
+  priceNote?: string;
+  deliveryLabels?: { charged: [string, string]; cost: [string, string] };
   values: { soldPrice: string; itemCost: string; shippingCharged: string; shippingCost: string; quantity: string };
   setters: { soldPrice: (v: string) => void; itemCost: (v: string) => void; shippingCharged: (v: string) => void; shippingCost: (v: string) => void; quantity: (v: string) => void };
   errors: { soldPrice?: string; itemCost?: string; shippingCharged?: string; shippingCost?: string; quantity?: string };
@@ -216,10 +220,10 @@ export function SaleFields({
   return (
     <>
       <div className="calc-grid">
-        <MoneyField label="Selling price" note="each" value={values.soldPrice} onChange={setters.soldPrice} error={errors.soldPrice} />
+        <MoneyField label="Selling price" note={priceNote} value={values.soldPrice} onChange={setters.soldPrice} error={errors.soldPrice} />
         <MoneyField label="Item cost" note="each" value={values.itemCost} onChange={setters.itemCost} error={errors.itemCost} />
-        <MoneyField label="Delivery charged" note="to the buyer" value={values.shippingCharged} onChange={setters.shippingCharged} error={errors.shippingCharged} />
-        <MoneyField label="Delivery cost" note="what you paid" value={values.shippingCost} onChange={setters.shippingCost} error={errors.shippingCost} />
+        <MoneyField label={deliveryLabels.charged[0]} note={deliveryLabels.charged[1]} value={values.shippingCharged} onChange={setters.shippingCharged} error={errors.shippingCharged} />
+        <MoneyField label={deliveryLabels.cost[0]} note={deliveryLabels.cost[1]} value={values.shippingCost} onChange={setters.shippingCost} error={errors.shippingCost} />
       </div>
       <QuantityField value={values.quantity} onChange={setters.quantity} error={errors.quantity} />
     </>
@@ -233,13 +237,19 @@ export function OptionCards<T extends string>({ label, value, onChange, options,
     <div className={`calc-options cols-${columns}`} role="radiogroup" aria-label={label}>
       {options.map((o) => (
         <button key={o.value} type="button" role="radio" aria-checked={value === o.value} className={`calc-option ${value === o.value ? "active" : ""}`} onClick={() => onChange(o.value)}>
-          <b>{o.title}</b>
+          <b>{withPercent(o.title)}</b>
           {o.detail && <span>{o.detail}</span>}
           {o.extra && <small>{o.extra}</small>}
         </button>
       ))}
     </div>
   );
+}
+
+/** This font's medium-weight "%" is cramped, so draw it at regular weight. */
+function withPercent(text: string) {
+  const parts = text.split("%");
+  return parts.map((part, i) => (i < parts.length - 1 ? <span key={i}>{part}<span className="calc-pct">%</span></span> : part));
 }
 
 export function Segmented<T extends string>({ label, value, onChange, options }: { label: string; value: T; onChange: (v: T) => void; options: { value: T; label: string }[] }) {
@@ -360,7 +370,7 @@ export function SearchablePicker<T extends string>({
 
 const CONFIDENCE: Record<ConfidenceLevel, { label: string; tone: string }> = {
   EXACT_FOR_SELECTED_INPUTS: { label: "Exact for these figures", tone: "good" },
-  ASSUMPTION_DEPENDENT: { label: "Uses your own rates", tone: "warn" },
+  ASSUMPTION_DEPENDENT: { label: "Uses your own figures", tone: "warn" },
   EXCLUDES_VARIABLE_FEES: { label: "Some costs not included", tone: "warn" },
 };
 
@@ -372,6 +382,14 @@ const FEE_NAMES: Record<string, string> = {
   international_fee: "International fee",
   currency_conversion_fee: "Currency conversion",
   subscription: "Plan cost",
+  listing_fee: "Listing fee",
+  transaction_fee: "Transaction fee",
+  advertising_fee: "Offsite Ads",
+  commission: "Commission",
+  affiliate_commission: "Creator commission",
+  other_actual_cost: "Your other TikTok costs",
+  seller_platform_fee: "Selling fee",
+  visibility_service: "Bump or Showcase",
 };
 
 function shortFeeName(label: string, feeType?: string) {
@@ -502,7 +520,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
       </div>
 
       <dl className="calc-legend">
-        <LegendRow className="seg-revenue" label="Buyer paid" value={formatGBP(result.grossRevenue)} />
+        <LegendRow className="seg-revenue" label="Sale total" value={formatGBP(result.grossRevenue)} />
         <LegendRow className="seg-cost" label="Item cost" value={`−${formatGBP(result.cogs)}`} />
         <LegendRow className="seg-delivery" label="Delivery" value={`−${formatGBP(result.shippingCost)}`} />
         <LegendRow className="seg-fees" label={`${platform} fees`} value={`−${formatGBP(result.totalCashFees)}`} />
@@ -523,6 +541,12 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
           <ul>{result.exclusions.map((e) => <li key={e}>{shortExclusion(e)}</li>)}</ul>
           <button type="button" onClick={openDetails}>Why?</button>
         </div>
+      )}
+
+      {result.buyerProtectionRange && (
+        <p className="calc-vat-note">
+          The buyer also pays {platform}'s Buyer Protection fee, usually <b>{formatGBP(result.buyerProtectionRange.low)}–{formatGBP(result.buyerProtectionRange.high)}</b> on this order. It doesn't come out of your money.
+        </p>
       )}
 
       {result.potentiallyReclaimableVat > 0 && (
