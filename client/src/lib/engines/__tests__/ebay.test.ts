@@ -66,8 +66,21 @@ describe('eBay UK Business acceptance tests', () => {
   });
 
   it('EB09: £100 basis, currency conversion selected -> £2.50', () => {
-    const r = calculateEbay({ ...base, itemPrice: 100, currencyConversionSelected: true });
+    // Pinned before the 1 December 2026 increase so this original fixture stays fixed.
+    const r = calculateEbay({ ...base, itemPrice: 100, currencyConversionSelected: true, saleDate: '2026-11-30' });
     expect(r.currencyConversionFee).toBeCloseTo(2.5, 6);
+  });
+
+  it('EB09b: currency conversion rises to 2.75% for sales from 1 December 2026', () => {
+    const before = calculateEbay({ ...base, itemPrice: 100, currencyConversionSelected: true, saleDate: '2026-11-30' });
+    const onDay = calculateEbay({ ...base, itemPrice: 100, currencyConversionSelected: true, saleDate: '2026-12-01' });
+    const after = calculateEbay({ ...base, itemPrice: 100, currencyConversionSelected: true, saleDate: '2027-03-15' });
+    expect(before.currencyConversionFee).toBeCloseTo(2.5, 6);
+    expect(onDay.currencyConversionFee).toBeCloseTo(2.75, 6);
+    expect(after.currencyConversionFee).toBeCloseTo(2.75, 6);
+    expect(line(onDay, 'ebay-conversion').label).toContain('2.75%');
+    expect(line(onDay, 'ebay-conversion').effectiveDate).toBe('2026-12-01');
+    expect(line(before, 'ebay-conversion').label).toContain('2.5%');
   });
 
   it('EB10: Top Rated Premium Service reduces only the variable FVF by 10%', () => {
@@ -313,6 +326,7 @@ describe('eBay UK Business acceptance tests', () => {
         currencyConversionSelected: true,
         topRatedPremiumService: true,
         vatProfile: true,
+        saleDate: true,
       };
       expect(Object.keys(allowedKeys)).not.toContain('qualifiesForReducedPerOrderFee');
     });

@@ -1,7 +1,7 @@
 import {
   EBAY_CATEGORIES,
-  EBAY_CURRENCY_CONVERSION_RATE,
-  EBAY_CURRENCY_CONVERSION_SOURCE,
+  ebayCurrencyConversionOn,
+  todayInUk,
   EBAY_INTERNATIONAL_FEE_RATES,
   EBAY_INTERNATIONAL_FEE_SOURCE,
   EBAY_PER_ORDER_FEE,
@@ -34,6 +34,8 @@ export interface EbayInput {
   currencyConversionSelected: boolean;
   topRatedPremiumService: boolean;
   vatProfile: VatProfile;
+  /** UK sale date (YYYY-MM-DD) for dated rates such as currency conversion. Defaults to today. Added in the EasyFeezy site. */
+  saleDate?: string;
 }
 
 function isValidManualRate(rate: number | null | undefined): rate is number {
@@ -238,15 +240,16 @@ export function calculateEbay(input: EbayInput): CalculationResult {
 
   let currencyConversionFee = ZERO;
   if (input.currencyConversionSelected) {
-    currencyConversionFee = percentOf(totalSaleBasis, EBAY_CURRENCY_CONVERSION_RATE);
+    const conversion = ebayCurrencyConversionOn(input.saleDate ?? todayInUk());
+    currencyConversionFee = percentOf(totalSaleBasis, conversion.rate);
     pushLine({
       id: 'ebay-conversion',
-      label: 'Currency conversion fee (2.5%)',
+      label: `Currency conversion fee (${formatPercent(conversion.rate, 2).replace(/\.?0+%$/, '%')})`,
       amount: currencyConversionFee,
       category: 'conversion',
       feeType: 'currency_conversion_fee',
-      formula: `${formatPercent(EBAY_CURRENCY_CONVERSION_RATE)} of the relevant basis`,
-      source: EBAY_CURRENCY_CONVERSION_SOURCE,
+      formula: `${formatPercent(conversion.rate, 2)} of the relevant basis`,
+      source: conversion.source,
     });
   }
 

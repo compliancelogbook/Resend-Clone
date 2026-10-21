@@ -28,6 +28,8 @@ import { EBAY_CATEGORY_OPTIONS } from "@/lib/category-options";
 import {
   EBAY_CATEGORIES,
   EBAY_INTERNATIONAL_FEE_RATES,
+  ebayCurrencyConversionOn,
+  todayInUk,
   EBAY_SOURCE_2026_08_04,
   type EbayInternationalRegion,
 } from "@/data/ebay.fees";
@@ -204,7 +206,7 @@ export default function EbayCalculator() {
                     checked={currencyConversion}
                     onChange={setCurrencyConversion}
                     title="eBay converted the currency"
-                    detail="Adds eBay's 2.5% conversion fee. Only applies if eBay changed the currency on this order."
+                    detail={`Adds eBay's ${+(ebayCurrencyConversionOn(todayInUk()).rate * 100).toFixed(2)}% conversion fee (2.75% from 1 December 2026). Only applies if eBay changed the currency on this order.`}
                   />
                 </Step>
 

@@ -334,6 +334,47 @@ export const EBAY_CURRENCY_CONVERSION_SOURCE: SourceRef = {
   conditions: 'Applies only when eBay performs currency conversion on the order.',
 };
 
+/**
+ * Added in the EasyFeezy site, 2026-10-21. eBay's business seller fees page
+ * (id=4809, "Seller currency conversion charge") states the charge is 2.5% for
+ * sellers registered in the UK and that "From December 1, 2026, the fee for
+ * sellers registered in the UK will increase to 2.75%". Checked by the site
+ * owner against screenshots of the live page on 2026-10-21. The page states its
+ * fees are exclusive of VAT, matching the rest of this schedule.
+ */
+export const EBAY_CURRENCY_CONVERSION_SOURCE_2026_12_01: SourceRef = {
+  ...EBAY_META,
+  feeType: 'currency_conversion_fee',
+  formula: '2.75% of the relevant basis',
+  currency: 'GBP',
+  conditions: 'Applies only when eBay performs currency conversion on the order. UK-registered sellers.',
+  effectiveDate: '2026-12-01',
+  url: 'https://www.ebay.co.uk/help/selling/fees-credits-invoices/fees-business-sellers?id=4809#currency',
+  verifiedAt: '2026-10-21',
+  verificationStatus: 'AUDIT_VERIFIED',
+  notes: 'Increase announced on the live business seller fees page; checked against owner screenshots on 2026-10-21.',
+};
+
+/** Dated currency conversion rates, oldest first. `from` is the first sale date (UK, YYYY-MM-DD) the rate applies to. */
+export const EBAY_CURRENCY_CONVERSION_SCHEDULE: { from: string | null; rate: number; source: SourceRef }[] = [
+  { from: null, rate: EBAY_CURRENCY_CONVERSION_RATE, source: EBAY_CURRENCY_CONVERSION_SOURCE },
+  { from: '2026-12-01', rate: 0.0275, source: EBAY_CURRENCY_CONVERSION_SOURCE_2026_12_01 },
+];
+
+/** The currency conversion rate in force on a UK sale date (YYYY-MM-DD). */
+export function ebayCurrencyConversionOn(saleDate: string): { rate: number; source: SourceRef } {
+  let current = EBAY_CURRENCY_CONVERSION_SCHEDULE[0];
+  for (const entry of EBAY_CURRENCY_CONVERSION_SCHEDULE) {
+    if (entry.from === null || saleDate >= entry.from) current = entry;
+  }
+  return current;
+}
+
+/** Today's date in the UK, as YYYY-MM-DD. */
+export function todayInUk(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+}
+
 /** Applied only to the variable Final Value Fee component when eligible. */
 export const EBAY_TOP_RATED_DISCOUNT_RATE = 0.1;
 
