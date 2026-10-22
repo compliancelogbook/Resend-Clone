@@ -232,3 +232,16 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
 .calc-statement { margin-top: 16px; padding: 14px 16px; border: 1px solid rgba(88,169,255,.2); border-radius: 12px; background: rgba(88,169,255,.05); }
 .calc-statement p:last-child { margin: 6px 0 0; color: #b5b5b5; font-size: 13.5px; line-height: 1.55; }
 .calc-statement b { color: #cfe2ff; font-weight: 500; }
+
+/* Info tips */
+.calc-label-row { display: inline-flex; align-items: center; gap: 6px; }
+.calc-info { display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%; background: none; color: #7d7d7d; cursor: help; transition: color 150ms var(--ease-out), background 150ms var(--ease-out); }
+.calc-info:hover, .calc-info:focus-visible, .calc-info[data-state="open"] { color: #8ff0c6; background: rgba(48,230,157,.1); }
+.calc-info-pop { z-index: 60; max-width: 300px; padding: 14px 16px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: #141414; color: #c9c9c9; font-size: 13.5px; line-height: 1.55; box-shadow: 0 18px 40px rgba(0,0,0,.55); animation: calc-info-in 140ms var(--ease-out); }
+.calc-info-pop b { color: #f2f2f2; font-weight: 500; }
+.calc-info-pop p { margin: 0; }
+.calc-info-pop p + p, .calc-info-pop p + ul, .calc-info-pop ul + p { margin-top: 8px; }
+.calc-info-pop ul { margin: 0; padding-left: 16px; }
+.calc-info-pop li + li { margin-top: 4px; }
+.calc-info-arrow { fill: #141414; }
+@keyframes calc-info-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }

@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
   CalculatorHero,
@@ -143,7 +144,7 @@ export default function TikTokCalculator() {
             </Step>
 
             <Step number={2} title="What you sold" intro="TikTok Shop charges 5% or 9% commission, depending on the category.">
-              <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={TIKTOK_CATEGORY_OPTIONS} placeholder="Search 343 categories, e.g. toothbrush" required emptyText="Choose your category" error={err(categoryId === "" ? "Choose a category to calculate TikTok Shop's commission." : undefined)} />
+              <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={TIKTOK_CATEGORY_OPTIONS} placeholder="Search 343 categories, e.g. toothbrush" required info={TIPS.tiktok.category} emptyText="Choose your category" error={err(categoryId === "" ? "Choose a category to calculate TikTok Shop's commission." : undefined)} />
               {manualActive && (
                 <TextField label="Commission rate" note="from your TikTok Shop account" suffix="%" placeholder="e.g. 9" value={manualRate} onChange={setManualRate} error={err(errorOf(manual))} />
               )}
@@ -151,6 +152,7 @@ export default function TikTokCalculator() {
                 checked={promoEnabled}
                 onChange={setPromoEnabled}
                 title="I have a promotional commission rate"
+                info={TIPS.tiktok.promo}
                 detail="If TikTok gave you a special rate, it replaces the category rate."
               />
               {promoEnabled && (
@@ -160,12 +162,13 @@ export default function TikTokCalculator() {
 
             <Step number={3} title="Discounts and creators" intro="Leave at £0 or blank if they didn't apply to this order.">
               <div className="calc-grid">
-                <MoneyField label="Your discount" note="whole order" value={sellerDiscount} onChange={setSellerDiscount} error={err(errorOf(sellerDisc) ?? (discountsTooBig ? DISCOUNTS_EXCEED_SUBTOTAL_MESSAGE : undefined))} />
-                <MoneyField label="TikTok's discount" note="whole order" value={platformDiscount} onChange={setPlatformDiscount} error={err(errorOf(platformDisc) ?? (discountsTooBig ? DISCOUNTS_EXCEED_SUBTOTAL_MESSAGE : undefined))} />
+                <MoneyField label="Your discount" note="whole order" info={TIPS.tiktok.sellerDiscount} value={sellerDiscount} onChange={setSellerDiscount} error={err(errorOf(sellerDisc) ?? (discountsTooBig ? DISCOUNTS_EXCEED_SUBTOTAL_MESSAGE : undefined))} />
+                <MoneyField label="TikTok's discount" note="whole order" info={TIPS.tiktok.platformDiscount} value={platformDiscount} onChange={setPlatformDiscount} error={err(errorOf(platformDisc) ?? (discountsTooBig ? DISCOUNTS_EXCEED_SUBTOTAL_MESSAGE : undefined))} />
               </div>
               <p className="calc-fine">Your discount lowers TikTok's commission. A discount TikTok pays for doesn't, because TikTok covers it.</p>
               <TextField
                 label="Creator commission"
+                info={TIPS.tiktok.creator}
                 note="optional, 1–80%"
                 suffix="%"
                 placeholder="Leave blank if no creator was involved"
@@ -178,6 +181,7 @@ export default function TikTokCalculator() {
             <Step number={4} title="Your other costs" intro="Costs TikTok charged you that aren't on a published price list.">
               <MoneyField
                 label="Other TikTok Shop costs"
+                info={TIPS.tiktok.other}
                 note="fulfilment, ads, storage, returns"
                 value={otherCosts}
                 onChange={setOtherCosts}
@@ -186,6 +190,7 @@ export default function TikTokCalculator() {
               <p className="calc-fine">Enter what you were actually charged, including any VAT. We don't estimate these for you.</p>
               <Segmented
                 label="VAT"
+                info={TIPS.tiktok.vat}
                 value={vatProfile}
                 onChange={setVatProfile}
                 options={[

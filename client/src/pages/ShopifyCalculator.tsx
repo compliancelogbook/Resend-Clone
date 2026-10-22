@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
   CalculatorHero,
@@ -136,6 +137,8 @@ export default function ShopifyCalculator() {
             <Step number={2} title="Your Shopify plan" intro="Card rates go down on bigger plans.">
               <OptionCards
                 label="Shopify plan"
+                heading="Plan"
+                info={TIPS.shopify.plan}
                 value={plan}
                 onChange={setPlan}
                 columns={3}
@@ -144,7 +147,7 @@ export default function ShopifyCalculator() {
                   return { value: id, title: p.label, detail: `£${p.monthlySubscription} a month`, extra: `Cards from ${(p.standardCard.rate * 100).toFixed(1)}% + ${Math.round(p.standardCard.fixed * 100)}p` };
                 })}
               />
-              <Toggle checked={includePlanCost} onChange={setIncludePlanCost} title="Include my plan cost" detail="Shares your monthly plan fee across your orders." />
+              <Toggle checked={includePlanCost} onChange={setIncludePlanCost} title="Include my plan cost" info={TIPS.shopify.planCost} detail="Shares your monthly plan fee across your orders." />
               {includePlanCost && (
                 <TextField
                   label="Orders per month"
@@ -158,11 +161,12 @@ export default function ShopifyCalculator() {
             </Step>
 
             <Step number={3} title="How the buyer paid" intro="This decides which payment fees apply.">
-              <OptionCards label="Payment method" value={processor} onChange={setProcessor} options={PAYMENT_OPTIONS} />
+              <OptionCards label="Payment method" heading="Payment method" info={TIPS.shopify.payment} value={processor} onChange={setProcessor} options={PAYMENT_OPTIONS} />
 
               {processor === "SHOPIFY_PAYMENTS" && (
                 <Segmented
                   label="Card used"
+                  info={TIPS.shopify.card}
                   value={cardType}
                   onChange={setCardType}
                   options={[

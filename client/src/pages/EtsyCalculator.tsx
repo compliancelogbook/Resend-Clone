@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
   CalculatorHero,
@@ -119,6 +120,8 @@ export default function EtsyCalculator() {
             <Step number={2} title="How the sale happened" intro="Some sales carry extra Etsy fees.">
               <OptionCards
                 label="Offsite Ads"
+                heading="Offsite Ads"
+                info={TIPS.etsy.offsiteAds}
                 value={offsiteAds}
                 onChange={setOffsiteAds}
                 columns={3}
@@ -135,6 +138,7 @@ export default function EtsyCalculator() {
                 checked={currencyConversion}
                 onChange={setCurrencyConversion}
                 title="Etsy converted the currency"
+                info={TIPS.etsy.currency}
                 detail="Adds Etsy's 2.5% conversion fee. Only applies if your listing currency differs from your payment account currency."
               />
             </Step>
@@ -142,6 +146,7 @@ export default function EtsyCalculator() {
             <Step number={3} title="Your seller account" intro="VAT changes what Etsy charges on its fees.">
               <Segmented
                 label="VAT"
+                info={TIPS.etsy.vat}
                 value={vatProfile}
                 onChange={setVatProfile}
                 options={[
@@ -154,6 +159,7 @@ export default function EtsyCalculator() {
                   checked={vatIdGiven}
                   onChange={setVatIdGiven}
                   title="I've given Etsy my VAT number"
+                  info={TIPS.etsy.vatNumber}
                   detail="Etsy then doesn't add VAT to its fees. Without it, Etsy adds 20%."
                 />
               ) : (
@@ -161,6 +167,7 @@ export default function EtsyCalculator() {
               )}
               <TextField
                 label="US dollar to pound rate"
+                info={TIPS.etsy.fx}
                 note="Etsy's 20¢ listing fee is charged in dollars"
                 placeholder="e.g. 0.75"
                 value={fxRate}

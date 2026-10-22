@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
   CalculatorHero,
@@ -115,6 +116,8 @@ export default function VintedCalculator() {
             <Step number={2} title="Your seller account" intro="Private and Pro sellers are treated differently for tax.">
               <OptionCards
                 label="Seller type"
+                heading="Seller type"
+                info={TIPS.vinted.sellerType}
                 value={sellerRoute}
                 onChange={setSellerRoute}
                 options={[
@@ -134,6 +137,7 @@ export default function VintedCalculator() {
                 checked={boughtVisibility}
                 onChange={setBoughtVisibility}
                 title="I paid for a Bump or Showcase"
+                info={TIPS.vinted.bump}
                 detail="Vinted shows the price at checkout, so enter what you actually paid."
               />
               {boughtVisibility && (

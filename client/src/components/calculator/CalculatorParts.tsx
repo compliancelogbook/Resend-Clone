@@ -5,7 +5,8 @@
  */
 import { type ReactNode, type RefObject, useId, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Minus, Plus, Search } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Info, Minus, Plus, Search } from "lucide-react";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Link } from "wouter";
 import { CALCULATOR_LINKS } from "@/lib/calculator-links";
 import { CALCULATION_DISCLAIMER } from "@/lib/calculation-disclaimer";
@@ -133,6 +134,60 @@ export function Step({ number, title, intro, children }: { number: number; title
 
 /* ---------- Fields ---------- */
 
+/**
+ * Small ⓘ that explains a choice. Opens on hover or keyboard focus on desktop,
+ * and on tap on touch screens. Never toggles the control it sits next to.
+ */
+export function InfoTip({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const closeTimer = useRef<number | null>(null);
+  const show = () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  const hide = () => {
+    closeTimer.current = window.setTimeout(() => setOpen(false), 120);
+  };
+  return (
+    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+      <PopoverPrimitive.Trigger asChild>
+        <button
+          type="button"
+          className="calc-info"
+          aria-label={`About ${label}`}
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          onFocus={show}
+          onBlur={hide}
+          onClick={(e) => {
+            // Inside a <label> or option card: explain, don't select.
+            e.preventDefault();
+            e.stopPropagation();
+            setOpen((o) => !o);
+          }}
+        >
+          <Info size={14} />
+        </button>
+      </PopoverPrimitive.Trigger>
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Content
+          className="calc-info-pop"
+          side="top"
+          align="center"
+          sideOffset={8}
+          collisionPadding={12}
+          onMouseEnter={show}
+          onMouseLeave={hide}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          {children}
+          <PopoverPrimitive.Arrow className="calc-info-arrow" width={12} height={6} />
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
+    </PopoverPrimitive.Root>
+  );
+}
+
 type FieldProps = {
   label: string;
   note?: string;
@@ -143,16 +198,20 @@ type FieldProps = {
   inputMode?: "decimal" | "numeric";
   prefix?: string;
   suffix?: string;
+  info?: ReactNode;
 };
 
-export function TextField({ label, note, value, onChange, error, placeholder, inputMode = "decimal", prefix, suffix }: FieldProps) {
+export function TextField({ label, note, value, onChange, error, placeholder, inputMode = "decimal", prefix, suffix, info }: FieldProps) {
   const id = useId();
   return (
     <div className={`calc-field ${error ? "has-error" : ""}`}>
-      <label htmlFor={id}>
-        {label}
-        {note && <span className="calc-label-note"> · {note}</span>}
-      </label>
+      <span className="calc-label-row">
+        <label htmlFor={id}>
+          {label}
+          {note && <span className="calc-label-note"> · {note}</span>}
+        </label>
+        {info && <InfoTip label={label}>{info}</InfoTip>}
+      </span>
       <div className="calc-input">
         {prefix && <span className="calc-affix" aria-hidden="true">{prefix}</span>}
         <input
@@ -235,8 +294,25 @@ export function SaleFields({
 
 export type Option<T extends string> = { value: T; title: string; detail?: string; extra?: string };
 
-export function OptionCards<T extends string>({ label, value, onChange, options, columns = 2 }: { label: string; value: T; onChange: (v: T) => void; options: Option<T>[]; columns?: 2 | 3 | 4 }) {
-  return (
+export function OptionCards<T extends string>({
+  label,
+  value,
+  onChange,
+  options,
+  columns = 2,
+  heading,
+  info,
+}: {
+  label: string;
+  value: T;
+  onChange: (v: T) => void;
+  options: Option<T>[];
+  columns?: 2 | 3 | 4;
+  /** Optional visible label above the cards. */
+  heading?: string;
+  info?: ReactNode;
+}) {
+  const cards = (
     <div className={`calc-options cols-${columns}`} role="radiogroup" aria-label={label}>
       {options.map((o) => (
         <button key={o.value} type="button" role="radio" aria-checked={value === o.value} className={`calc-option ${value === o.value ? "active" : ""}`} onClick={() => onChange(o.value)}>
@@ -247,6 +323,16 @@ export function OptionCards<T extends string>({ label, value, onChange, options,
       ))}
     </div>
   );
+  if (!heading && !info) return cards;
+  return (
+    <div className="calc-field">
+      <span className="calc-label-row">
+        <span className="calc-label">{heading ?? label}</span>
+        {info && <InfoTip label={heading ?? label}>{info}</InfoTip>}
+      </span>
+      {cards}
+    </div>
+  );
 }
 
 /** This font's medium-weight "%" is cramped, so draw it at regular weight. */
@@ -255,10 +341,13 @@ function withPercent(text: string) {
   return parts.map((part, i) => (i < parts.length - 1 ? <span key={i}>{part}<span className="calc-pct">%</span></span> : part));
 }
 
-export function Segmented<T extends string>({ label, value, onChange, options }: { label: string; value: T; onChange: (v: T) => void; options: { value: T; label: string }[] }) {
+export function Segmented<T extends string>({ label, value, onChange, options, info }: { label: string; value: T; onChange: (v: T) => void; options: { value: T; label: string }[]; info?: ReactNode }) {
   return (
     <div className="calc-field">
-      <span className="calc-label">{label}</span>
+      <span className="calc-label-row">
+        <span className="calc-label">{label}</span>
+        {info && <InfoTip label={label}>{info}</InfoTip>}
+      </span>
       <div className="calc-segmented" role="radiogroup" aria-label={label}>
         {options.map((o) => (
           <button key={o.value} type="button" role="radio" aria-checked={value === o.value} className={value === o.value ? "active" : ""} onClick={() => onChange(o.value)}>
@@ -270,12 +359,15 @@ export function Segmented<T extends string>({ label, value, onChange, options }:
   );
 }
 
-export function Toggle({ checked, onChange, title, detail }: { checked: boolean; onChange: (v: boolean) => void; title: string; detail: string }) {
+export function Toggle({ checked, onChange, title, detail, info }: { checked: boolean; onChange: (v: boolean) => void; title: string; detail: string; info?: ReactNode }) {
   return (
     <label className="calc-toggle">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       <span>
-        <b>{title}</b>
+        <b className="calc-label-row">
+          {title}
+          {info && <InfoTip label={title}>{info}</InfoTip>}
+        </b>
         <small>{detail}</small>
       </span>
     </label>
@@ -296,6 +388,7 @@ export function SearchablePicker<T extends string>({
   required = false,
   error,
   emptyText = "Choose one",
+  info,
 }: {
   label: string;
   value: T;
@@ -306,6 +399,7 @@ export function SearchablePicker<T extends string>({
   required?: boolean;
   error?: string;
   emptyText?: string;
+  info?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -316,10 +410,13 @@ export function SearchablePicker<T extends string>({
 
   return (
     <div className={`calc-field ${error ? "has-error" : ""}`}>
-      <span className="calc-label">
-        {label}
-        {required && <span className="calc-required" aria-hidden="true"> *</span>}
-        {required && <span className="sr-only"> (required)</span>}
+      <span className="calc-label-row">
+        <span className="calc-label">
+          {label}
+          {required && <span className="calc-required" aria-hidden="true"> *</span>}
+          {required && <span className="sr-only"> (required)</span>}
+        </span>
+        {info && <InfoTip label={label}>{info}</InfoTip>}
       </span>
       {!open ? (
         <button

@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
   CalculatorHero,
@@ -138,6 +139,8 @@ export default function EbayCalculator() {
             <Step number={1} title="How you sell on eBay" intro="Private sellers pay no selling fees. Business sellers pay eBay's full fees.">
               <OptionCards
                 label="Seller type"
+                heading="Seller type"
+                info={TIPS.ebay.sellerType}
                 value={sellerType}
                 onChange={setSellerType}
                 options={[
@@ -164,6 +167,8 @@ export default function EbayCalculator() {
               <Step number={3} title="Where the buyer is" intro="eBay only charges private sellers when the buyer is abroad.">
                 <OptionCards
                   label="Buyer location"
+                  heading="Buyer location"
+                  info={TIPS.ebay.regionPrivate}
                   value={region === "DOMESTIC" ? "DOMESTIC" : "OTHER"}
                   onChange={setRegion}
                   options={[
@@ -175,13 +180,14 @@ export default function EbayCalculator() {
                   checked={pastFreeListings}
                   onChange={setPastFreeListings}
                   title={`I've used my ${EBAY_PRIVATE_FREE_LISTINGS_PER_MONTH} free listings this month`}
+                  info={TIPS.ebay.freeListings}
                   detail="eBay then charges 35p for each new listing (400 free with an eBay Shop)."
                 />
               </Step>
             ) : (
               <>
                 <Step number={3} title="What you sold" intro="eBay's main fee depends on the category.">
-                  <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={EBAY_CATEGORY_OPTIONS} placeholder="Search 74 categories, e.g. trainers" required emptyText="Choose your category" error={err(categoryMissing ? "Choose a category to calculate eBay's fee." : undefined)} />
+                  <SearchablePicker label="Category" value={categoryId} onChange={setCategoryId} options={EBAY_CATEGORY_OPTIONS} placeholder="Search 74 categories, e.g. trainers" required info={TIPS.ebay.category} emptyText="Choose your category" error={err(categoryMissing ? "Choose a category to calculate eBay's fee." : undefined)} />
                   {needsManualRate && (
                     <TextField
                       label="Final value fee rate"
@@ -201,11 +207,12 @@ export default function EbayCalculator() {
                 </Step>
 
                 <Step number={4} title="Where the buyer is" intro="eBay adds a fee when you sell abroad.">
-                  <OptionCards label="Buyer location" value={region} onChange={setRegion} options={REGION_OPTIONS} />
+                  <OptionCards label="Buyer location" heading="Buyer location" info={TIPS.ebay.regionBusiness} value={region} onChange={setRegion} options={REGION_OPTIONS} />
                   <Toggle
                     checked={currencyConversion}
                     onChange={setCurrencyConversion}
                     title="eBay converted the currency"
+                    info={TIPS.ebay.currency}
                     detail={`Adds eBay's ${+(ebayCurrencyConversionOn(todayInUk()).rate * 100).toFixed(2)}% conversion fee (2.75% from 1 December 2026). Only applies if eBay changed the currency on this order.`}
                   />
                 </Step>
@@ -213,6 +220,7 @@ export default function EbayCalculator() {
                 <Step number={5} title="Your seller account" intro="These change what you pay, or what you can claim back.">
                   <Segmented
                     label="VAT"
+                    info={TIPS.ebay.vat}
                     value={vatProfile}
                     onChange={setVatProfile}
                     options={[
@@ -224,6 +232,7 @@ export default function EbayCalculator() {
                     checked={topRated}
                     onChange={setTopRated}
                     title="Top Rated Premium Service discount"
+                    info={TIPS.ebay.topRated}
                     detail="10% off the final value fee, if your listing qualifies."
                   />
                 </Step>
