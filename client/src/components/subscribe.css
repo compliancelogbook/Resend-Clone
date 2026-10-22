@@ -1,0 +1,47 @@
+.sb { position: relative; width: min(760px, 100%); margin: 0 auto; padding: 40px; border: 1px solid rgba(48,230,157,.3); border-radius: 26px; background: radial-gradient(circle at 50% 0, rgba(48,230,157,.09), transparent 50%), linear-gradient(160deg, #111, #060606 60%); box-shadow: 0 40px 90px rgba(0,0,0,.45); }
+.sb::before { content: ""; position: absolute; top: -1px; left: 50%; width: 50%; height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, rgba(48,230,157,.9), transparent); }
+.sb form { display: flex; flex-direction: column; gap: 16px; }
+.sb-head { text-align: center; margin-bottom: 8px; }
+.sb-head h3 { margin: 0 0 10px; color: #f5f5f5; font-size: clamp(26px, 2.6vw, 36px); font-weight: 400; letter-spacing: -.045em; }
+.sb-head p { max-width: 520px; margin: 0 auto; color: #9d9d9d; font-size: 15.5px; line-height: 1.55; }
+
+.sb-lists { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.sb-list { display: flex; gap: 10px; align-items: flex-start; padding: 14px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: #0a0a0a; color: #e6e6e6; text-align: left; cursor: pointer; transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out); }
+.sb-list:hover { border-color: rgba(255,255,255,.26); }
+.sb-list.active { border-color: rgba(48,230,157,.55); background: rgba(48,230,157,.07); }
+.sb-list b { display: block; font-size: 14.5px; font-weight: 500; }
+.sb-list small { display: block; margin-top: 4px; color: #858585; font-size: 12.5px; line-height: 1.45; }
+.sb-check { display: grid; place-items: center; width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; border: 1px solid rgba(255,255,255,.25); border-radius: 5px; color: #05140d; }
+.sb-list.active .sb-check { border-color: var(--green); background: var(--green); }
+
+.sb-row { display: flex; gap: 10px; }
+.sb-input { flex: 1; min-width: 0; }
+.sb-input input { width: 100%; height: 52px; padding: 0 18px; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; outline: 0; background: #0a0a0a; color: #f4f4f4; font: inherit; font-size: 16px; transition: border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
+.sb-input input::placeholder { color: #5c5c5c; }
+.sb-input input:focus { border-color: rgba(48,230,157,.6); box-shadow: 0 0 0 4px rgba(48,230,157,.1); }
+.sb-input.has-error input { border-color: rgba(255,120,140,.6); }
+.sb-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 140px; height: 52px; padding: 0 22px; border: 0; border-radius: 14px; background: #f4f4f4; color: #0a0a0a; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 30px rgba(48,230,157,.12); transition: background 160ms var(--ease-out), transform 160ms var(--ease-out); }
+.sb-submit:hover { background: #fff; }
+.sb-submit:active { transform: scale(.98); }
+.sb-submit:disabled { opacity: .7; cursor: progress; }
+
+.sb-consent { display: flex; gap: 10px; align-items: flex-start; color: #9a9a9a; font-size: 13.5px; line-height: 1.5; cursor: pointer; }
+.sb-consent input { width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--green); flex: 0 0 auto; }
+.sb-consent.has-error span { color: #f3c3cb; }
+.sb-error { margin-top: -8px; color: #ff9baa; font-size: 12.5px; }
+.sb-failed { margin: 0; padding: 12px 14px; border-left: 2px solid #ff9baa; border-radius: 4px 10px 10px 4px; background: rgba(255,120,140,.06); color: #f3c3cb; font-size: 14px; }
+
+.sb-sent { display: flex; gap: 18px; align-items: center; padding: 10px 4px; }
+.sb-sent-icon { display: grid; place-items: center; width: 56px; height: 56px; flex: 0 0 auto; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #8ff0c6, var(--green) 55%, #138a5c); color: #05140d; box-shadow: 0 0 30px rgba(48,230,157,.4); }
+.sb-sent h3 { margin: 0 0 6px; color: #f5f5f5; font-size: 24px; font-weight: 400; letter-spacing: -.04em; }
+.sb-sent p { margin: 0; color: #a4a4a4; font-size: 15px; line-height: 1.5; }
+
+.sb.is-compact { padding: 26px; }
+.sb.is-compact .sb-head h3 { font-size: 22px; }
+
+@media (max-width: 760px) {
+  .sb { padding: 24px 18px; }
+  .sb-lists { grid-template-columns: 1fr; }
+  .sb-row { flex-direction: column; }
+  .sb-submit { width: 100%; }
+}

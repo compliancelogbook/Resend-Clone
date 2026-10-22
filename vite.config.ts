@@ -6,6 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from "vite";
 import { handleContact } from "./server/contact";
+import { handleConfirm, handleSubscribe } from "./server/subscribe";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 // =============================================================================
@@ -220,6 +221,33 @@ function vitePluginContactApi(): Plugin {
     name: "easyfeezy-contact-api",
     configureServer(server: ViteDevServer) {
       const env = { ...process.env, ...loadEnv(server.config.mode, PROJECT_ROOT, "") };
+      const readJson = (req: import("node:http").IncomingMessage) =>
+        new Promise<unknown>((resolve) => {
+          let raw = "";
+          req.on("data", (chunk) => {
+            raw += chunk;
+            if (raw.length > 20_000) req.destroy();
+          });
+          req.on("end", () => {
+            try {
+              resolve(JSON.parse(raw));
+            } catch {
+              resolve(null);
+            }
+          });
+        });
+      server.middlewares.use("/api/subscribe/confirm", async (req, res, next) => {
+        if (req.method !== "GET") return next();
+        const token = new URL(req.url ?? "", "http://local").searchParams.get("token");
+        res.writeHead(303, { Location: await handleConfirm(token, env) });
+        res.end();
+      });
+      server.middlewares.use("/api/subscribe", async (req, res, next) => {
+        if (req.method !== "POST") return next();
+        const result = await handleSubscribe(await readJson(req), req.socket.remoteAddress ?? "local", env);
+        res.writeHead(result.status, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(result.json));
+      });
       server.middlewares.use("/api/contact", (req, res, next) => {
         if (req.method !== "POST") return next();
         let raw = "";

@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import SubscribeForm from "@/components/SubscribeForm";
 import {
   BLOG_CATEGORIES,
   CATEGORY_SLUGS,
@@ -24,7 +25,8 @@ export default function Blog() {
 
   useEffect(() => {
     document.title = "Blog · EasyFeezy";
-    window.scrollTo(0, 0);
+    if (window.location.hash === "#subscribe") window.setTimeout(() => document.getElementById("subscribe")?.scrollIntoView({ behavior: "smooth" }), 150);
+    else window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
@@ -73,6 +75,10 @@ export default function Blog() {
             )}
           </motion.div>
         </AnimatePresence>
+      </section>
+
+      <section className="bl-subscribe" id="subscribe">
+        <SubscribeForm />
       </section>
 
       <SiteFooter />

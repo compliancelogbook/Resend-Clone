@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, CircleAlert, Info } from "lucide-r
 import { Link, useParams } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import SubscribeForm from "@/components/SubscribeForm";
 import NotFound from "@/pages/NotFound";
 import { CATEGORY_SLUGS, formatPostDate, formatShortDate, SHOW_DRAFTS, visiblePosts, type Block, type BlogPost as Post } from "@/content/blog";
 import "./blog.css";
@@ -59,6 +60,10 @@ export default function BlogPost() {
           {post.blocks.map((b, i) => <BlockView key={i} block={b} draft={post.status === "draft"} />)}
         </div>
       </article>
+
+      <section className="bl-subscribe">
+        <SubscribeForm compact title="Get this in your inbox" intro="The best of the blog, plus EasyFeezy updates. Unsubscribe any time." />
+      </section>
 
       {related.length > 0 && (
         <section className="bl-related">

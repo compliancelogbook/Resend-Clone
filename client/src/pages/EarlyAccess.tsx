@@ -8,6 +8,7 @@ import { ArrowRight, Bot, Check, ImageIcon, ScanSearch } from "lucide-react";
 import { Link } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import SubscribeForm from "@/components/SubscribeForm";
 import "./early-access.css";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -49,10 +50,6 @@ export default function EarlyAccess() {
             Shoppers are starting to ask AI agents to find and buy products for them. Scan, Readiness and Alt Text will show
             whether those agents can discover, understand and buy what you sell, and what to fix.
           </p>
-          <div className="ea-signup" role="status">
-            <b>Sign-ups open soon.</b>
-            <span>We're setting up early access now. In the meantime, the calculators and Compare are free to use.</span>
-          </div>
         </motion.div>
       </section>
 
@@ -64,6 +61,14 @@ export default function EarlyAccess() {
             <p>{copy}</p>
           </motion.article>
         ))}
+      </section>
+
+      <section className="ea-subscribe" id="signup">
+        <SubscribeForm
+          title="Be first to try Scan and Readiness"
+          intro="Join early access and we'll email you as soon as they're ready. You can also get our weekly commerce brief."
+          defaultLists={["updates"]}
+        />
       </section>
 
       <section className="ea-pricing" id="pricing">

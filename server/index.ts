@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { handleContact } from "./contact";
+import { handleConfirm, handleSubscribe } from "./subscribe";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,13 @@ async function startServer() {
       : path.resolve(__dirname, "..", "dist", "public");
 
   app.set("trust proxy", true);
+  app.post("/api/subscribe", express.json({ limit: "10kb" }), async (req, res) => {
+    const result = await handleSubscribe(req.body, req.ip ?? "unknown", process.env);
+    res.status(result.status).json(result.json);
+  });
+  app.get("/api/subscribe/confirm", async (req, res) => {
+    res.redirect(303, await handleConfirm(typeof req.query.token === "string" ? req.query.token : null, process.env));
+  });
   app.post("/api/contact", express.json({ limit: "20kb" }), async (req, res) => {
     const result = await handleContact(req.body, req.ip ?? "unknown", process.env);
     res.status(result.status).json(result.json);

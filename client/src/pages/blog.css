@@ -124,3 +124,5 @@ a.bl-cat:hover { color: #fff; }
   .bl-stats.n-3 { grid-template-columns: 1fr; }
   .bl-stats dd { font-size: 26px; }
 }
+.bl-body { padding-bottom: 60px; }
+.bl-subscribe { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 40px 0 140px; scroll-margin-top: 90px; }
