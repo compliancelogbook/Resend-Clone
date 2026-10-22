@@ -1,5 +1,5 @@
 import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { CALCULATOR_LINKS } from "@/lib/calculator-links";
 
@@ -54,7 +54,7 @@ const MENUS: NavMenu[] = [
     ],
   },
   {
-    label: "Agentic commerce",
+    label: "Agentic Commerce",
     badge: "New",
     columns: [
       {
@@ -129,7 +129,10 @@ export default function SiteHeader() {
 
       <nav className="nav-links" aria-label="Primary navigation">
         {MENUS.map((menu) => (
-          <div className="nav-menu" key={menu.label} onMouseEnter={() => setOpenMenu(menu.label)} onMouseLeave={() => setOpenMenu(null)}>
+          <Fragment key={menu.label}>
+          {/* Pricing sits just before Resources, which is last. */}
+          {menu.label === "Resources" && <Link href="/early-access#pricing" className="nav-plain">Pricing</Link>}
+          <div className="nav-menu" onMouseEnter={() => setOpenMenu(menu.label)} onMouseLeave={() => setOpenMenu(null)}>
             <button type="button" aria-expanded={openMenu === menu.label} onClick={() => setOpenMenu(openMenu === menu.label ? null : menu.label)}>
               {menu.label}
               {menu.badge && <span className="nav-badge">{menu.badge}</span>}
@@ -157,8 +160,8 @@ export default function SiteHeader() {
               )}
             </div>
           </div>
+          </Fragment>
         ))}
-        <Link href="/early-access#pricing" className="nav-plain">Pricing</Link>
       </nav>
 
       <div className="nav-actions">
