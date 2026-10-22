@@ -93,8 +93,15 @@ export const ETSY_CURRENCY_CONVERSION_RATE = 0.025;
 export const ETSY_CURRENCY_CONVERSION_VAT: EtsyFeeVatTreatment = 'UNCONFIRMED';
 
 export type EtsyOffsiteAdsRate = 0.15 | 0.12;
-/** Offsite Ads fee VAT treatment is not separately confirmed by a primary source — shown ex-VAT, disclosed. */
-export const ETSY_OFFSITE_ADS_VAT: EtsyFeeVatTreatment = 'UNCONFIRMED';
+/**
+ * Offsite Ads VAT — changed 2026-10-22 from UNCONFIRMED to VAT_ID_BASED.
+ * Evidence: the site owner's real Etsy order (#4204049111, 18 Oct 2026, UK seller
+ * without a VAT number) and its payout of 19 Oct 2026. The £4.20 Offsite Ads fee
+ * (15% of £27.98) appeared on the order without VAT, and 20% VAT on it (£0.84)
+ * was billed separately and deducted from the payout. Treated like Etsy's other
+ * fees: 20% without a VAT number, reverse charge (0%) with one.
+ */
+export const ETSY_OFFSITE_ADS_VAT: EtsyFeeVatTreatment = 'VAT_ID_BASED';
 /** Cap on the Offsite Ads fee, per order, in USD — converted using the same
  *  user-facing USD→GBP assumption used for the listing fee. */
 export const ETSY_OFFSITE_ADS_CAP_USD = 100;

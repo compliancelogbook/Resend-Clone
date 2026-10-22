@@ -28,6 +28,7 @@ export interface ResultParts {
 
   /** Vinted-only passthrough — see CalculationResult.buyerProtectionRange. Never contributes to any total below. */
   buyerProtectionRange?: { low: number; high: number; note: string } | null;
+  statement?: CalculationResult['statement'];
 }
 
 /**
@@ -97,6 +98,7 @@ export function buildResult(parts: ResultParts): CalculationResult {
     assumptions: parts.assumptions,
     exclusions: parts.exclusions,
     buyerProtectionRange: parts.buyerProtectionRange ?? null,
+    statement: parts.statement,
   };
 }
 

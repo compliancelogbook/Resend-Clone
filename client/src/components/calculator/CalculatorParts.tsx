@@ -565,6 +565,10 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
         </div>
       )}
 
+      {result.statement && result.statement.billedSeparately.length > 0 && (
+        <StatementNote result={result} />
+      )}
+
       {result.buyerProtectionRange && (
         <p className="calc-vat-note">
           The buyer also pays {platform}'s Buyer Protection fee, usually <b>{formatGBP(result.buyerProtectionRange.low)}–{formatGBP(result.buyerProtectionRange.high)}</b> on this order. It doesn't come out of your money.
@@ -704,6 +708,26 @@ function PricingAdvice({ pricing, platform }: { pricing: PricingContext; platfor
         <p className="calc-pricing-warn">{platform}'s percentage fees mean a {targetPct}% margin can't be reached at any price.</p>
       )}
       <p className="calc-fine">Keeps your other costs and delivery the same, and only changes the selling price.</p>
+    </div>
+  );
+}
+
+/** Explains why the marketplace's own order screen shows a higher figure than our net profit. */
+function StatementNote({ result }: { result: CalculationResult }) {
+  const st = result.statement!;
+  const extra = st.billedSeparately.reduce((n, b) => n + b.amount, 0);
+  const shown = result.grossRevenue - result.totalCashFees + extra;
+  // Lowercase the first letter for mid-sentence use, except acronyms like VAT.
+  const names = st.billedSeparately.map((b) => `${/^[A-Z]{2}/.test(b.label) ? b.label : b.label.charAt(0).toLowerCase() + b.label.slice(1)} (${formatGBP(b.amount)})`);
+  const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
+  return (
+    <div className="calc-statement">
+      <p className="calc-eyebrow">Matching your {st.platform} records</p>
+      <p>
+        {st.platform}'s order screen will show <b>{formatGBP(shown)}</b> earned. Your {list}{" "}
+        {names.length > 1 ? "are" : "is"} billed separately, so we include {names.length > 1 ? "them" : "it"} here.
+        {result.cogs + result.shippingCost > 0 && " The order screen also doesn't take off your item and delivery costs."}
+      </p>
     </div>
   );
 }

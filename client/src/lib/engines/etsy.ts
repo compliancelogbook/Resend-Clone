@@ -22,7 +22,7 @@ import type { SourceRef } from '../../data/types';
 import { UK_STANDARD_VAT_RATE } from '../../data/vat';
 import type { VatProfile } from '../../data/vat';
 import { formatPercent } from '../format';
-import { money, percentOf, ZERO, type Money } from '../decimal';
+import { money, percentOf, roundToPennies, ZERO, type Money } from '../decimal';
 import { worstConfidence } from '../confidence';
 import type { CalculationResult, ConfidenceLevel, FeeCategory, FeeLine } from '../types';
 import { assertNonNegative, assertValidQuantity, buildResult, makeFeeLine, reclaimableIfRegistered } from './shared';
@@ -47,9 +47,16 @@ export interface EtsyInput {
   usdToGbpRate?: number | null;
 }
 
+/**
+ * Etsy rounds every fee line, and the VAT on it, to the penny (round half up).
+ * Evidence: the owner's real order of 22 Oct 2026, where each statement line matched
+ * this rounding exactly (e.g. VAT on a £1.62 transaction fee = £0.324 → £0.32).
+ */
+const penny = (m: Money): Money => money(roundToPennies(m));
+
 function vatFor(amount: Money, treatment: EtsyFeeVatTreatment, vatIdSupplied: boolean): { vat: Money; unconfirmed: boolean } {
   if (treatment === 'UNCONFIRMED') return { vat: ZERO, unconfirmed: true };
-  const vat = vatIdSupplied ? ZERO : amount.times(UK_STANDARD_VAT_RATE);
+  const vat = vatIdSupplied ? ZERO : penny(amount.times(UK_STANDARD_VAT_RATE));
   return { vat, unconfirmed: false };
 }
 
@@ -92,21 +99,25 @@ export function calculateEtsy(input: EtsyInput): CalculationResult {
   }
 
   // Etsy charges the US$0.20 listing fee once per unit sold, not once per order.
-  const listingFee = fxRate !== null ? money(ETSY_LISTING_FEE_USD).times(qty).times(fxRate) : ZERO;
-  const transactionFee = percentOf(feeBasis, ETSY_TRANSACTION_FEE_RATE);
-  const paymentsFee = percentOf(feeBasis, ETSY_PAYMENTS_FEE.rate).plus(ETSY_PAYMENTS_FEE.fixed);
-  const regulatoryFee = percentOf(feeBasis, ETSY_REGULATORY_FEE_RATE);
+  const listingFee = fxRate !== null ? penny(money(ETSY_LISTING_FEE_USD).times(qty).times(fxRate)) : ZERO;
+  // Etsy charges the transaction fee on the item and on postage as two separately
+  // rounded amounts ("Transaction fee" and "delivery transaction" on its statement).
+  const itemTransactionFee = penny(percentOf(money(input.itemPrice).times(qty), ETSY_TRANSACTION_FEE_RATE));
+  const deliveryTransactionFee = penny(percentOf(money(input.shippingCharged), ETSY_TRANSACTION_FEE_RATE));
+  const transactionFee = itemTransactionFee.plus(deliveryTransactionFee);
+  const paymentsFee = penny(percentOf(feeBasis, ETSY_PAYMENTS_FEE.rate).plus(ETSY_PAYMENTS_FEE.fixed));
+  const regulatoryFee = penny(percentOf(feeBasis, ETSY_REGULATORY_FEE_RATE));
 
   let currencyConversionFee = ZERO;
   if (input.currencyConversionSelected) {
-    currencyConversionFee = percentOf(feeBasis, ETSY_CURRENCY_CONVERSION_RATE);
+    currencyConversionFee = penny(percentOf(feeBasis, ETSY_CURRENCY_CONVERSION_RATE));
   }
 
   let advertisingFee = ZERO;
   if (input.offsiteAdsRate && fxRate !== null) {
     const uncapped = percentOf(feeBasis, input.offsiteAdsRate);
     const capGBP = money(ETSY_OFFSITE_ADS_CAP_USD).times(fxRate);
-    advertisingFee = uncapped.gt(capGBP) ? capGBP : uncapped;
+    advertisingFee = penny(uncapped.gt(capGBP) ? capGBP : uncapped);
     if (uncapped.gt(capGBP)) {
       assumptions.push(
         `Offsite Ads fee capped at US$${ETSY_OFFSITE_ADS_CAP_USD}/order (≈£${capGBP.toFixed(2)} at the assumed FX rate) — uncapped fee would have been £${uncapped.toFixed(2)}.`
@@ -206,7 +217,15 @@ export function calculateEtsy(input: EtsyInput): CalculationResult {
   let vatOnFees: Money = ZERO;
 
   for (const line of lineDefs) {
-    const { vat, unconfirmed } = vatFor(line.amount, line.vatTreatment, input.vatIdSupplied);
+    // VAT on the transaction fee is charged separately on the item and delivery parts.
+    const { vat, unconfirmed } =
+      line.id === 'etsy-transaction'
+        ? (() => {
+            const a = vatFor(itemTransactionFee, line.vatTreatment, input.vatIdSupplied);
+            const b = vatFor(deliveryTransactionFee, line.vatTreatment, input.vatIdSupplied);
+            return { vat: a.vat.plus(b.vat), unconfirmed: a.unconfirmed || b.unconfirmed };
+          })()
+        : vatFor(line.amount, line.vatTreatment, input.vatIdSupplied);
     if (unconfirmed) {
       unconfirmedVatLines.push(line.label);
       // A real, applicable fee is present but its VAT can't be confirmed — that's a missing
@@ -245,6 +264,20 @@ export function calculateEtsy(input: EtsyInput): CalculationResult {
 
   const potentiallyReclaimableVat = reclaimableIfRegistered(vatOnFees, input.vatProfile);
 
+  // What Etsy's order "Earnings" screen shows vs what it bills separately. The listing
+  // fee is charged when listing or renewing, and VAT on Offsite Ads is charged on the
+  // payment account, so neither appears on the order screen (owner's order, 22 Oct 2026).
+  const listingLine = feeLines.find((f) => f.id === 'etsy-listing');
+  const adsLine = feeLines.find((f) => f.id === 'etsy-offsite-ads');
+  const separately: { label: string; amount: number }[] = [];
+  if (listingLine && listingLine.amountExVat > 0) {
+    separately.push({ label: qty > 1 ? 'Listing fees' : 'Listing fee', amount: listingLine.amountExVat + (listingLine.vatAmount ?? 0) });
+  }
+  if (adsLine && (adsLine.vatAmount ?? 0) > 0) {
+    separately.push({ label: 'VAT on Offsite Ads', amount: adsLine.vatAmount ?? 0 });
+  }
+
+
   return buildResult({
     grossRevenue,
     cogs,
@@ -261,5 +294,8 @@ export function calculateEtsy(input: EtsyInput): CalculationResult {
     assumptions,
     exclusions,
     confidence: worstConfidence(signals),
+    statement: separately.length
+      ? { platform: 'Etsy', billedSeparately: separately }
+      : undefined,
   });
 }

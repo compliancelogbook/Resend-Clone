@@ -19,25 +19,28 @@ function line(r: ReturnType<typeof calculateEtsy>, id: string) {
 }
 
 describe('Etsy acceptance tests', () => {
-  it('E01: £30 item, no postage, no conversion, no ad -> raw fees reconcile to £3.644', () => {
+  // 2026-10-22: Etsy rounds each fee line to the penny (owner's real order), so the
+  // original unrounded fixtures (e.g. regulatory £0.144) are now penny-rounded.
+  it('E01: £30 item, no postage, no conversion, no ad -> fees reconcile to £3.64', () => {
     const r = calculateEtsy(base);
     expect(line(r, 'etsy-transaction').amountExVat).toBeCloseTo(1.95, 6);
     expect(line(r, 'etsy-payments').amountExVat).toBeCloseTo(1.4, 6);
-    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(0.144, 6);
+    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(0.14, 6);
     expect(line(r, 'etsy-listing').amountExVat).toBeCloseTo(0.15, 6);
     const rawTotal =
       line(r, 'etsy-transaction').amountExVat +
       line(r, 'etsy-payments').amountExVat +
       line(r, 'etsy-regulatory').amountExVat +
       line(r, 'etsy-listing').amountExVat;
-    expect(rawTotal).toBeCloseTo(3.644, 6);
+    expect(rawTotal).toBeCloseTo(3.64, 6);
   });
 
   it('E02: £30 item + £5 charged postage -> percentage fee bases include postage (basis £35)', () => {
     const r = calculateEtsy({ ...base, shippingCharged: 5 });
-    expect(line(r, 'etsy-transaction').amountExVat).toBeCloseTo(35 * 0.065, 6);
+    // Item (£1.95) and postage (£0.325 -> £0.33) parts are rounded separately, as on Etsy's statement.
+    expect(line(r, 'etsy-transaction').amountExVat).toBeCloseTo(1.95 + 0.33, 6);
     expect(line(r, 'etsy-payments').amountExVat).toBeCloseTo(35 * 0.04 + 0.2, 6);
-    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(35 * 0.0048, 6);
+    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(0.17, 6); // £0.168 -> £0.17
     // Listing fee is flat per unit, unaffected by postage.
     expect(line(r, 'etsy-listing').amountExVat).toBeCloseTo(0.15, 6);
   });
@@ -79,13 +82,15 @@ describe('Etsy acceptance tests', () => {
     expect(transactionLine.vatUnconfirmed).toBeFalsy();
     expect(transactionLine.vatAmount).toBeCloseTo(transactionLine.amountExVat * 0.2, 6);
 
-    // Currency conversion and Offsite Ads VAT treatment remain unconfirmed by a primary source.
+    // Currency conversion VAT treatment remains unconfirmed by a primary source.
     const conversionLine = line(noVatId, 'etsy-conversion');
     expect(conversionLine.vatUnconfirmed).toBe(true);
     expect(conversionLine.vatAmount).toBeUndefined();
 
+    // 2026-10-22: Offsite Ads VAT confirmed by the owner's real payout (£0.84 on £4.20).
     const adsLine = line(noVatId, 'etsy-offsite-ads');
-    expect(adsLine.vatUnconfirmed).toBe(true);
+    expect(adsLine.vatUnconfirmed).toBeFalsy();
+    expect(adsLine.vatAmount).toBeCloseTo(3, 6); // 20% of £15
 
     expect(noVatId.exclusions.some((e) => e.includes('not independently confirmed'))).toBe(true);
     // A real, applicable fee (conversion/ads) has unconfirmed VAT -> excluded, not merely an assumption.
@@ -98,7 +103,7 @@ describe('Etsy acceptance tests', () => {
     const withoutVatId = calculateEtsy({ ...base, vatIdSupplied: false });
     const regWithout = line(withoutVatId, 'etsy-regulatory');
     expect(regWithout.vatUnconfirmed).toBeFalsy();
-    expect(regWithout.vatAmount).toBeCloseTo(regWithout.amountExVat * 0.2, 6);
+    expect(regWithout.vatAmount).toBeCloseTo(0.03, 6); // 20% of £0.14 = £0.028 -> £0.03
 
     const withVatId = calculateEtsy({ ...base, vatIdSupplied: true });
     const regWith = line(withVatId, 'etsy-regulatory');
@@ -125,8 +130,59 @@ describe('Etsy acceptance tests', () => {
     expect(line(r, 'etsy-offsite-ads').amountExVat).toBe(0);
     // Everything else still computes normally — this is an exclusion, not a blocked calculation.
     expect(line(r, 'etsy-transaction').amountExVat).toBeCloseTo(30 * 0.065, 6);
-    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(30 * 0.0048, 6);
+    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(0.14, 6);
     expect(r.confidence).toBe('EXCLUDES_VARIABLE_FEES');
     expect(r.exclusions.some((e) => e.includes('exchange rate'))).toBe(true);
+  });
+});
+
+/**
+ * Real-order reconciliation, 22 Oct 2026. Owner's Etsy order #4204049111 (18 Oct 2026):
+ * £24.99 item + £2.99 postage, Offsite Ads 15%, UK seller without a VAT number.
+ * Etsy order screen: fees & credits £3.91, Offsite Ads £4.20, "You earned £19.87".
+ * Payout of 19 Oct 2026 additionally deducted £0.84 VAT on the Offsite Ads fee, and
+ * listing fees were £0.18 each including VAT.
+ */
+describe('Etsy real-order reconciliation (22 Oct 2026)', () => {
+  const order: EtsyInput = {
+    itemPrice: 24.99,
+    itemCost: 0,
+    shippingCharged: 2.99,
+    shippingCost: 0,
+    quantity: 1,
+    currencyConversionSelected: false,
+    offsiteAdsRate: 0.15,
+    vatIdSupplied: false,
+    vatProfile: 'NOT_REGISTERED',
+    usdToGbpRate: 0.75,
+  };
+  const r = calculateEtsy(order);
+  const total = (id: string) => line(r, id).amountExVat + (line(r, id).vatAmount ?? 0);
+
+  it('matches every line of Etsy\'s statement to the penny', () => {
+    expect(line(r, 'etsy-transaction').amountExVat).toBeCloseTo(1.81, 10); // £1.62 item + £0.19 delivery
+    expect(line(r, 'etsy-transaction').vatAmount).toBeCloseTo(0.36, 10); // £0.32 + £0.04
+    expect(line(r, 'etsy-payments').amountExVat).toBeCloseTo(1.32, 10);
+    expect(line(r, 'etsy-payments').vatAmount).toBeCloseTo(0.26, 10);
+    expect(line(r, 'etsy-regulatory').amountExVat).toBeCloseTo(0.13, 10);
+    expect(line(r, 'etsy-regulatory').vatAmount).toBeCloseTo(0.03, 10);
+    expect(line(r, 'etsy-offsite-ads').amountExVat).toBeCloseTo(4.2, 10);
+    expect(line(r, 'etsy-offsite-ads').vatAmount).toBeCloseTo(0.84, 10);
+    expect(total('etsy-listing')).toBeCloseTo(0.18, 10);
+  });
+
+  it('order screen fees come to £3.91, and "You earned" to £19.87', () => {
+    const onOrderScreen = total('etsy-transaction') + total('etsy-payments') + total('etsy-regulatory');
+    expect(onOrderScreen).toBeCloseTo(3.91, 10);
+    expect(r.grossRevenue - onOrderScreen - line(r, 'etsy-offsite-ads').amountExVat).toBeCloseTo(19.87, 10);
+  });
+
+  it('true profit after everything billed separately is £18.85', () => {
+    expect(r.estimatedProfit).toBeCloseTo(18.85, 10);
+    expect(r.statement?.billedSeparately).toEqual([
+      { label: 'Listing fee', amount: expect.closeTo(0.18, 10) },
+      { label: 'VAT on Offsite Ads', amount: expect.closeTo(0.84, 10) },
+    ]);
+    expect(r.estimatedProfit + 0.18 + 0.84).toBeCloseTo(19.87, 10);
   });
 });

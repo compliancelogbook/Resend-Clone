@@ -97,6 +97,13 @@ export interface CalculationResult {
    * src/lib/engines/shared.ts). Undefined for every other platform.
    */
   buyerProtectionRange?: { low: number; high: number; note: string } | null;
+
+  /**
+   * Costs of this sale that the marketplace bills outside the order screen (e.g. Etsy's
+   * listing fee and VAT on Offsite Ads). Already included in every total above; listed so
+   * the result can explain why the marketplace's own order screen shows a higher figure.
+   */
+  statement?: { platform: string; billedSeparately: { label: string; amount: number }[] };
 }
 
 /** margin = profit / revenue; roi = profit / total cost. Never NaN/Infinity. */
