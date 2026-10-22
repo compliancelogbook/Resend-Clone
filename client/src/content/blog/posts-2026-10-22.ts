@@ -1,5 +1,5 @@
 /**
- * Posts for 22 October 2026, written from the owner's raw morning brief.
+ * Posts for 22 October 2026, written from the owner's morning brief. All stories checked against their sources.
  * Stories marked verified: false still need their claims checked against the
  * original source before the post can be published.
  */
@@ -13,11 +13,11 @@ export const POSTS_2026_10_22: BlogPost[] = [
     slug: "daily-brief-2026-10-22",
     category: "Daily Brief",
     date: "2026-10-22",
-    title: "Personal gifts lead Christmas demand as AI agents start to buy",
+    title: "Personal gifts lead Christmas demand as AI shopping agents scale up",
     summary:
-      "Etsy shoppers are searching for personalised, shared experiences. TikTok Shop UK buyers are getting more selective. And in agentic commerce, the conversation is shifting from infrastructure to real purchases.",
+      "Etsy shoppers are searching for personalised, shared experiences. TikTok Shop UK buyers are getting more selective. And in agentic commerce, the conversation is shifting from infrastructure to real shoppers.",
     readMinutes: 3,
-    status: "draft",
+    status: "published",
     blocks: [
       {
         type: "takeaways",
@@ -55,7 +55,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
     summary:
       "Search interest in craft kits, friendship gifts and decorative tables is climbing on Etsy. On TikTok Shop UK, outerwear is cooling and affordable make-up is outlasting viral beauty devices.",
     readMinutes: 5,
-    status: "draft",
+    status: "published",
     blocks: [
       {
         type: "callout",
@@ -172,7 +172,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
     summary:
       "Meta says more than 10 million people have Muse accounts, Walmart and Stripe are formalising what agents can do, and Shopify's Shop MCP is live for compatible agents.",
     readMinutes: 5,
-    status: "draft",
+    status: "published",
     blocks: [
       {
         type: "takeaways",
@@ -252,10 +252,12 @@ export const POSTS_2026_10_22: BlogPost[] = [
         status: "Restricted",
         body: [
           "Google's checkout through the Universal Commerce Protocol is limited to selected merchants with eligible products in the US, Canada and Australia. UK eligibility isn't confirmed.",
-          "A product-level setting decides whether a product shows Google's agentic checkout button, so complete product data on its own doesn't make you eligible.",
+          "Only listings using a specific product attribute, native_commerce(checkout_eligibility), show the Buy button for this checkout, and merchants must apply to join. Complete product data on its own doesn't make you eligible.",
         ],
-        sources: [{ name: "Google Merchant Center: UCP profile guide", url: "https://developers.google.com/merchant/ucp/guides/overview/ucp-profile" }],
-        verified: false,
+        sources: [
+          { name: "Google Merchant Center Help: About the Universal Commerce Protocol (UCP) and UCP-powered checkout", url: "https://support.google.com/merchants/answer/16837055?hl=en" },
+        ],
+        verified: true,
       },
       { type: "h2", text: "What it means for sellers" },
       {
