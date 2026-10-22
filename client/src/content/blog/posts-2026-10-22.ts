@@ -60,7 +60,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
       {
         type: "callout",
         title: "About this data",
-        text: "Etsy's figures cover signed-in US shoppers over the three months to 14 September 2026, compared with a year earlier. They show search interest, not confirmed UK sales. TikTok Shop figures come from third-party tracking, not audited platform totals.",
+        text: "Etsy's figures compare search (and some sales) data for the three months to 14 September 2026 with the same period last year. Some figures cover US shoppers only. They show interest on Etsy, not confirmed UK sales. TikTok Shop figures come from third-party tracking, not audited platform totals.",
       },
       { type: "h2", text: "Etsy" },
       {
@@ -87,7 +87,8 @@ export const POSTS_2026_10_22: BlogPost[] = [
         status: "Accelerating, seasonal",
         stats: [
           { value: "+1,400%", label: "Personalised friend gifts" },
-          { value: "2×", label: "Pet gift searches" },
+          { value: "2×", label: "Pet gifting searches" },
+          { value: "+22%", label: "Pet tree decorations" },
           { value: "+37%", label: "\"Friendsmas\" party supply sales" },
         ],
         body: [
@@ -97,7 +98,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
         caveat:
           "Personalisation adds making time and the cost of mistakes. Build both into your price before Christmas orders arrive.",
         sources: [ETSY_TRENDS],
-        verified: false,
+        verified: true,
       },
       {
         type: "story",
@@ -148,13 +149,17 @@ export const POSTS_2026_10_22: BlogPost[] = [
       },
       {
         type: "story",
-        title: "One to watch: pirate-inspired boots",
+        title: "One to watch: freaky festive shoes",
         status: "Early signal",
-        stats: [{ value: "+153%", label: "Searches for men's pirate boots on Etsy" }],
-        body: ["An unusual niche that may outlast Halloween: theatrical and historically inspired footwear."],
+        stats: [
+          { value: "+153%", label: "Men's pirate boots" },
+          { value: "+155%", label: "Rain boots" },
+          { value: "+55%", label: "Slip shoes" },
+        ],
+        body: ["Etsy calls it \"freaky festive shoes\": statement footwear that gives people something to talk about at Christmas parties, from pirate-inspired boots to weather-defying rain boots."],
         caveat: "Search growth alone doesn't show lasting demand or profit.",
         sources: [ETSY_TRENDS],
-        verified: false,
+        verified: true,
       },
       { type: "cta", label: "Check your Etsy margins", href: "/etsy-fee-calculator", text: "Personalised and bundled products cost more to make and post. See what you actually keep." },
     ],
