@@ -67,7 +67,11 @@ export const POSTS_2026_10_22: BlogPost[] = [
         type: "story",
         title: "Christmas craft experiences",
         status: "Accelerating",
-        stats: [{ value: "+8,500%", label: "Searches for DIY activities, year on year" }],
+        stats: [
+          { value: "+8,500%", label: "DIY activities" },
+          { value: "+470%", label: "Needlepoint bags, with Gen Z shoppers" },
+          { value: "+125%", label: "Sewing patterns for beginners" },
+        ],
         body: [
           "Christmas crafting is becoming something people do together. Shoppers are looking for activities they can share, not just finished decorations.",
           "Opportunity: DIY decoration kits, beginner-friendly craft bundles and personalised group activities.",
