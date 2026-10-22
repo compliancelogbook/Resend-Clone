@@ -124,8 +124,7 @@ export default function SiteHeader() {
   return (
     <header className="site-nav" ref={navRef}>
       <a className="wordmark" href={onHome ? "#top" : "/"} aria-label="EasyFeezy home">
-        <span className="wordmark-dot" aria-hidden="true" />
-        <span>EasyFeezy</span>
+        <img className="wordmark-logo" src="/brand/easyfeezy-wordmark.png" alt="EasyFeezy" width={640} height={106} />
       </a>
 
       <nav className="nav-links" aria-label="Primary navigation">

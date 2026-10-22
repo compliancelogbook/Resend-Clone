@@ -44,8 +44,7 @@ export default function SiteFooter() {
       <div className="footer-main">
         <div className="footer-intro">
           <a className="wordmark footer-wordmark" href={location === "/" ? "#top" : "/"}>
-            <span className="wordmark-dot" aria-hidden="true" />
-            <span>EasyFeezy</span>
+            <img className="wordmark-logo" src="/brand/easyfeezy-wordmark.png" alt="EasyFeezy" width={640} height={106} />
           </a>
           <p>Commerce intelligence for online sellers. Fee calculations are estimates based on each marketplace's published rates.</p>
           <p className="footer-copy">© {new Date().getFullYear()} EasyFeezy</p>
