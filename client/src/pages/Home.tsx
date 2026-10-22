@@ -9,6 +9,7 @@ import { Link } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import HeroResultCard from "@/components/HeroResultCard";
+import { CALCULATOR_LINKS } from "@/lib/calculator-links";
 import { AgentDemoSection } from "@/components/AgentDemo";
 import "@/components/agent-demo.css";
 import "./home.css";
@@ -100,7 +101,11 @@ export default function Home() {
       <section className="home-marketplaces" aria-label="Supported marketplaces">
         <p>Fees and net profit for</p>
         <ul>
-          {["Shopify", "eBay", "Etsy", "TikTok Shop", "Vinted"].map((m) => <li key={m}>{m}</li>)}
+          {CALCULATOR_LINKS.map((m) => (
+            <li key={m.name}>
+              <Link href={m.href ?? "/"} aria-label={`${m.name} fee calculator`}>{m.name}</Link>
+            </li>
+          ))}
         </ul>
       </section>
 

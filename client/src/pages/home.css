@@ -6,7 +6,11 @@
 .home-marketplaces::after { content: ""; position: absolute; z-index: -1; top: 0; left: 50%; width: min(560px, 90%); height: 220px; transform: translateX(-50%); background: radial-gradient(ellipse 50% 70% at 50% 0, rgba(48,230,157,.1), transparent 75%); pointer-events: none; }
 .home-marketplaces p { margin: 0; color: #7a7a7a; font-size: 14px; }
 .home-marketplaces ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 56px; margin: 0; padding: 0; list-style: none; }
-.home-marketplaces li { color: #d8d8d8; font-size: clamp(18px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.04em; }
+.home-marketplaces li { font-size: clamp(18px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.04em; }
+.home-marketplaces li a { display: inline-block; color: #d8d8d8; transition: transform 260ms var(--ease-out), color 260ms var(--ease-out), text-shadow 260ms var(--ease-out); }
+.home-marketplaces li a:hover, .home-marketplaces li a:focus-visible { transform: translateY(-3px); color: #fff; text-shadow: 0 6px 18px rgba(48,230,157,.35); }
+.home-marketplaces li a:active { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) { .home-marketplaces li a:hover { transform: none; } }
 
 .centre-heading .calc-pill { margin-bottom: 22px; }
 
