@@ -5,8 +5,8 @@
  */
 import type { BlogPost } from "./types";
 
-const ETSY_TRENDS = { name: "Etsy trend report", date: "14 October 2026", url: "https://www.etsy.com/trends" };
-const ZMEDIA = { name: "Z Media (third-party TikTok Shop UK tracking)", date: "Week ending 11 October 2026" };
+const ETSY_TRENDS = { name: "Etsy: Seller Trend Report, Fall and Winter 2026", date: "14 October 2026", url: "https://www.etsy.com/seller-handbook/article/1521255894814" };
+const ZMEDIA = { name: "Z Media: TikTok Shop UK trending products and top creators, week ending 11 October", date: "12 October 2026", url: "https://www.z.media/insights/tiktok-shop-uk-trending-week-ending-2026-10-11" };
 
 export const POSTS_2026_10_22: BlogPost[] = [
   {
@@ -36,7 +36,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
       { type: "h2", text: "Agentic commerce" },
       {
         type: "p",
-        text: "Meta is reported to have shared the first figures on people buying through its Muse AI agent. Walmart and Stripe are setting clearer rules for what agents can access, buy and pay for. Shopify's Shop MCP, opened to compatible agents on 13 October, is already live.",
+        text: "Meta says more than 10 million people in the US and Canada have set up its Muse AI agent. Walmart and Stripe are setting clearer rules for what agents can access, buy and pay for. Shopify's Shop MCP, opened to compatible agents on 13 October, is already live.",
       },
       { type: "cta", label: "Read the agentic commerce update", href: "/blog/agentic-commerce-update-2026-10-22" },
       { type: "h2", text: "What it means for sellers" },
@@ -75,7 +75,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
         caveat:
           "This is growth in searches, not purchases. Kits sell best with clear contents, quantities and photos of the finished project.",
         sources: [ETSY_TRENDS],
-        verified: false,
+        verified: true,
       },
       {
         type: "story",
@@ -118,7 +118,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
         title: "Autumn outerwear is cooling",
         status: "Seasonal, slowing",
         stats: [
-          { value: "£94k", label: "PUFFIT rain jacket, reported weekly sales" },
+          { value: "£94k", label: "PUFFIT rain jacket weekly sales, down 28% on the week before" },
           { value: "£220k", label: "Trespass, entering the UK top ten" },
         ],
         body: [
@@ -126,21 +126,21 @@ export const POSTS_2026_10_22: BlogPost[] = [
           "For sellers: strong category sales aren't a reason to pay ever-higher creator commissions.",
         ],
         sources: [ZMEDIA],
-        verified: false,
+        verified: true,
       },
       {
         type: "story",
         title: "Affordable make-up outlasts viral devices",
         status: "Diverging",
         stats: [
-          { value: "+23%", label: "P.Louise Treat Trio, week on week (about £234k)" },
-          { value: "−35%", label: "medicube UK, brand level" },
+          { value: "+23%", label: "P.Louise Treat Trio, week on week (£234k)" },
+          { value: "−35%", label: "medicube UK brand sales, £930k to £603k" },
         ],
         body: [
           "Affordable products that are easy to demonstrate on camera are proving more resilient than some once-viral skincare devices, which may be reaching saturation.",
         ],
         sources: [ZMEDIA],
-        verified: false,
+        verified: true,
       },
       {
         type: "story",
@@ -161,66 +161,70 @@ export const POSTS_2026_10_22: BlogPost[] = [
     date: "2026-10-22",
     title: "Agentic commerce moves from infrastructure to real purchases",
     summary:
-      "Meta is reported to have shared the first figures on people buying through its Muse agent, Walmart and Stripe are formalising what agents can do, and Shopify's Shop MCP is live for compatible agents.",
+      "Meta says more than 10 million people have Muse accounts, Walmart and Stripe are formalising what agents can do, and Shopify's Shop MCP is live for compatible agents.",
     readMinutes: 5,
     status: "draft",
     blocks: [
       {
         type: "takeaways",
         items: [
-          "Reported Muse figures would be among the first evidence of shoppers actually buying through an AI agent at scale.",
+          "Meta says more than 10 million people in the US and Canada have set up its Muse shopping agent, and about a quarter use it daily.",
           "Retailers and payment providers are adding permissions, spending limits and approval steps for agents.",
           "None of these developments is confirmed for UK shoppers yet.",
         ],
       },
       {
         type: "story",
-        title: "Meta shares Muse shopping figures",
+        title: "Meta shares Muse adoption figures",
         status: "Live in the US and Canada",
         stats: [
-          { value: "10m+", label: "Muse accounts reported, US and Canada" },
-          { value: "25%+", label: "Of users reported to have bought through it" },
-          { value: "$200+", label: "Reported average purchase" },
+          { value: "10m+", label: "People with Muse accounts, US and Canada" },
+          { value: "~25%", label: "Of them use Muse on a given day" },
         ],
         body: [
-          "Muse is Meta's personal AI agent. It can help with shopping as well as other tasks, with payments handled by partners such as Link by Stripe and Shop Pay.",
-          "Reported comments from Meta's third-quarter results suggest people are buying through it, not just browsing. Meta hasn't said how merchants are chosen or ranked.",
+          "Muse is Meta's personal AI agent for adults, able to help with shopping as well as other tasks, with payments handled by partners such as Link by Stripe and Shop Pay.",
+          "On Meta's third-quarter results call, Mark Zuckerberg said more than 10 million people in the US and Canada have set up Muse accounts, and about a quarter use it on any given day.",
+          "MarketWatch also reports that over a quarter of Muse users have bought something through it, with an average purchase above $200. If confirmed, that's among the first evidence of shoppers buying through an AI agent at scale. Meta hasn't said how merchants are chosen or ranked.",
         ],
-        caveat:
-          "These are company-reported figures, not audited data. Muse's September launch and shopping features are confirmed; the user and purchase figures still need checking against Meta's results.",
+        caveat: "These are company-reported figures, not audited data. The purchase figures come from MarketWatch's report and still need checking. Muse isn't available in the UK.",
         sources: [
-          { name: "Meta Q3 2026 results (reported by AP News and MarketWatch)", date: "21 October 2026" },
-          { name: "Communicate Online: Meta launches Muse", url: "https://communicateonline.me/news/meta-launches-muse-ai-agent-to-send-emails-book-trips-and-shop-online/" },
+          { name: "AP News: Meta Q3 revenue tops estimates and Zuckerberg says Muse accounts have topped 10 million", url: "https://finance.yahoo.com/markets/stocks/articles/meta-q3-revenue-tops-estimates-220424034.html", date: "21 October 2026" },
+          { name: "MarketWatch", date: "21 October 2026" },
         ],
         verified: false,
       },
       {
         type: "story",
-        title: "Walmart sets rules for shopping agents",
-        status: "US, launching from November",
+        title: "Walmart opens its doors to shopping agents",
+        status: "US, profiles from November",
         body: [
-          "Walmart is reported to be introducing a formal route for approved AI assistants to shop with it: separate agent profiles with their own permissions and spending limits, a gateway built on MCP, and terms covering customer approval and data access.",
-          "Walmart says agents must see the same prices as human shoppers.",
+          "Walmart is giving approved AI agents an official way to shop for customers. Its Agent Gateway, built on MCP, lets agents search Walmart and Sam's Club inventory and buy on a shopper's behalf, without receiving their personal details or purchase history.",
+          "Agent Profiles sit inside a customer's account, keeping each agent's orders separate. Shoppers can approve every purchase or set a spending cap. Walmart compares it to adding an authorised user to a credit card, and says agents must see the same prices as people do.",
+          "Coverage names Meta's Muse, ChatGPT and Gemini among the agents it expects to support. It's a sharp contrast with Amazon, which has blocked outside agents, including Muse.",
         ],
-        caveat: "Announced for the US. No UK rollout has been announced.",
-        sources: [{ name: "Walmart News", date: "21 October 2026" }],
-        verified: false,
+        caveat: "Announced for the US, with Agent Profiles rolling out from November and the Gateway starting in a beta. No UK rollout has been announced.",
+        sources: [
+          { name: "Walmart News: Making It Possible for Agents to Shop on Behalf of Customers", date: "21 October 2026" },
+          { name: "TechCrunch: While Amazon blocks AI agents, Walmart rolls out the welcome mat", url: "https://techcrunch.com/2026/10/21/while-amazon-blocks-ai-agents-walmart-rolls-out-the-welcome-mat/", date: "21 October 2026" },
+        ],
+        verified: true,
       },
       {
         type: "story",
-        title: "Stripe gives agents a way to pay",
-        status: "Rolling out",
+        title: "Stripe lets agents pay, and run business finances",
+        status: "Public preview",
         body: [
           "Stripe's Link wallet lets agents pay on a shopper's behalf, issuing a single-use card for each task, with the shopper approving every payment.",
-          "Stripe is also reported to be extending its Treasury product so businesses can let agents check balances, pay invoices and move money, with human approval where they choose.",
+          "On 21 October Stripe launched Treasury for agents. Connected through Stripe's MCP server, agents such as ChatGPT and Claude can check balances, pay invoices, move money between accounts and convert currencies. A person must approve anything that moves live money.",
+          "Card creation and agent spending limits are coming soon. Agentic commerce is spreading from the shopper's checkout into how sellers run their business.",
         ],
-        caveat:
-          "Link wallets for agents are confirmed by Stripe. The Treasury extension still needs checking. UK availability isn't confirmed for either.",
+        caveat: "Treasury for agents is in public preview and depends on Stripe Treasury eligibility. UK availability isn't confirmed.",
         sources: [
+          { name: "Stripe: Introducing Stripe Treasury for agents", url: "https://stripe.com/newsroom/news/treasury-for-agents", date: "21 October 2026" },
+          { name: "Stripe docs: Agentic Treasury", url: "https://docs.stripe.com/treasury/agents" },
           { name: "Stripe Sessions 2026", url: "https://stripe.com/gb/newsroom/news/sessions-2026" },
-          { name: "Stripe announcement", date: "21 October 2026" },
         ],
-        verified: false,
+        verified: true,
       },
       {
         type: "story",
@@ -231,8 +235,8 @@ export const POSTS_2026_10_22: BlogPost[] = [
           "Search needs no API key; checkout needs the shopper's approval. Shopify says existing catalogue integrations don't need any changes.",
         ],
         caveat: "Shopify hasn't shared how many sales come through agents, so the commercial impact for individual merchants isn't yet measurable.",
-        sources: [{ name: "Shopify developer changelog", url: "https://shopify.dev/changelog/posts/add-shopping-and-shop-pay-checkout-to-any-agent-with-shop-mcp", date: "13 October 2026" }],
-        verified: false,
+        sources: [{ name: "Shopify: Add shopping and Shop Pay checkout to any agent with Shop MCP", url: "https://shopify.dev/changelog/posts/add-shopping-and-shop-pay-checkout-to-any-agent-with-shop-mcp", date: "13 October 2026" }],
+        verified: true,
       },
       {
         type: "story",
