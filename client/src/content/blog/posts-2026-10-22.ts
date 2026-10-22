@@ -110,7 +110,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
         ],
         caveat: "Bundles can raise order value, but packaging and postage can quickly eat the extra margin.",
         sources: [ETSY_TRENDS],
-        verified: false,
+        verified: true,
       },
       { type: "h2", text: "TikTok Shop UK" },
       {
