@@ -159,7 +159,7 @@ export const POSTS_2026_10_22: BlogPost[] = [
     slug: "agentic-commerce-update-2026-10-22",
     category: "Agentic Commerce",
     date: "2026-10-22",
-    title: "Agentic commerce moves from infrastructure to real purchases",
+    title: "Agentic commerce moves from infrastructure to real shoppers",
     summary:
       "Meta says more than 10 million people have Muse accounts, Walmart and Stripe are formalising what agents can do, and Shopify's Shop MCP is live for compatible agents.",
     readMinutes: 5,
@@ -184,14 +184,13 @@ export const POSTS_2026_10_22: BlogPost[] = [
         body: [
           "Muse is Meta's personal AI agent for adults, able to help with shopping as well as other tasks, with payments handled by partners such as Link by Stripe and Shop Pay.",
           "On Meta's third-quarter results call, Mark Zuckerberg said more than 10 million people in the US and Canada have set up Muse accounts, and about a quarter use it on any given day.",
-          "MarketWatch also reports that over a quarter of Muse users have bought something through it, with an average purchase above $200. If confirmed, that's among the first evidence of shoppers buying through an AI agent at scale. Meta hasn't said how merchants are chosen or ranked.",
+          "That's millions of people already letting an AI agent help them shop. Meta hasn't said how merchants are chosen or ranked.",
         ],
-        caveat: "These are company-reported figures, not audited data. The purchase figures come from MarketWatch's report and still need checking. Muse isn't available in the UK.",
+        caveat: "These are company-reported figures, not audited data. Muse isn't available in the UK.",
         sources: [
-          { name: "AP News: Meta Q3 revenue tops estimates and Zuckerberg says Muse accounts have topped 10 million", url: "https://finance.yahoo.com/markets/stocks/articles/meta-q3-revenue-tops-estimates-220424034.html", date: "21 October 2026" },
-          { name: "MarketWatch", date: "21 October 2026" },
+          { name: "AP News: Meta Q3 revenue tops estimates and Zuckerberg says Muse accounts have topped 10 million", url: "https://apnews.com/article/meta-earnings-facebook-instagram-muse-capex-13ecd6c459e39a3602f302bcc2412fe9", date: "21 October 2026" },
         ],
-        verified: false,
+        verified: true,
       },
       {
         type: "story",
