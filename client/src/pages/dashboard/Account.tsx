@@ -1,6 +1,7 @@
 /** Saved calculations, Settings and Billing. Example data only. */
 import { useState } from "react";
-import { ArrowRight, ArrowUpRight, Check, CircleAlert, Download, Mail, Scale, Calculator } from "lucide-react";
+import PlanCards from "@/components/PlanCards";
+import { ArrowUpRight, Check, CircleAlert, Download, Mail, Scale, Calculator } from "lucide-react";
 
 /* ---------- Saved ---------- */
 
@@ -125,13 +126,6 @@ export function SettingsPage() {
 
 /* ---------- Billing ---------- */
 
-const PLANS = [
-  { name: "Free", price: "£0", points: ["All fee calculators", "Compare", "Save calculations"] },
-  { name: "Plus", price: "£7.99", points: ["10 scans a month", "Alt text for 500 images", "Everything in Free"], current: true },
-  { name: "Pro", price: "£14.99", points: ["50 scans a month", "Alt text for 2,500 images", "Fee change alerts"] },
-  { name: "Business", price: "£29.99", points: ["Unlimited scans", "Several shops", "Priority support"] },
-];
-
 const INVOICES = [
   { date: "1 Oct 2026", amount: "£7.99", status: "Paid" },
   { date: "1 Sep 2026", amount: "£7.99", status: "Paid" },
@@ -146,7 +140,7 @@ export function Billing() {
           <span className="db-eyebrow">Current plan</span>
           <div className="db-plan-row">
             <strong className="db-big">Plus</strong>
-            <span>£7.99 a month</span>
+            <span>£7.99 a month · billed monthly</span>
           </div>
           <p className="db-sub">Renews on 1 November 2026. Cancel any time and keep Plus until then.</p>
           <div className="db-usage-rows">
@@ -178,16 +172,7 @@ export function Billing() {
 
       <section className="db-card db-pad">
         <div className="db-card-head"><span className="db-eyebrow">Plans</span><span className="db-muted-note">Example prices and limits</span></div>
-        <div className="db-plans">
-          {PLANS.map((p) => (
-            <div key={p.name} className={`db-plan-opt ${p.current ? "current" : ""}`}>
-              <b>{p.name}</b>
-              <strong>{p.price}<small>{p.price === "£0" ? "" : " a month"}</small></strong>
-              <ul>{p.points.map((pt) => <li key={pt}><Check size={13} /> {pt}</li>)}</ul>
-              {p.current ? <span className="db-current">Current plan</span> : <button type="button" className="db-btn-ghost">{p.name === "Free" ? "Downgrade" : "Upgrade"} {p.name !== "Free" && <ArrowRight size={13} />}</button>}
-            </div>
-          ))}
-        </div>
+        <PlanCards mode="app" current="plus" showPrices />
       </section>
     </>
   );

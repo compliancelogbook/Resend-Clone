@@ -28,9 +28,8 @@ const MENUS: NavMenu[] = [
       {
         title: "Agentic commerce",
         items: [
-          { name: "Scan", desc: "See what AI shopping agents can read in your listings" },
+          { name: "Scan", desc: "See what AI shopping agents can read in your listings, with alt text written for you" },
           { name: "Readiness", desc: "Can AI agents discover, match and buy your products?" },
-          { name: "Alt Text", desc: "Accurate, accessible descriptions for every product photo" },
         ],
       },
     ],
@@ -60,9 +59,8 @@ const MENUS: NavMenu[] = [
       {
         title: "Get ready for AI shopping agents",
         items: [
-          { name: "Scan", desc: "See what AI shopping agents can and can't read in your listings" },
+          { name: "Scan", desc: "See what AI shopping agents can and can't read in your listings, and fix it" },
           { name: "Readiness", desc: "Check whether AI agents can discover, match and buy your products" },
-          { name: "Alt Text", desc: "Accurate, accessible descriptions for every product photo" },
         ],
       },
       {

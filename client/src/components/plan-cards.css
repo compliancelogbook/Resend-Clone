@@ -1,0 +1,43 @@
+/* Plan cards: website pricing and dashboard Billing */
+.pc { --pc-line: rgba(255,255,255,.1); }
+.pc-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 22px; color: #e6e6e6; font-size: 15px; }
+.pc-bar em { padding: 3px 9px; border: 1px solid rgba(48,230,157,.35); border-radius: 999px; background: rgba(48,230,157,.06); color: #8ff0c6; font-size: 12.5px; font-style: normal; }
+.pc-toggle { position: relative; width: 46px; height: 26px; padding: 0; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: #151515; cursor: pointer; transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.pc-toggle i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #9a9a9a; transition: transform 180ms var(--ease-out), background 180ms var(--ease-out); }
+.pc-toggle.on { border-color: #30e69d; background: #30e69d; }
+.pc-toggle.on i { transform: translateX(20px); background: #04130c; }
+
+.pc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.pc-card { display: flex; flex-direction: column; padding: 26px 24px 22px; border: 1px solid var(--pc-line); border-radius: 22px; background: radial-gradient(circle at 50% 0, rgba(255,255,255,.05), transparent 45%), linear-gradient(160deg, #111, #060606 60%); }
+.pc-card.is-free { border-color: rgba(48,230,157,.35); background: radial-gradient(circle at 50% 0, rgba(48,230,157,.09), transparent 50%), linear-gradient(160deg, #111, #060606 60%); }
+.pc-card.is-current { border-color: rgba(48,230,157,.6); box-shadow: 0 0 0 1px rgba(48,230,157,.2) inset; }
+.pc-card header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pc-card h3 { margin: 0; color: #f4f4f4; font-size: 24px; font-weight: 500; letter-spacing: -.035em; }
+.pc-card header { align-items: baseline; }
+.pc-tagline { margin: 4px 0 0; color: #30e69d; font-size: 14px; }
+.pc-soon-tag { margin-left: 8px; padding: 1px 6px; border: 1px solid rgba(255,255,255,.16); border-radius: 5px; color: #9a9a9a; font-size: 11px; font-style: normal; }
+.pc-price { display: flex; align-items: baseline; white-space: nowrap; }
+.pc-price strong { color: #f4f4f4; font-size: 26px; font-weight: 400; letter-spacing: -.03em; }
+.pc-price span { color: #9a9a9a; font-size: 14px; }
+.pc-soon { flex: 0 0 auto; padding: 3px 9px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: #a8a8a8; font-size: 12px; white-space: nowrap; }
+.pc-billed { display: block; margin-top: 6px; color: #777; font-size: 12.5px; text-align: right; }
+
+.pc-btn, .pc-current { display: flex; align-items: center; justify-content: center; gap: 6px; height: 46px; margin: 24px 0 18px; border: 1px solid rgba(255,255,255,.75); border-radius: 999px; background: none; color: #f4f4f4; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.pc-btn:hover { background: #f4f4f4; color: #0a0a0a; }
+.pc-btn.primary { border-color: #f4f4f4; background: #f4f4f4; color: #0a0a0a; }
+.pc-btn.primary:hover { background: #fff; }
+.pc-current { border-color: rgba(48,230,157,.5); color: #8ff0c6; cursor: default; }
+.pc-billed + .pc-btn, .pc-billed + .pc-current { margin-top: 18px; }
+
+.pc-card ul { margin: 0; padding: 0; list-style: none; }
+.pc-card li { display: flex; gap: 9px; padding: 13px 0; border-top: 1px solid var(--pc-line); color: #cfcfcf; font-size: 14px; line-height: 1.4; }
+.pc-card li svg { flex: 0 0 auto; margin-top: 2px; color: #30e69d; }
+.pc-note { margin: 18px 0 0; color: #8a8a8a; font-size: 13.5px; }
+
+@media (max-width: 1180px) {
+  .pc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .pc-grid { grid-template-columns: 1fr; }
+}
+.pc-card header { flex-wrap: wrap; row-gap: 2px; }

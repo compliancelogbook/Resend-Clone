@@ -11,7 +11,6 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
       { label: "Compare", href: "/compare" },
       { label: "Scan" },
       { label: "Readiness" },
-      { label: "Alt Text" },
     ],
   },
   { title: "Calculators", links: CALCULATOR_LINKS.map((c) => ({ label: c.name, href: c.href })) },

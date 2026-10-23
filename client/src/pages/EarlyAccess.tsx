@@ -4,11 +4,11 @@
  */
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Bot, Check, ImageIcon, ScanSearch } from "lucide-react";
-import { Link } from "wouter";
+import { Bot, ScanSearch } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SubscribeForm from "@/components/SubscribeForm";
+import PlanCards from "@/components/PlanCards";
 import "./early-access.css";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -17,17 +17,12 @@ const COMING = [
   {
     icon: ScanSearch,
     title: "Scan",
-    copy: "See exactly what AI shopping agents can read in your listings: what's confirmed, what's missing and what conflicts, with clear fixes.",
+    copy: "See exactly what AI shopping agents can read in your listings: what's confirmed, what's missing and what conflicts, with clear fixes. Includes alt text written for your photos, ready for you to approve.",
   },
   {
     icon: Bot,
     title: "Readiness",
     copy: "Check whether AI shopping agents can discover your products, match them to what shoppers ask for, and complete the purchase.",
-  },
-  {
-    icon: ImageIcon,
-    title: "Alt Text",
-    copy: "Accurate, accessible descriptions for every product photo, based on what's actually in the picture. You approve every word.",
   },
 ];
 
@@ -47,7 +42,7 @@ export default function EarlyAccess() {
           <span className="calc-pill">Coming soon</span>
           <h1>Built for{" "}<br />agentic commerce</h1>
           <p>
-            Shoppers are starting to ask AI agents to find and buy products for them. Scan, Readiness and Alt Text will show
+            Shoppers are starting to ask AI agents to find and buy products for them. Scan and Readiness will show
             whether those agents can discover, understand and buy what you sell, and what to fix.
           </p>
         </motion.div>
@@ -73,23 +68,8 @@ export default function EarlyAccess() {
 
       <section className="ea-pricing" id="pricing">
         <h2>Pricing</h2>
-        <div className="ea-pricing-grid">
-          <div className="ea-plan is-free">
-            <p className="calc-eyebrow">Free, always</p>
-            <h3>£0</h3>
-            <ul>
-              <li><Check size={15} /> Fees: calculators for Shopify, eBay, Etsy, TikTok Shop and Vinted</li>
-              <li><Check size={15} /> Compare: rank marketplaces by net profit, or price for a target profit</li>
-              <li><Check size={15} /> Break-even and target-margin prices</li>
-            </ul>
-            <Link href="/compare" className="button">Compare your sale <ArrowRight size={15} /></Link>
-          </div>
-          <div className="ea-plan">
-            <p className="calc-eyebrow">Paid plans</p>
-            <h3>Coming soon</h3>
-            <p>Paid plans launch with Scan, Readiness and Alt Text. We'll publish prices before anything is charged.</p>
-          </div>
-        </div>
+        <p className="ea-pricing-intro">Fee calculators and Compare are free. Paid plans add Scan, alt text and, later, Readiness.</p>
+        <PlanCards mode="site" />
       </section>
 
       <SiteFooter />
