@@ -1,0 +1,13 @@
+.lp { padding: 22px 24px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: linear-gradient(160deg, #0f0f0f, #070707 60%); }
+.lp-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.lp-head b { color: #e8e8e8; font-size: 14.5px; font-weight: 500; }
+.lp-head em { padding: 2px 8px; border: 1px solid rgba(255,255,255,.2); border-radius: 6px; color: #9a9a9a; font-size: 11px; font-style: normal; letter-spacing: .03em; }
+.lp h3 { margin: 16px 0 6px; color: #f2f2f2; font-size: 19px; font-weight: 500; letter-spacing: -.025em; }
+.lp > p { margin: 0 0 12px; color: #9a9a9a; font-size: 13.5px; line-height: 1.55; }
+.lp ul { margin: 0 0 18px; padding: 0; list-style: none; }
+.lp li { display: flex; gap: 8px; padding: 4px 0; color: #cfcfcf; font-size: 13.5px; }
+.lp li svg { flex: 0 0 auto; margin-top: 2px; color: #30e69d; }
+.lp-cta { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border: 1px solid rgba(255,255,255,.7); border-radius: 999px; color: #f2f2f2; font-size: 14px; font-weight: 500; transition: background 150ms var(--ease-out), color 150ms var(--ease-out); }
+.lp-cta:hover { background: #f2f2f2; color: #0a0a0a; }
+.lp small { display: block; margin-top: 12px; color: #6f6f6f; font-size: 12px; line-height: 1.5; }
+.lp small a { color: #9a9a9a; text-decoration: underline; text-underline-offset: 2px; }

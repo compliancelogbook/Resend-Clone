@@ -14,6 +14,7 @@ import {
   Scale,
   Plus,
 } from "lucide-react";
+import ListingPartnerCard from "@/components/ListingPartnerCard";
 import { BASE, Shell } from "./Shell";
 import { Billing, Saved, SettingsPage } from "./Account";
 import { Compare, Fees } from "./Tools";
@@ -143,10 +144,13 @@ function Home() {
           <div className="db-card-head"><span className="db-eyebrow">Top fixes</span><a href="#" className="db-card-link" onClick={(e) => e.preventDefault()}>All <ArrowRight size={13} /></a></div>
           <FixList limit={3} />
         </section>
-        <section className="db-card db-pad">
-          <div className="db-card-head"><span className="db-eyebrow">Saved calculations</span><Link href={`${BASE}/saved`} className="db-card-link">All <ArrowRight size={13} /></Link></div>
-          <SavedList />
-        </section>
+        <div className="db-stack">
+          <section className="db-card db-pad">
+            <div className="db-card-head"><span className="db-eyebrow">Saved calculations</span><Link href={`${BASE}/saved`} className="db-card-link">All <ArrowRight size={13} /></Link></div>
+            <SavedList />
+          </section>
+          <ListingPartnerCard example />
+        </div>
       </div>
     </>
   );

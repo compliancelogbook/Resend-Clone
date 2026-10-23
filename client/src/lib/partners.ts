@@ -28,3 +28,27 @@ export function partnerFor(platform: Platform): Partner | null {
   const p = PARTNERS[platform];
   return p && p.url.trim() ? p : null;
 }
+
+/**
+ * Cross-listing partner for sellers on two or more marketplaces.
+ * Not chosen yet (see the shortlist in the plan doc). Empty url = hidden.
+ */
+export interface ListingPartner {
+  name: string;
+  url: string;
+  headline: string;
+  text: string;
+  points: string[];
+  /** Only if the partner's programme really offers it. */
+  offer?: string;
+}
+
+export const LISTING_PARTNER: ListingPartner = {
+  name: "",
+  url: "",
+  headline: "Selling on more than one marketplace?",
+  text: "A cross-listing tool lists each product on all your marketplaces at once, and takes it down everywhere when it sells.",
+  points: ["Create a listing once, post it everywhere", "Stock updates across marketplaces", "Fewer double sales"],
+};
+
+export const listingPartner = (): ListingPartner | null => (LISTING_PARTNER.url.trim() && LISTING_PARTNER.name ? LISTING_PARTNER : null);

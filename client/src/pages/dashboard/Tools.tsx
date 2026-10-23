@@ -9,6 +9,7 @@ import EtsyCalculator from "@/pages/EtsyCalculator";
 import TikTokCalculator from "@/pages/TikTokCalculator";
 import VintedCalculator from "@/pages/VintedCalculator";
 import ComparePage from "@/pages/ComparePage";
+import ListingPartnerCard from "@/components/ListingPartnerCard";
 import { BASE } from "./Shell";
 
 const MARKETPLACES: { slug: string; name: string; Page: ComponentType }[] = [
@@ -56,6 +57,7 @@ export function Compare() {
   return (
     <CalculatorEmbed.Provider value={{ embedded: true, onSave, mapHref }}>
       <ComparePage />
+      <div className="db-compare-partner"><ListingPartnerCard example /></div>
     </CalculatorEmbed.Provider>
   );
 }
