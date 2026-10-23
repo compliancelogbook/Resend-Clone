@@ -28,7 +28,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
     { label: "Home", icon: House, href: BASE },
     { label: "Scans", icon: ScanSearch, href: `${BASE}/scans` },
     { label: "Listings", icon: LayoutList, soon: true },
-    { label: "Saved", icon: Bookmark },
+    { label: "Saved", icon: Bookmark, href: `${BASE}/saved` },
   ] },
   { group: "Tools", items: [
     { label: "Fees", icon: Calculator },
@@ -36,8 +36,8 @@ const NAV: { group: string; items: NavItem[] }[] = [
     { label: "Readiness", icon: Radar, soon: true },
   ] },
   { group: "Account", items: [
-    { label: "Settings", icon: Settings },
-    { label: "Billing", icon: CreditCard },
+    { label: "Settings", icon: Settings, href: `${BASE}/settings` },
+    { label: "Billing", icon: CreditCard, href: `${BASE}/billing` },
   ] },
 ];
 

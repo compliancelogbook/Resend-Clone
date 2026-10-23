@@ -15,6 +15,7 @@ import {
   Plus,
 } from "lucide-react";
 import { BASE, Shell } from "./Shell";
+import { Billing, Saved, SettingsPage } from "./Account";
 import { NewScan, RescanButton, ScanDetail, ScansEmpty, ScansList } from "./Scans";
 import "./dashboard.css";
 
@@ -141,7 +142,7 @@ function Home() {
           <FixList limit={3} />
         </section>
         <section className="db-card db-pad">
-          <div className="db-card-head"><span className="db-eyebrow">Saved calculations</span><a href="#" className="db-card-link" onClick={(e) => e.preventDefault()}>All <ArrowRight size={13} /></a></div>
+          <div className="db-card-head"><span className="db-eyebrow">Saved calculations</span><Link href={`${BASE}/saved`} className="db-card-link">All <ArrowRight size={13} /></Link></div>
           <SavedList />
         </section>
       </div>
@@ -166,6 +167,15 @@ export default function DashboardPreview() {
   }, [location]);
   const firstVisit = new URLSearchParams(useSearch()).get("state") === "empty";
 
+  if (location.startsWith(`${BASE}/saved`)) {
+    return <Shell title="Saved"><Saved /></Shell>;
+  }
+  if (location.startsWith(`${BASE}/settings`)) {
+    return <Shell title="Settings"><SettingsPage /></Shell>;
+  }
+  if (location.startsWith(`${BASE}/billing`)) {
+    return <Shell title="Billing"><Billing /></Shell>;
+  }
   if (location === `${BASE}/scans/new`) {
     return (
       <Shell title="New scan" crumb={<><Link href={`${BASE}/scans`}>Scans</Link><span>/</span>New</>}>
