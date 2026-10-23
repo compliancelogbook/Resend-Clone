@@ -36,6 +36,7 @@ export default function SubscribeForm({
   };
   const shown: Partial<typeof errors> = tried ? errors : {};
   const hasErrors = Object.values(errors).some(Boolean);
+  const allSelected = lists.length === NEWSLETTER_LISTS.length;
 
   function toggle(id: NewsletterListId) {
     setLists((l) => (l.includes(id) ? l.filter((x) => x !== id) : [...l, id]));
@@ -77,6 +78,12 @@ export default function SubscribeForm({
               <p>{intro}</p>
             </div>
 
+            <div className="sb-lists-head">
+              <span>Choose your emails</span>
+              <button type="button" className="sb-all" onClick={() => setLists(allSelected ? [] : NEWSLETTER_LISTS.map((l) => l.id))}>
+                {allSelected ? "Clear all" : "Select all"}
+              </button>
+            </div>
             <div className="sb-lists" role="group" aria-label="Choose your emails">
               {NEWSLETTER_LISTS.map((l) => {
                 const on = lists.includes(l.id);
