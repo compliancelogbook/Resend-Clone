@@ -2,31 +2,20 @@
  * Hidden design preview of the signed-in dashboard (/preview/dashboard).
  * Example data only: no login, no database. Not linked from the site.
  */
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import {
   ArrowRight,
   ArrowUpRight,
-  Bookmark,
-  ChevronsUpDown,
-  CircleHelp,
-  CreditCard,
-  House,
   ImageOff,
-  LayoutList,
-  MessageSquare,
-  MoreHorizontal,
-  Radar,
-  Scale,
-  ScanSearch,
-  Settings,
-  Sparkles,
-  Calculator,
   TriangleAlert,
-  Menu,
-  X,
   Tag,
   PackageCheck,
+  Scale,
+  Plus,
 } from "lucide-react";
+import { BASE, Shell } from "./Shell";
+import { RescanButton, ScanDetail, ScansList } from "./Scans";
 import "./dashboard.css";
 
 /* ---------- Example data (fictional) ---------- */
@@ -35,10 +24,10 @@ const SCORE_HISTORY = [58, 61, 60, 66, 64, 71, 74, 73, 78, 82];
 const SCORE_LABELS = ["14 Aug", "", "", "", "", "", "", "", "", "Today"];
 
 const FIXES = [
-  { icon: ImageOff, title: "14 images have no alt text", detail: "AI agents and screen readers can't tell what these photos show.", area: "AI ready", urgent: true, action: "Write alt text" },
-  { icon: Tag, title: "6 listings are missing a brand", detail: "Google and marketplaces use brand to match your products to searches.", area: "Listings", urgent: true, action: "Add brands" },
-  { icon: Scale, title: "3 products sell below break-even on Etsy", detail: "After fees and Offsite Ads, these lose money on each sale.", area: "Profit", urgent: true, action: "See prices" },
-  { icon: PackageCheck, title: "9 listings have no delivery time", detail: "Buyers and agents skip products with unclear delivery.", area: "Listings", urgent: false, action: "Add delivery" },
+  { icon: ImageOff, title: "14 images have no alt text", detail: "AI agents and screen readers can't tell what these photos show.", area: "Discoverable", urgent: true, action: "Write alt text" },
+  { icon: Tag, title: "6 listings are missing a brand", detail: "Google and marketplaces use brand to match your products to searches.", area: "Matchable", urgent: true, action: "Add brands" },
+  { icon: Scale, title: "3 products sell below break-even on Etsy", detail: "After fees and Offsite Ads, these lose money on each sale.", area: "Profitable", urgent: true, action: "See prices" },
+  { icon: PackageCheck, title: "9 listings have no delivery time", detail: "Buyers and agents skip products with unclear delivery.", area: "Purchasable", urgent: false, action: "Add delivery" },
 ];
 
 const SAVED = [
@@ -46,82 +35,6 @@ const SAVED = [
   { title: "Linen tote · compared", meta: "Best: Shopify, £20.41", when: "Yesterday" },
   { title: "Candle set · eBay", meta: "£32.00 · profit £21.07", when: "18 Oct" },
 ];
-
-/* ---------- Shell ---------- */
-
-const NAV: { group: string; items: { label: string; icon: typeof House; active?: boolean; soon?: boolean }[] }[] = [
-  { group: "Your shop", items: [
-    { label: "Home", icon: House, active: true },
-    { label: "Scans", icon: ScanSearch },
-    { label: "Listings", icon: LayoutList },
-    { label: "Saved", icon: Bookmark },
-  ] },
-  { group: "Tools", items: [
-    { label: "Fees", icon: Calculator },
-    { label: "Compare", icon: Scale },
-    { label: "Readiness", icon: Radar, soon: true },
-  ] },
-  { group: "Account", items: [
-    { label: "Settings", icon: Settings },
-    { label: "Billing", icon: CreditCard },
-  ] },
-];
-
-function Sidebar() {
-  const [open, setOpen] = useState(false);
-  return (
-    <aside className={`db-side ${open ? "open" : ""}`}>
-      <button className="db-menu-btn" type="button" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        {open ? <X size={18} /> : <Menu size={18} />}
-      </button>
-      <button className="db-shop" type="button">
-        <span className="db-shop-mark">J</span>
-        <span className="db-shop-name">Jade's Shop</span>
-        <span className="db-plan">Plus</span>
-        <ChevronsUpDown size={15} className="db-shop-chev" />
-      </button>
-      <nav className="db-nav">
-        {NAV.map((g) => (
-          <div className="db-nav-group" key={g.group}>
-            {g.items.map((it) => (
-              <a key={it.label} href="#" className={`db-nav-item ${it.active ? "active" : ""} ${it.soon ? "soon" : ""}`} onClick={(e) => e.preventDefault()}>
-                <it.icon size={17} strokeWidth={1.7} />
-                <span>{it.label}</span>
-                {it.soon && <em>Soon</em>}
-              </a>
-            ))}
-          </div>
-        ))}
-      </nav>
-      <div className="db-user">
-        <span className="db-avatar">J</span>
-        <span className="db-user-mail">jade@jadesshop.co.uk</span>
-        <MoreHorizontal size={16} />
-      </div>
-    </aside>
-  );
-}
-
-function Topbar({ title, action }: { title: string; action?: ReactNode }) {
-  return (
-    <header className="db-top">
-      <h1>{title}</h1>
-      <div className="db-top-right">
-        <a href="#" onClick={(e) => e.preventDefault()}><CircleHelp size={15} /> Help</a>
-        <a href="#" className="db-feedback" onClick={(e) => e.preventDefault()}><MessageSquare size={14} /> Feedback</a>
-        {action}
-      </div>
-    </header>
-  );
-}
-
-function AskButton() {
-  return (
-    <button className="db-ask" type="button">
-      <Sparkles size={15} /> Ask
-    </button>
-  );
-}
 
 /* ---------- Building blocks ---------- */
 
@@ -203,10 +116,10 @@ function Home() {
         <div>
           <span className="db-eyebrow">Your shop today</span>
           <strong className="db-hero-score">82<small>/100</small></strong>
-          <p className="db-sub">Up 4 since 16 Oct. Matchable needs the most attention.</p>
+          <p className="db-sub">Up 4 since 9 Oct. Matchable needs the most attention.</p>
           <div className="db-hero-actions">
-            <button type="button" className="db-btn">Run a new scan</button>
-            <button type="button" className="db-btn-ghost">See all fixes</button>
+            <Link href={`${BASE}/scans`} className="db-btn">Run a new scan</Link>
+            <Link href={`${BASE}/scans/example`} className="db-btn-ghost">See all fixes</Link>
           </div>
         </div>
         <div className="db-hero-chart"><Chart height={150} /></div>
@@ -239,6 +152,7 @@ function Home() {
 /* ---------- Page ---------- */
 
 export default function DashboardPreview() {
+  const [location] = useLocation();
   useEffect(() => {
     document.title = "Dashboard preview · EasyFeezy";
     const meta = document.createElement("meta");
@@ -247,18 +161,25 @@ export default function DashboardPreview() {
     document.head.appendChild(meta);
     return () => meta.remove();
   }, []);
+  useEffect(() => window.scrollTo(0, 0), [location]);
 
+  if (location.startsWith(`${BASE}/scans/`)) {
+    return (
+      <Shell title="jadesshop.co.uk" crumb={<><Link href={`${BASE}/scans`}>Scans</Link><span>/</span>Today, 09:12</>} action={<RescanButton />}>
+        <ScanDetail />
+      </Shell>
+    );
+  }
+  if (location.startsWith(`${BASE}/scans`)) {
+    return (
+      <Shell title="Scans" action={<button type="button" className="db-btn small"><Plus size={14} /> New scan</button>}>
+        <ScansList />
+      </Shell>
+    );
+  }
   return (
-    <div className="db">
-      <div className="db-preview-bar"><span className="db-preview-label">Preview · example data</span></div>
-      <div className="db-frame">
-        <Sidebar />
-        <main className="db-main">
-          <Topbar title="Home" action={<button type="button" className="db-btn small">Run a scan <ArrowUpRight size={14} /></button>} />
-          <div className="db-content"><Home /></div>
-        </main>
-      </div>
-      <AskButton />
-    </div>
+    <Shell title="Home" action={<Link href={`${BASE}/scans`} className="db-btn small">Run a scan <ArrowUpRight size={14} /></Link>}>
+      <Home />
+    </Shell>
   );
 }

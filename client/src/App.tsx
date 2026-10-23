@@ -43,6 +43,7 @@ function Router() {
       <Route path="/terms">{() => <Legal slug="terms" />}</Route>
       <Route path="/affiliate-disclosure">{() => <Legal slug="affiliate-disclosure" />}</Route>
       <Route path="/preview/dashboard" component={DashboardPreview} />
+      <Route path="/preview/dashboard/*" component={DashboardPreview} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
