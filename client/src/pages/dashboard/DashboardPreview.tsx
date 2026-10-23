@@ -17,6 +17,7 @@ import {
 import { BASE, Shell } from "./Shell";
 import { Billing, Saved, SettingsPage } from "./Account";
 import { Compare, Fees } from "./Tools";
+import { LogIn, SignUp } from "./Auth";
 import { NewScan, RescanButton, ScanDetail, ScansEmpty, ScansList } from "./Scans";
 import "./dashboard.css";
 
@@ -168,6 +169,8 @@ export default function DashboardPreview() {
   }, [location]);
   const firstVisit = new URLSearchParams(useSearch()).get("state") === "empty";
 
+  if (location.startsWith(`${BASE}/signup`)) return <SignUp />;
+  if (location.startsWith(`${BASE}/login`)) return <LogIn />;
   if (location.startsWith(`${BASE}/fees`)) {
     return <Shell title="Fees"><Fees /></Shell>;
   }

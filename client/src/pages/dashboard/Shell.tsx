@@ -100,6 +100,8 @@ function PreviewBar() {
       <span className="db-preview-label">Preview · example data</span>
       <Link href={scans} className={!first && location.startsWith(scans) ? "on" : ""}>Returning user</Link>
       <Link href={`${scans}?state=empty`} className={first ? "on" : ""}>First visit</Link>
+      <Link href={`${BASE}/signup`}>Sign up</Link>
+      <Link href={`${BASE}/login`}>Log in</Link>
     </div>
   );
 }
