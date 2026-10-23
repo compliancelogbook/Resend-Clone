@@ -3,8 +3,8 @@
  * Marketing emails need their own unticked box: account emails don't.
  */
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { ArrowLeft, Mail, MailCheck } from "lucide-react";
-import { Link } from "wouter";
+import { ArrowLeft, Check, Mail, MailCheck } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { BASE } from "./Shell";
 import "./auth.css";
 
@@ -19,13 +19,13 @@ function GoogleMark() {
   );
 }
 
-function AuthFrame({ children }: { children: ReactNode }) {
+function AuthFrame({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return (
     <main className="au">
       <div className="au-top">
         <a href="/" className="au-back"><ArrowLeft size={15} /> easyfeezy.com</a>
       </div>
-      <div className="au-card">
+      <div className={`au-card ${wide ? "is-wide" : ""}`}>
         <img className="au-logo" src="/brand/easyfeezy-wordmark.png" alt="EasyFeezy" width={640} height={106} />
         {children}
       </div>
@@ -144,6 +144,48 @@ export function LogIn() {
           <p className="au-switch">New to EasyFeezy? <Link href={`${BASE}/signup`}>Create an account</Link></p>
         </>
       )}
+    </AuthFrame>
+  );
+}
+
+/* ---------- First login: where do you sell? (optional) ---------- */
+
+const WHERE = ["Shopify", "eBay", "Etsy", "TikTok Shop", "Vinted", "Amazon", "My own website", "Somewhere else"] as const;
+
+export function Welcome() {
+  const [, navigate] = useLocation();
+  const [where, setWhere] = useState<string[]>([]);
+  const [vat, setVat] = useState<"yes" | "no" | "unsure" | null>(null);
+  useEffect(() => { document.title = "Welcome · EasyFeezy"; }, []);
+
+  const toggle = (w: string) => setWhere((all) => (all.includes(w) ? all.filter((x) => x !== w) : [...all, w]));
+  const done = () => navigate(BASE);
+
+  return (
+    <AuthFrame wide>
+      <h1>Where do you sell?</h1>
+      <p className="au-sub">Pick all that apply. We'll set up Compare and your calculators to match. You can change this any time in Settings.</p>
+      <div className="au-chips" role="group" aria-label="Where you sell">
+        {WHERE.map((w) => {
+          const on = where.includes(w);
+          return (
+            <button key={w} type="button" className={on ? "on" : ""} aria-pressed={on} onClick={() => toggle(w)}>
+              {on && <Check size={14} />} {w}
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="au-q">Are you VAT registered?</p>
+      <div className="au-seg" role="radiogroup" aria-label="VAT registered">
+        {([["no", "No"], ["yes", "Yes"], ["unsure", "Not sure"]] as const).map(([v, label]) => (
+          <button key={v} type="button" role="radio" aria-checked={vat === v} className={vat === v ? "on" : ""} onClick={() => setVat(v)}>{label}</button>
+        ))}
+      </div>
+      {vat === "unsure" && <p className="au-hint">That's fine. We'll assume not, and show where VAT would change the result.</p>}
+
+      <button type="button" className="au-btn au-continue" onClick={done}>Continue</button>
+      <button type="button" className="au-link au-skip" onClick={done}>Skip for now</button>
     </AuthFrame>
   );
 }

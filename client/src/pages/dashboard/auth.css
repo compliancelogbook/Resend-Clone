@@ -49,3 +49,18 @@
   .au-card { margin-top: 2vh; padding: 30px 22px 26px; }
   .au-switch { margin: 22px -22px -26px; }
 }
+
+/* Where do you sell? */
+.au-card.is-wide { width: min(560px, 100%); }
+.au-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.au-chips button { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 15px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; background: #0b0b0b; color: #d6d6d6; font: inherit; font-size: 14px; cursor: pointer; transition: border-color 150ms var(--ease-out), background 150ms var(--ease-out), color 150ms var(--ease-out); }
+.au-chips button:hover { border-color: rgba(255,255,255,.3); }
+.au-chips button.on { border-color: rgba(48,230,157,.6); background: rgba(48,230,157,.08); color: #e8fff4; }
+.au-chips button.on svg { color: #30e69d; }
+.au-q { margin: 28px 0 10px; color: #e6e6e6; font-size: 15px; text-align: center; }
+.au-seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; }
+.au-seg button { height: 38px; border: 0; border-radius: 9px; background: none; color: #9a9a9a; font: inherit; font-size: 14px; cursor: pointer; transition: background 150ms var(--ease-out), color 150ms var(--ease-out); }
+.au-seg button.on { background: rgba(255,255,255,.09); color: #f2f2f2; }
+.au-hint { margin: 10px 0 0; color: #8f8f8f; font-size: 13px; text-align: center; }
+.au-continue { width: 100%; margin-top: 28px; }
+.au-skip { display: block; margin: 14px auto 0; }

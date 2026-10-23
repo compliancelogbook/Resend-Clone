@@ -17,7 +17,7 @@ import {
 import { BASE, Shell } from "./Shell";
 import { Billing, Saved, SettingsPage } from "./Account";
 import { Compare, Fees } from "./Tools";
-import { LogIn, SignUp } from "./Auth";
+import { LogIn, SignUp, Welcome } from "./Auth";
 import { NewScan, RescanButton, ScanDetail, ScansEmpty, ScansList } from "./Scans";
 import "./dashboard.css";
 
@@ -171,6 +171,7 @@ export default function DashboardPreview() {
 
   if (location.startsWith(`${BASE}/signup`)) return <SignUp />;
   if (location.startsWith(`${BASE}/login`)) return <LogIn />;
+  if (location.startsWith(`${BASE}/welcome`)) return <Welcome />;
   if (location.startsWith(`${BASE}/fees`)) {
     return <Shell title="Fees"><Fees /></Shell>;
   }

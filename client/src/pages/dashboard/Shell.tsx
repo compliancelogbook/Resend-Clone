@@ -102,6 +102,7 @@ function PreviewBar() {
       <Link href={`${scans}?state=empty`} className={first ? "on" : ""}>First visit</Link>
       <Link href={`${BASE}/signup`}>Sign up</Link>
       <Link href={`${BASE}/login`}>Log in</Link>
+      <Link href={`${BASE}/welcome`}>Welcome</Link>
     </div>
   );
 }
