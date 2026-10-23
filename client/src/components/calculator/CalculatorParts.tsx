@@ -737,7 +737,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
         <Link href={mapHref(compareHrefFromCalculator(pricing.platform, pricing.scenario, pricing.config as never))} className="calc-compare-link">
           <span>
             <b>Compare this sale</b>
-            <small>Rank Shopify, eBay, Etsy, TikTok Shop and Vinted by net profit.</small>
+            <small>{pricing.platform === "VINTED" ? "Rank Vinted against Shopify, eBay, Etsy and TikTok Shop by net profit." : "Rank Shopify, eBay, Etsy and TikTok Shop by net profit."}</small>
           </span>
           <ArrowRight size={18} />
         </Link>

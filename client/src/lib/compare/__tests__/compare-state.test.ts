@@ -16,10 +16,32 @@ import {
 
 function withCategories(): CompareState {
   const state = defaultCompareState();
+  state.off = []; // these tests check every marketplace's maths, Vinted included
   state.configs.EBAY.categoryId = "EVERYTHING_ELSE";
   state.configs.TIKTOK.categoryId = "WOMENSWEAR_UNDERWEAR__ALL";
   return state;
 }
+
+describe("Vinted off by default", () => {
+  it("leaves Vinted out of the default ranking and match prices", () => {
+    const state = defaultCompareState();
+    state.configs.EBAY.categoryId = "EVERYTHING_ELSE";
+    state.configs.TIKTOK.categoryId = "WOMENSWEAR_UNDERWEAR__ALL";
+    expect(runComparison(state).map((r) => r.platform)).not.toContain("VINTED");
+    expect(runMatch(state, 15).map((r) => r.platform)).not.toContain("VINTED");
+  });
+  it("adds Vinted when the link asks for it or comes from the Vinted calculator", () => {
+    expect(stateFromSearch("price=30&cost=10").off).toEqual(["VINTED"]);
+    expect(stateFromSearch("price=30&cost=10&vinted=1").off).toEqual([]);
+    expect(stateFromSearch("price=30&cost=10&from=VINTED").off).toEqual([]);
+  });
+  it("keeps the choice in shared links", () => {
+    const state = defaultCompareState();
+    state.off = [];
+    expect(stateFromSearch(stateToSearch(state)).off).toEqual([]);
+    expect(stateFromSearch(stateToSearch(defaultCompareState())).off).toEqual(["VINTED"]);
+  });
+});
 
 describe("compare state", () => {
   it("ranks every marketplace by profit, highest first, using the real engines", () => {
@@ -74,6 +96,7 @@ describe("compare state", () => {
     state.configs.ETSY = { ...state.configs.ETSY, offsiteAdsRate: 0.15, vatIdSupplied: true };
     state.configs.VINTED = { ...state.configs.VINTED, visibilityServiceCost: 1.95 };
     state.customised = ["SHOPIFY", "EBAY", "ETSY", "TIKTOK", "VINTED"];
+    state.off = []; // Vinted settings were chosen, so Vinted is in the ranking
     state.from = "EBAY";
     state.mode = "MATCH";
     state.matchTarget = 19.15;

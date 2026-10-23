@@ -128,6 +128,7 @@ export default function ComparePage() {
               <RowCard key={row.platform} row={row} rank={i + 1} best={shown[0]} state={state} updateConfig={updateConfig} />
             ))}
           </ol>
+          <VintedChoice state={state} setState={setState} />
           <Differences state={state} />
           <div className="cmp-share">
             <SaveButton summary={`Comparison at £${state.sale.soldPrice}`} />
@@ -141,6 +142,22 @@ export default function ComparePage() {
         <p>{CALCULATION_DISCLAIMER}</p>
       </section>
     </CalculatorPage>
+  );
+}
+
+/* ---------- Vinted: off by default ---------- */
+function VintedChoice({ state, setState }: { state: CompareState; setState: (fn: (s: CompareState) => CompareState) => void }) {
+  const off = state.off.includes("VINTED");
+  const toggle = () => setState((s) => ({ ...s, off: off ? s.off.filter((p) => p !== "VINTED") : [...s.off, "VINTED"] }));
+  return (
+    <div className="cmp-extra">
+      <p>
+        {off
+          ? "Vinted isn't included. It charges sellers no fee and buyers pay a protection fee instead, so its prices aren't like-for-like with these marketplaces."
+          : "Vinted is included. It charges sellers no fee and buyers pay a protection fee instead, so its ranking isn't like-for-like."}
+      </p>
+      <button type="button" onClick={toggle}>{off ? "Add Vinted" : "Remove Vinted"}</button>
+    </div>
   );
 }
 
@@ -748,9 +765,10 @@ function Differences({ state }: { state: CompareState }) {
   const id = useId();
   const c = linkedConfigs(state);
   const notes: string[] = [];
+  const vinted = !state.off.includes("VINTED");
   if (state.sale.sellerType === "PRIVATE") {
-    notes.push("On Vinted and on eBay private sales, the buyer pays a Buyer Protection fee on top of your price. It doesn't come out of your money, but it does change what the buyer sees.");
-  } else {
+    notes.push(`On ${vinted ? "Vinted and on " : ""}eBay private sales, the buyer pays a Buyer Protection fee on top of your price. It doesn't come out of your money, but it does change what the buyer sees.`);
+  } else if (vinted) {
     notes.push("On Vinted, the buyer pays a Buyer Protection fee on top of your price.");
   }
   if (!c.SHOPIFY.expectedMonthlyOrders) notes.push(`Shopify's monthly plan (from £${SHOPIFY_PLANS.BASIC.monthlySubscription}) isn't included. Add your orders per month in Shopify's settings to share it across sales.`);

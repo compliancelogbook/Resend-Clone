@@ -53,6 +53,11 @@ export interface CompareState {
   customised: ComparePlatform[];
   /** The calculator the person came from, if any. */
   from: ComparePlatform | null;
+  /**
+   * Marketplaces left out of the ranking. Vinted is off by default: it charges sellers
+   * no fee (buyers pay a protection fee instead), so it isn't a like-for-like comparison.
+   */
+  off: ComparePlatform[];
   /** KEEP: what you keep at your price. MATCH: the price each marketplace needs for you to keep a set amount. */
   mode: "KEEP" | "MATCH";
   /** MATCH mode target profit for the whole order. Null = use the reference marketplace's profit. */
@@ -79,8 +84,13 @@ export function defaultConfigs(): CompareConfigs {
   };
 }
 
+/** Marketplaces Compare leaves out unless the person adds them. */
+export const DEFAULT_OFF: ComparePlatform[] = ["VINTED"];
+/** Marketplaces Compare ranks for this state. */
+export const comparedPlatforms = (state: CompareState) => COMPARE_PLATFORMS.filter((p) => !state.off.includes(p));
+
 export function defaultCompareState(): CompareState {
-  return { sale: { ...DEFAULT_SALE }, configs: defaultConfigs(), customised: [], from: null, mode: "KEEP", matchTarget: null };
+  return { sale: { ...DEFAULT_SALE }, configs: defaultConfigs(), customised: [], from: null, mode: "KEEP", matchTarget: null, off: [...DEFAULT_OFF] };
 }
 
 /**
@@ -128,7 +138,7 @@ export function missingRequirement(platform: ComparePlatform, state: CompareStat
 export function runComparison(state: CompareState): CompareRow[] {
   const configs = linkedConfigs(state);
   const scenario = scenarioOf(state.sale);
-  const rows = COMPARE_PLATFORMS.map((platform): CompareRow => {
+  const rows = comparedPlatforms(state).map((platform): CompareRow => {
     const missing = missingRequirement(platform, state);
     if (missing) return { platform, result: null, error: null, missing };
     try {
@@ -170,7 +180,7 @@ export function matchTargetFor(state: CompareState, rows: CompareRow[]): number 
 export function runMatch(state: CompareState, target: number): MatchRow[] {
   const configs = linkedConfigs(state);
   const scenario = scenarioOf(state.sale);
-  const rows = COMPARE_PLATFORMS.map((platform): MatchRow => {
+  const rows = comparedPlatforms(state).map((platform): MatchRow => {
     const missing = missingRequirement(platform, state);
     if (missing) return { platform, result: null, error: null, missing, price: null };
     try {
@@ -263,6 +273,7 @@ export function stateToSearch(state: CompareState): string {
   if (state.mode === "MATCH") p.set("mode", "match");
   if (state.matchTarget !== null) p.set("target", String(state.matchTarget));
   if (state.customised.length) p.set("set", state.customised.join(","));
+  if (!state.off.includes("VINTED")) p.set("vinted", "1");
 
   for (const platform of state.customised) {
     switch (platform) {
@@ -407,6 +418,8 @@ export function stateFromSearch(search: string): CompareState {
   }
 
   state.customised = COMPARE_PLATFORMS.filter((x) => customised.has(x));
+  // Vinted joins the ranking when asked for, or when the person came from its calculator.
+  if (p.get("vinted") === "1" || state.from === "VINTED" || customised.has("VINTED")) state.off = state.off.filter((x) => x !== "VINTED");
   return state;
 }
 
