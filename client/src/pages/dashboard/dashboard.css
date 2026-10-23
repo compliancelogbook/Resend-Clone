@@ -290,3 +290,7 @@ a.db-btn-ghost { padding: 0 14px; }
   .db-seg { flex-wrap: nowrap; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
   .db-seg button { flex: 0 0 auto; }
 }
+.db-split > *, .db-card-head > *, .db-stack > * { min-width: 0; }
+@media (max-width: 960px) {
+  .db-split, .db-split.even { grid-template-columns: minmax(0, 1fr); }
+}
