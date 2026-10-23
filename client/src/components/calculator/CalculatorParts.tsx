@@ -3,9 +3,9 @@
  * hero, numbered steps, fields, option cards and the result panel.
  * The fee maths lives in lib/engines; nothing here calculates fees.
  */
-import { type ReactNode, type RefObject, useId, useMemo, useRef, useState } from "react";
+import { createContext, type ReactNode, type RefObject, useContext, useId, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Info, Minus, Plus, Search } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Bookmark, BookmarkCheck, Info, Minus, Plus, Search } from "lucide-react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Link } from "wouter";
 import { CALCULATOR_LINKS } from "@/lib/calculator-links";
@@ -17,10 +17,58 @@ import type { MarketplaceConfigMap, SharedComparisonScenario } from "@/lib/compa
 import { suggestBreakEvenPrice, suggestTargetMarginPrice } from "@/lib/optimise/price-suggestions";
 import { compareHrefFromCalculator } from "@/lib/compare/compare-state";
 import { partnerFor } from "@/lib/partners";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import "./calculator.css";
 import "./compare.css";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
+
+/* ---------- Website page or inside the dashboard ---------- */
+
+export interface CalculatorEmbedValue {
+  embedded: boolean;
+  /** Dashboard only: save the current result. */
+  onSave?: (summary: string) => void;
+  /** Dashboard only: keep links between calculators and Compare inside the dashboard. */
+  mapHref?: (href: string) => string;
+}
+export const CalculatorEmbed = createContext<CalculatorEmbedValue>({ embedded: false });
+export const useCalculatorEmbed = () => useContext(CalculatorEmbed);
+
+/** The website page around a calculator. Inside the dashboard, only the calculator shows. */
+export function CalculatorPage({ hero, children }: { hero: ReactNode; children: ReactNode }) {
+  const { embedded } = useCalculatorEmbed();
+  if (embedded) return <div className="calc-embedded">{children}</div>;
+  return (
+    <main className="site-shell">
+      <SiteHeader />
+      {hero}
+      {children}
+      <SiteFooter />
+    </main>
+  );
+}
+
+/** Dashboard save button. Example only until accounts exist. */
+export function SaveButton({ summary }: { summary: string }) {
+  const { onSave } = useCalculatorEmbed();
+  const [saved, setSaved] = useState(false);
+  if (!onSave) return null;
+  return (
+    <button
+      type="button"
+      className={`calc-save ${saved ? "is-saved" : ""}`}
+      onClick={() => {
+        if (saved) return;
+        setSaved(true);
+        onSave(summary);
+      }}
+    >
+      {saved ? <><BookmarkCheck size={15} /> Saved</> : <><Bookmark size={15} /> Save</>}
+    </button>
+  );
+}
 
 /* ---------- Page flow: result appears after first "Calculate", then stays live ---------- */
 
@@ -595,6 +643,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
   const positive = profit >= 0;
   const hasVat = result.vatOnFees > 0;
   const quantity = pricing.scenario.quantity;
+  const { embedded, mapHref = (h: string) => h } = useCalculatorEmbed();
 
   // Where the buyer's money goes. Scale to whichever is larger: what came in, or what went out.
   const segments = [
@@ -618,9 +667,12 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
     <div className="calc-result-body">
       <div className="calc-result-top">
         <p className="calc-eyebrow">Net profit</p>
-        <button type="button" className={`calc-chip ${confidence.tone}`} onClick={openDetails}>
-          {confidence.label}
-        </button>
+        <span className="calc-result-actions">
+          <button type="button" className={`calc-chip ${confidence.tone}`} onClick={openDetails}>
+            {confidence.label}
+          </button>
+          <SaveButton summary={`${platform}: ${formatGBP(profit)} profit`} />
+        </span>
       </div>
       <p className={`calc-profit ${positive ? "" : "negative"}`} aria-live="polite" aria-atomic="true">
         {formatGBP(profit)}
@@ -682,7 +734,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
       <PricingAdvice pricing={pricing} platform={platform} />
 
       {pricing.platform !== "AMAZON" && (
-        <Link href={compareHrefFromCalculator(pricing.platform, pricing.scenario, pricing.config as never)} className="calc-compare-link">
+        <Link href={mapHref(compareHrefFromCalculator(pricing.platform, pricing.scenario, pricing.config as never))} className="calc-compare-link">
           <span>
             <b>Compare this sale</b>
             <small>Rank Shopify, eBay, Etsy, TikTok Shop and Vinted by net profit.</small>
@@ -691,7 +743,7 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
         </Link>
       )}
 
-      <PartnerCard platform={pricing.platform} />
+      {!embedded && <PartnerCard platform={pricing.platform} />}
 
       <dl className="calc-metrics">
         <div><dt>Profit margin</dt><dd>{result.marginPct === null ? "–" : `${result.marginPct.toFixed(1)}%`}</dd></div>

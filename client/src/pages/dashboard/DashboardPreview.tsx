@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { BASE, Shell } from "./Shell";
 import { Billing, Saved, SettingsPage } from "./Account";
+import { Compare, Fees } from "./Tools";
 import { NewScan, RescanButton, ScanDetail, ScansEmpty, ScansList } from "./Scans";
 import "./dashboard.css";
 
@@ -167,6 +168,12 @@ export default function DashboardPreview() {
   }, [location]);
   const firstVisit = new URLSearchParams(useSearch()).get("state") === "empty";
 
+  if (location.startsWith(`${BASE}/fees`)) {
+    return <Shell title="Fees"><Fees /></Shell>;
+  }
+  if (location.startsWith(`${BASE}/compare`)) {
+    return <Shell title="Compare"><Compare /></Shell>;
+  }
   if (location.startsWith(`${BASE}/saved`)) {
     return <Shell title="Saved"><Saved /></Shell>;
   }

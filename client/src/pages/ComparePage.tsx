@@ -7,10 +7,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Check, ChevronDown, Link2, Settings2, TriangleAlert } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import {
   CalculatorHero,
+  CalculatorPage,
+  SaveButton,
+  useCalculatorEmbed,
   MoneyField,
   OptionCards,
   QuantityField,
@@ -70,7 +71,8 @@ export default function ComparePage() {
 
   // Keep the address bar in step, so any comparison can be bookmarked or shared.
   useEffect(() => {
-    const t = window.setTimeout(() => window.history.replaceState(null, "", `/compare?${stateToSearch(state)}`), 250);
+    // Keep the current page (the website or the dashboard); only the settings change.
+    const t = window.setTimeout(() => window.history.replaceState(null, "", `${window.location.pathname}?${stateToSearch(state)}`), 250);
     return () => window.clearTimeout(t);
   }, [state]);
 
@@ -98,9 +100,7 @@ export default function ComparePage() {
   }
 
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <CalculatorHero marketplace="" title="Compare marketplaces" intro="Rank every marketplace by net profit on the same sale." />
+    <CalculatorPage hero={<CalculatorHero marketplace="" title="Compare marketplaces" intro="Rank every marketplace by net profit on the same sale." />}>
 
       <section className="cmp-layout" aria-label="Compare marketplaces">
         <SalePanel state={state} setState={setState} />
@@ -130,6 +130,7 @@ export default function ComparePage() {
           </ol>
           <Differences state={state} />
           <div className="cmp-share">
+            <SaveButton summary={`Comparison at £${state.sale.soldPrice}`} />
             <button type="button" onClick={share}><Link2 size={15} /> Copy link to this comparison</button>
           </div>
         </div>
@@ -139,14 +140,14 @@ export default function ComparePage() {
         <p>Each marketplace uses the same verified fee rules as its own calculator, with sources and check dates in each breakdown.</p>
         <p>{CALCULATION_DISCLAIMER}</p>
       </section>
-      <SiteFooter />
-    </main>
+    </CalculatorPage>
   );
 }
 
 /* ---------- Shared sale ---------- */
 
 function SalePanel({ state, setState }: { state: CompareState; setState: (fn: (s: CompareState) => CompareState) => void }) {
+  const { mapHref = (h: string) => h } = useCalculatorEmbed();
   const s = state.sale;
   const [raw, setRaw] = useState({
     soldPrice: String(s.soldPrice),
@@ -203,7 +204,7 @@ function SalePanel({ state, setState }: { state: CompareState; setState: (fn: (s
         />
         {state.from && (
           <p className="calc-fine">
-            Started from the <Link href={CALCULATOR_PATHS[state.from]}>{PLATFORM_LABELS[state.from]} calculator</Link>, so {PLATFORM_LABELS[state.from]} uses your settings.
+            Started from the <Link href={mapHref(CALCULATOR_PATHS[state.from])}>{PLATFORM_LABELS[state.from]} calculator</Link>, so {PLATFORM_LABELS[state.from]} uses your settings.
           </p>
         )}
       </div>
@@ -349,6 +350,7 @@ function RowCard({
 }) {
   const [open, setOpen] = useState<"settings" | "fees" | null>(null);
   const { platform, result } = row;
+  const { mapHref = (h: string) => h } = useCalculatorEmbed();
   const label = PLATFORM_LABELS[platform];
   const isOwn = state.customised.includes(platform);
   const matchPrice = "price" in row ? row.price : undefined;
@@ -438,7 +440,7 @@ function RowCard({
             <ChevronDown size={14} /> Fee breakdown
           </button>
         )}
-        <Link href={calculatorHref(platform, state)} className="cmp-row-link">Full calculator <ArrowUpRight size={13} /></Link>
+        <Link href={mapHref(calculatorHref(platform, state))} className="cmp-row-link">Full calculator <ArrowUpRight size={13} /></Link>
       </div>
 
       <AnimatePresence initial={false}>

@@ -4,11 +4,10 @@
  * this file only collects inputs and presents the result.
  */
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
+  CalculatorPage,
   CalculatorHero,
   CalculatorLayout,
   MoneyField,
@@ -117,9 +116,7 @@ export default function ShopifyCalculator() {
   }
 
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <CalculatorHero marketplace="Shopify" title="Shopify fee calculator" intro="Calculate Shopify fees and net profit on any sale." />
+    <CalculatorPage hero={<CalculatorHero marketplace="Shopify" title="Shopify fee calculator" intro="Calculate Shopify fees and net profit on any sale." />}>
 
       <CalculatorLayout
         onCalculate={calculate}
@@ -198,7 +195,6 @@ export default function ShopifyCalculator() {
       />
 
       <CalculatorFootnote checkedOn={SHOPIFY_SOURCE.verifiedAt} sourceUrl={SHOPIFY_SOURCE.url} sourceName="Shopify UK pricing" />
-      <SiteFooter />
-    </main>
+    </CalculatorPage>
   );
 }

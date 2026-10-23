@@ -5,11 +5,10 @@
  * lib/engines/tiktok-resolve.ts.
  */
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
+  CalculatorPage,
   CalculatorHero,
   CalculatorLayout,
   MoneyField,
@@ -125,9 +124,7 @@ export default function TikTokCalculator() {
   }
 
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <CalculatorHero marketplace="TikTok Shop" title="TikTok Shop fee calculator" intro="Calculate TikTok Shop fees and net profit on any sale, for UK sellers." />
+    <CalculatorPage hero={<CalculatorHero marketplace="TikTok Shop" title="TikTok Shop fee calculator" intro="Calculate TikTok Shop fees and net profit on any sale, for UK sellers." />}>
 
       <CalculatorLayout
         onCalculate={calculate}
@@ -206,7 +203,6 @@ export default function TikTokCalculator() {
       />
 
       <CalculatorFootnote checkedOn={TIKTOK_SOURCE.verifiedAt} sourceUrl={TIKTOK_SOURCE.url} sourceName="TikTok Shop UK commission rates" />
-      <SiteFooter />
-    </main>
+    </CalculatorPage>
   );
 }

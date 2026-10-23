@@ -5,11 +5,10 @@
  * lib/engines/vinted-resolve.ts.
  */
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
+  CalculatorPage,
   CalculatorHero,
   CalculatorLayout,
   MoneyField,
@@ -94,9 +93,7 @@ export default function VintedCalculator() {
   }
 
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <CalculatorHero marketplace="Vinted" title="Vinted fee calculator" intro="Vinted charges sellers no selling fee. Calculate your net profit after costs." />
+    <CalculatorPage hero={<CalculatorHero marketplace="Vinted" title="Vinted fee calculator" intro="Vinted charges sellers no selling fee. Calculate your net profit after costs." />}>
 
       <CalculatorLayout
         onCalculate={calculate}
@@ -150,7 +147,6 @@ export default function VintedCalculator() {
       />
 
       <CalculatorFootnote checkedOn={VINTED_ZERO_SELLING_FEE_SOURCE.verifiedAt} sourceUrl={VINTED_ZERO_SELLING_FEE_SOURCE.url} sourceName="Vinted UK: how it works" />
-      <SiteFooter />
-    </main>
+    </CalculatorPage>
   );
 }

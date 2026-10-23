@@ -4,11 +4,10 @@
  * this file only collects inputs and presents the result.
  */
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
+  CalculatorPage,
   CalculatorHero,
   CalculatorLayout,
   OptionCards,
@@ -100,9 +99,7 @@ export default function EtsyCalculator() {
   }
 
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <CalculatorHero marketplace="Etsy" title="Etsy fee calculator" intro="Calculate Etsy fees and net profit on any sale, for UK sellers." />
+    <CalculatorPage hero={<CalculatorHero marketplace="Etsy" title="Etsy fee calculator" intro="Calculate Etsy fees and net profit on any sale, for UK sellers." />}>
 
       <CalculatorLayout
         onCalculate={calculate}
@@ -181,7 +178,6 @@ export default function EtsyCalculator() {
       />
 
       <CalculatorFootnote checkedOn={ETSY_SOURCES.feesAndTaxes.verifiedAt} sourceUrl={ETSY_SOURCES.feesAndTaxes.url} sourceName="Etsy's fees and taxes" />
-      <SiteFooter />
-    </main>
+    </CalculatorPage>
   );
 }

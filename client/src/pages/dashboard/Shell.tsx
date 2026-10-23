@@ -31,8 +31,8 @@ const NAV: { group: string; items: NavItem[] }[] = [
     { label: "Saved", icon: Bookmark, href: `${BASE}/saved` },
   ] },
   { group: "Tools", items: [
-    { label: "Fees", icon: Calculator },
-    { label: "Compare", icon: Scale },
+    { label: "Fees", icon: Calculator, href: `${BASE}/fees` },
+    { label: "Compare", icon: Scale, href: `${BASE}/compare` },
     { label: "Readiness", icon: Radar, soon: true },
   ] },
   { group: "Account", items: [

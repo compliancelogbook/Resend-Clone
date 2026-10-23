@@ -4,11 +4,10 @@
  * this file only collects inputs and presents the result.
  */
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
 import { TIPS } from "@/lib/info-tips";
 import {
   CalculatorFootnote,
+  CalculatorPage,
   CalculatorHero,
   CalculatorLayout,
   Note,
@@ -127,9 +126,7 @@ export default function EbayCalculator() {
   }
 
   return (
-    <main className="site-shell">
-      <SiteHeader />
-      <CalculatorHero marketplace="eBay" title="eBay fee calculator" intro="Calculate eBay fees and net profit on any sale, for UK private and business sellers." />
+    <CalculatorPage hero={<CalculatorHero marketplace="eBay" title="eBay fee calculator" intro="Calculate eBay fees and net profit on any sale, for UK private and business sellers." />}>
 
       <CalculatorLayout
         onCalculate={calculate}
@@ -248,7 +245,6 @@ export default function EbayCalculator() {
       ) : (
         <CalculatorFootnote checkedOn={EBAY_SOURCE_2026_08_04.verifiedAt} sourceUrl={EBAY_SOURCE_2026_08_04.url} sourceName="eBay UK business seller fees" />
       )}
-      <SiteFooter />
-    </main>
+    </CalculatorPage>
   );
 }

@@ -436,3 +436,10 @@ a.db-tr:hover .db-row-arrow { opacity: 1; transform: none; }
 }
 .db-saved-list li > .db-btn-ghost { justify-self: end; }
 @media (max-width: 960px) { .db-saved-list li { grid-template-columns: 28px minmax(0, 1fr) auto; } }
+
+/* Marketplace tabs (Fees) */
+.db-tabs { align-self: flex-start; }
+.db-tabs a { padding: 6px 13px; border-radius: 6px; color: var(--db-muted); font-size: 13.5px; transition: color 150ms var(--ease-out), background 150ms var(--ease-out); }
+.db-tabs a:hover { color: #ddd; }
+.db-tabs a.on { background: rgba(255,255,255,.08); color: #f0f0f0; }
+.db-content .calc-embedded { min-width: 0; }

@@ -256,3 +256,13 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
 .calc-partner-cta { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 4px; color: #f2f2f2; font-size: 13.5px; font-weight: 500; white-space: nowrap; }
 .calc-partner > p { margin: 8px 2px 0; color: #6f6f6f; font-size: 12px; line-height: 1.5; }
 .calc-partner > p a { color: #9a9a9a; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Inside the dashboard */
+.calc-result-actions { display: inline-flex; align-items: center; gap: 8px; }
+.calc-save { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: none; color: #e8e8e8; font: inherit; font-size: 13px; cursor: pointer; transition: border-color 150ms var(--ease-out), background 150ms var(--ease-out); }
+.calc-save:hover { border-color: rgba(48,230,157,.55); background: rgba(48,230,157,.06); }
+.calc-save.is-saved { border-color: rgba(48,230,157,.55); color: #8ff0c6; cursor: default; }
+.calc-embedded .calc-layout, .calc-embedded .cmp-layout, .calc-embedded .calc-footnote { width: 100%; }
+.calc-embedded .calc-footnote { padding: 26px 0 20px; }
+.calc-embedded .calc-aside, .calc-embedded .cmp-sale { top: 24px; }
+.cmp-share { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
