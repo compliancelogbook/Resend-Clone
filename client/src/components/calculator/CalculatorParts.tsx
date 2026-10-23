@@ -16,6 +16,7 @@ import type { Platform } from "@/data/types";
 import type { MarketplaceConfigMap, SharedComparisonScenario } from "@/lib/compare/adapters";
 import { suggestBreakEvenPrice, suggestTargetMarginPrice } from "@/lib/optimise/price-suggestions";
 import { compareHrefFromCalculator } from "@/lib/compare/compare-state";
+import { partnerFor } from "@/lib/partners";
 import "./calculator.css";
 import "./compare.css";
 
@@ -690,6 +691,8 @@ function ResultView({ platform, result, pricing }: { platform: string; result: C
         </Link>
       )}
 
+      <PartnerCard platform={pricing.platform} />
+
       <dl className="calc-metrics">
         <div><dt>Profit margin</dt><dd>{result.marginPct === null ? "–" : `${result.marginPct.toFixed(1)}%`}</dd></div>
         <div><dt>Return on costs</dt><dd>{result.roiPct === null ? "–" : `${result.roiPct.toFixed(1)}%`}</dd></div>
@@ -805,6 +808,31 @@ function PricingAdvice({ pricing, platform }: { pricing: PricingContext; platfor
         <p className="calc-pricing-warn">{platform}'s percentage fees mean a {targetPct}% margin can't be reached at any price.</p>
       )}
       <p className="calc-fine">Keeps your other costs and delivery the same, and only changes the selling price.</p>
+    </div>
+  );
+}
+
+/** Affiliate offer beside a result. Labelled as an ad; never changes the numbers. */
+function PartnerCard({ platform }: { platform: Platform }) {
+  const partner = partnerFor(platform);
+  if (!partner) return null;
+  return (
+    <div className="calc-partner">
+      <a href={partner.url} target="_blank" rel="sponsored noopener noreferrer" className="calc-partner-link">
+        <span>
+          <b>
+            {partner.title} <em>Ad</em>
+          </b>
+          <small>{partner.text}</small>
+        </span>
+        <span className="calc-partner-cta">
+          {partner.cta} <ArrowUpRight size={14} />
+        </span>
+      </a>
+      <p>
+        We may earn a commission if you sign up. It never affects our calculations.{" "}
+        <Link href="/affiliate-disclosure">How we make money</Link>
+      </p>
     </div>
   );
 }

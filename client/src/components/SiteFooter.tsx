@@ -31,8 +31,9 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
       { label: "Newsletter", href: "/blog#subscribe" },
       { label: "Pricing", href: "/early-access#pricing" },
       { label: "Contact", href: "/contact" },
-      { label: "Privacy" },
-      { label: "Terms" },
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "How we make money", href: "/affiliate-disclosure" },
     ],
   },
 ];

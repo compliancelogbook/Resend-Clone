@@ -18,6 +18,7 @@ import EarlyAccess from "./pages/EarlyAccess";
 import EbayCalculator from "./pages/EbayCalculator";
 import EtsyCalculator from "./pages/EtsyCalculator";
 import ShopifyCalculator from "./pages/ShopifyCalculator";
+import Legal from "./pages/Legal";
 import Subscribed from "./pages/Subscribed";
 import TikTokCalculator from "./pages/TikTokCalculator";
 import VintedCalculator from "./pages/VintedCalculator";
@@ -37,6 +38,9 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/subscribed" component={Subscribed} />
+      <Route path="/privacy">{() => <Legal slug="privacy" />}</Route>
+      <Route path="/terms">{() => <Legal slug="terms" />}</Route>
+      <Route path="/affiliate-disclosure">{() => <Legal slug="affiliate-disclosure" />}</Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

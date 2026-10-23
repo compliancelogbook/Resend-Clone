@@ -245,3 +245,14 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
 .calc-info-pop li + li { margin-top: 4px; }
 .calc-info-arrow { fill: #141414; }
 @keyframes calc-info-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+/* Affiliate partner card */
+.calc-partner { margin-top: 16px; }
+.calc-partner-link { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: rgba(255,255,255,.025); color: #e8e8e8; transition: border-color 160ms var(--ease-out), background 160ms var(--ease-out); }
+.calc-partner-link:hover { border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.045); }
+.calc-partner-link b { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 500; }
+.calc-partner-link em { padding: 1px 6px; border: 1px solid rgba(255,255,255,.2); border-radius: 5px; color: #9a9a9a; font-size: 10.5px; font-style: normal; letter-spacing: .03em; }
+.calc-partner-link small { display: block; margin-top: 3px; color: #8f8f8f; font-size: 12.5px; line-height: 1.45; }
+.calc-partner-cta { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 4px; color: #f2f2f2; font-size: 13.5px; font-weight: 500; white-space: nowrap; }
+.calc-partner > p { margin: 8px 2px 0; color: #6f6f6f; font-size: 12px; line-height: 1.5; }
+.calc-partner > p a { color: #9a9a9a; text-decoration: underline; text-underline-offset: 2px; }
