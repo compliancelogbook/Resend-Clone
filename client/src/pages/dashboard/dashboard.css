@@ -5,6 +5,7 @@
 /* Preview switcher (not part of the product) */
 .db-preview-bar { position: fixed; top: 10px; left: 50%; z-index: 30; display: flex; align-items: center; gap: 4px; padding: 4px; transform: translateX(-50%); border: 1px solid rgba(48,230,157,.35); border-radius: 999px; background: rgba(5,20,13,.92); backdrop-filter: blur(8px); white-space: nowrap; }
 .db-preview-label { padding: 0 10px; color: #8ff0c6; font-size: 12px; }
+.db-preview-bar { padding: 6px 4px; }
 .db-preview-bar button { padding: 5px 11px; border: 0; border-radius: 999px; background: none; color: #a8c9bb; font-size: 12.5px; cursor: pointer; }
 .db-preview-bar button.on { background: #30e69d; color: #04130c; }
 
@@ -30,6 +31,8 @@
 .db-user { display: flex; align-items: center; gap: 10px; padding: 8px; border-top: 1px solid var(--db-line); padding-top: 14px; color: var(--db-muted); }
 .db-avatar { display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 auto; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; color: #ddd; font-size: 12.5px; }
 .db-user-mail { flex: 1; overflow: hidden; color: #bdbdbd; font-size: 13.5px; text-overflow: ellipsis; white-space: nowrap; }
+
+.db-menu-btn { display: none; place-items: center; width: 36px; height: 36px; flex: 0 0 auto; border: 1px solid var(--db-line); border-radius: 10px; background: none; color: #ddd; cursor: pointer; }
 
 /* Main */
 .db-main { min-width: 0; }
@@ -156,10 +159,13 @@ a.db-tr:hover { background: rgba(255,255,255,.03); }
 }
 @media (max-width: 960px) {
   .db { padding: 56px 0 0; }
-  .db-preview-label { display: none; }
   .db-frame { grid-template-columns: 1fr; border-radius: 0; border-width: 1px 0 0; }
   .db-side { flex-direction: row; align-items: center; gap: 10px; padding: 10px 16px; border-right: 0; border-bottom: 1px solid var(--db-line); }
+  .db-side { position: relative; }
+  .db-menu-btn { display: grid; }
   .db-nav, .db-user-mail, .db-user > svg { display: none; }
+  .db-side.open .db-nav { position: absolute; top: 100%; right: 0; left: 0; z-index: 25; display: flex; padding: 14px 16px 18px; border-bottom: 1px solid var(--db-line); background: #050505; box-shadow: 0 30px 60px rgba(0,0,0,.6); }
+  .db-side.open .db-nav-group:last-child { margin-top: 0; }
   .db-shop { width: auto; flex: 1; }
   .db-user { padding: 0; border: 0; }
   .db-top { padding: 20px 16px 4px; }
