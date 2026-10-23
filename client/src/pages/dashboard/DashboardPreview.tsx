@@ -161,7 +161,9 @@ export default function DashboardPreview() {
     document.head.appendChild(meta);
     return () => meta.remove();
   }, []);
-  useEffect(() => window.scrollTo(0, 0), [location]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   if (location.startsWith(`${BASE}/scans/`)) {
     return (
