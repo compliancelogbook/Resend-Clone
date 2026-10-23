@@ -1,8 +1,12 @@
 /** Scans: the list of past scans, and one scan's results grouped by the four seller questions. */
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import {
   ArrowRight,
+  ArrowUpRight,
+  ChevronRight,
+  Plus,
+  ScanSearch,
   Barcode,
   Check,
   ChevronDown,
@@ -70,19 +74,104 @@ function SourceIcon({ source }: { source: Source }) {
   return <span className={`db-src db-src-${source}`}>{source === "website" ? <Globe size={14} /> : <Store size={14} />}</span>;
 }
 
+function Usage({ used }: { used: number }) {
+  return (
+    <div className="db-usage db-card">
+      <div>
+        <span className="db-eyebrow">Scans this month</span>
+        <strong>{used} <small>of 10</small></strong>
+      </div>
+      <div className="db-bar wide"><i style={{ width: `${used * 10}%` }} /></div>
+      <p>Resets on 1 November. Each scan checks up to 500 products.</p>
+    </div>
+  );
+}
+
+/** First visit: no scans yet. */
+export function ScansEmpty() {
+  return (
+    <>
+      <Usage used={0} />
+      <section className="db-card db-empty">
+        <span className="db-empty-icon"><ScanSearch size={26} /></span>
+        <h2>Run your first scan</h2>
+        <p>See what buyers, marketplaces and AI shopping agents can and can't read in your listings, and what to fix first.</p>
+        <Link href={`${BASE}/scans/new`} className="db-btn"><Plus size={15} /> New scan</Link>
+        <ul className="db-empty-points">
+          <li><b>A score out of 100</b><span>Split across the four questions, so you know where you stand.</span></li>
+          <li><b>Fixes in order</b><span>The most useful changes first, with the products each one affects.</span></li>
+          <li><b>Alt text written for you</b><span>Suggested descriptions for every photo, ready to approve.</span></li>
+        </ul>
+      </section>
+    </>
+  );
+}
+
+/** Choose what to scan. */
+export function NewScan() {
+  const [source, setSource] = useState<Source>("website");
+  const [, navigate] = useLocation();
+  const options: { id: Source; title: string; text: string }[] = [
+    { id: "website", title: "Website", text: "Any online shop, including Shopify, Wix and WooCommerce. Enter its address." },
+    { id: "etsy", title: "Etsy shop", text: "Connect your shop to scan every active listing." },
+    { id: "ebay", title: "eBay shop", text: "Connect your account to scan every active listing." },
+  ];
+  return (
+    <div className="db-new">
+      <section className="db-card db-pad">
+        <span className="db-eyebrow">What should we scan?</span>
+        <div className="db-choice">
+          {options.map((o) => (
+            <button key={o.id} type="button" className={source === o.id ? "on" : ""} onClick={() => setSource(o.id)} aria-pressed={source === o.id}>
+              <SourceIcon source={o.id} />
+              <b>{o.title}</b>
+              <small>{o.text}</small>
+            </button>
+          ))}
+        </div>
+
+        {source === "website" ? (
+          <label className="db-field">
+            <span>Shop address</span>
+            <input type="url" defaultValue="https://jadesshop.co.uk" />
+          </label>
+        ) : (
+          <div className="db-connect">
+            <div>
+              <b>Connect {SOURCE_LABEL[source]}</b>
+              <p>You'll sign in on {SOURCE_LABEL[source]} and approve read-only access. We can't change your listings or see your payments.</p>
+            </div>
+            <button type="button" className="db-btn-ghost">Connect {SOURCE_LABEL[source]} <ArrowUpRight size={13} /></button>
+          </div>
+        )}
+
+        <div className="db-new-foot">
+          <p>Uses 1 of your 6 remaining scans this month. Most scans finish in 2 to 5 minutes, and we'll email you when it's ready.</p>
+          <button type="button" className="db-btn" onClick={() => navigate(`${BASE}/scans`)}>Start scan <ArrowRight size={15} /></button>
+        </div>
+      </section>
+
+      <section className="db-card db-pad">
+        <span className="db-eyebrow">What we check</span>
+        <ul className="db-passed">
+          <li><CircleCheck size={15} /> Product titles, prices, brands and barcodes</li>
+          <li><CircleCheck size={15} /> Stock, delivery and returns information</li>
+          <li><CircleCheck size={15} /> Image quality and alt text</li>
+          <li><CircleCheck size={15} /> Product data that Google and AI agents read</li>
+          <li><CircleCheck size={15} /> Profit after fees, where we know your costs</li>
+        </ul>
+        <p className="db-sub">We only read public product pages, or what you allow when you connect a shop.</p>
+      </section>
+    </div>
+  );
+}
+
 export function ScansList() {
   const [filter, setFilter] = useState<"all" | Source>("all");
   const rows = SCANS.filter((s) => filter === "all" || s.source === filter);
   return (
     <>
-      <div className="db-usage db-card">
-        <div>
-          <span className="db-eyebrow">Scans this month</span>
-          <strong>4 <small>of 10</small></strong>
-        </div>
-        <div className="db-bar wide"><i style={{ width: "40%" }} /></div>
-        <p>Resets on 1 November. Each scan checks up to 500 products.</p>
-      </div>
+      <Usage used={4} />
 
       <section className="db-card">
         <div className="db-toolbar">
@@ -96,15 +185,20 @@ export function ScansList() {
           <span className="db-muted-note">{rows.length} scans</span>
         </div>
         <div className="db-table scans">
-          <div className="db-tr db-th"><span>Shop</span><span>Date</span><span>Products</span><span>Fixes</span><span>Score</span></div>
+          <div className="db-tr db-th"><span>Shop</span><span>Date</span><span>Products</span><span>Fixes</span><span>Score</span><span /></div>
           {rows.map((s) =>
             s.status === "running" ? (
               <div key={s.id} className="db-tr is-running">
-                <span className="db-td-main"><SourceIcon source={s.source} />{s.name}</span>
-                <span className="db-running"><Loader2 size={13} className="db-spin" /> Scanning · {s.progress}%</span>
+                <span className="db-td-main"><SourceIcon source={s.source} /><span>{s.name}<small>{SOURCE_LABEL[s.source]}</small></span></span>
+                <span className="db-running-cell">
+                  <span className="db-running"><Loader2 size={13} className="db-spin" /> Scanning · {s.progress}%</span>
+                  <span className="db-progress"><i style={{ width: `${s.progress}%` }} /></span>
+                  <small>Started 2 minutes ago</small>
+                </span>
                 <span>{s.products}</span>
-                <span className="db-progress"><i style={{ width: `${s.progress}%` }} /></span>
                 <span>–</span>
+                <span>–</span>
+                <span />
               </div>
             ) : (
               <Link key={s.id} href={`${BASE}/scans/${s.id}`} className="db-tr">
@@ -113,6 +207,7 @@ export function ScansList() {
                 <span>{s.products}</span>
                 <span>{s.fixes}{s.urgent > 0 && <em className="db-urgent">{s.urgent} urgent</em>}</span>
                 <span className="db-score-cell">{s.score}<em className={s.change > 0 ? "up" : s.change < 0 ? "down" : ""}>{s.change > 0 ? "+" : ""}{s.change !== 0 ? s.change : "±0"}</em></span>
+                <ChevronRight size={16} className="db-row-arrow" />
               </Link>
             ),
           )}

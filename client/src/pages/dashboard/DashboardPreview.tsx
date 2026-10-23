@@ -3,7 +3,7 @@
  * Example data only: no login, no database. Not linked from the site.
  */
 import { useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -15,7 +15,7 @@ import {
   Plus,
 } from "lucide-react";
 import { BASE, Shell } from "./Shell";
-import { RescanButton, ScanDetail, ScansList } from "./Scans";
+import { NewScan, RescanButton, ScanDetail, ScansEmpty, ScansList } from "./Scans";
 import "./dashboard.css";
 
 /* ---------- Example data (fictional) ---------- */
@@ -164,7 +164,15 @@ export default function DashboardPreview() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
+  const firstVisit = new URLSearchParams(useSearch()).get("state") === "empty";
 
+  if (location === `${BASE}/scans/new`) {
+    return (
+      <Shell title="New scan" crumb={<><Link href={`${BASE}/scans`}>Scans</Link><span>/</span>New</>}>
+        <NewScan />
+      </Shell>
+    );
+  }
   if (location.startsWith(`${BASE}/scans/`)) {
     return (
       <Shell title="jadesshop.co.uk" crumb={<><Link href={`${BASE}/scans`}>Scans</Link><span>/</span>Today, 09:12</>} action={<RescanButton />}>
@@ -174,8 +182,8 @@ export default function DashboardPreview() {
   }
   if (location.startsWith(`${BASE}/scans`)) {
     return (
-      <Shell title="Scans" action={<button type="button" className="db-btn small"><Plus size={14} /> New scan</button>}>
-        <ScansList />
+      <Shell title="Scans" action={<Link href={`${BASE}/scans/new`} className="db-btn small"><Plus size={14} /> New scan</Link>}>
+        {firstVisit ? <ScansEmpty /> : <ScansList />}
       </Shell>
     );
   }

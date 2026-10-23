@@ -1,6 +1,6 @@
 /** Dashboard frame: shop and plan switcher, grouped menu, profile, top bar and Ask. */
 import { useState, type ReactNode } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import {
   Bookmark,
   Calculator,
@@ -27,7 +27,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
   { group: "Your shop", items: [
     { label: "Home", icon: House, href: BASE },
     { label: "Scans", icon: ScanSearch, href: `${BASE}/scans` },
-    { label: "Listings", icon: LayoutList },
+    { label: "Listings", icon: LayoutList, soon: true },
     { label: "Saved", icon: Bookmark },
   ] },
   { group: "Tools", items: [
@@ -90,10 +90,24 @@ function Sidebar() {
   );
 }
 
+/** Preview-only switch between a returning user and a first visit (no scans yet). */
+function PreviewBar() {
+  const [location] = useLocation();
+  const first = new URLSearchParams(useSearch()).get("state") === "empty";
+  const scans = `${BASE}/scans`;
+  return (
+    <div className="db-preview-bar">
+      <span className="db-preview-label">Preview · example data</span>
+      <Link href={scans} className={!first && location.startsWith(scans) ? "on" : ""}>Returning user</Link>
+      <Link href={`${scans}?state=empty`} className={first ? "on" : ""}>First visit</Link>
+    </div>
+  );
+}
+
 export function Shell({ title, crumb, action, children }: { title: string; crumb?: ReactNode; action?: ReactNode; children: ReactNode }) {
   return (
     <div className="db">
-      <div className="db-preview-bar"><span className="db-preview-label">Preview · example data</span></div>
+      <PreviewBar />
       <div className="db-frame">
         <Sidebar />
         <main className="db-main">
