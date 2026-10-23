@@ -2,15 +2,17 @@
  * Newsletter sign-up with double opt-in (UK GDPR / PECR):
  *   1. POST /api/subscribe validates the request and emails a confirmation link.
  *      Nobody is added to a list at this point.
- *   2. GET /api/subscribe/confirm?token=… checks the signed link and only then adds the
- *      person to the chosen Resend audiences.
+ *   2. GET /api/subscribe/confirm?token=… checks the signed link and only then creates the
+ *      Resend contact, opted in to the chosen Topics (or updates an existing contact's Topics).
  * The link is signed with SUBSCRIBE_SECRET, so it can't be forged or edited, and expires
  * after 48 hours. Unsubscribing is handled by Resend's own link in every broadcast.
  *
  * Settings (in .env, never committed):
  *   RESEND_API_KEY, CONTACT_FROM            – shared with the contact form
  *   SUBSCRIBE_SECRET                        – any long random string
- *   RESEND_AUDIENCE_WEEKLY / _DAILY / _UPDATES – Resend audience IDs, one per list
+ *   RESEND_TOPIC_WEEKLY / _DAILY / _UPDATES – Resend Topic IDs, one per list. Create the
+ *                                       Topics with default subscription "Opt-out", so
+ *                                       people only get the emails they chose.
  *   SITE_URL                                – e.g. http://localhost:5173 or https://easyfeezy.com
  */
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -20,10 +22,10 @@ type Env = Record<string, string | undefined>;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
 
-const AUDIENCE_ENV: Record<NewsletterListId, string> = {
-  weekly: "RESEND_AUDIENCE_WEEKLY",
-  daily: "RESEND_AUDIENCE_DAILY",
-  updates: "RESEND_AUDIENCE_UPDATES",
+const TOPIC_ENV: Record<NewsletterListId, string> = {
+  weekly: "RESEND_TOPIC_WEEKLY",
+  daily: "RESEND_TOPIC_DAILY",
+  updates: "RESEND_TOPIC_UPDATES",
 };
 
 export interface SubscribeRequest {
@@ -91,7 +93,7 @@ export function resetSubscribeRateLimit() {
 /* ---------- Handlers ---------- */
 
 function configured(env: Env, lists: NewsletterListId[]) {
-  return Boolean(env.RESEND_API_KEY && env.SUBSCRIBE_SECRET && env.SITE_URL && lists.every((l) => env[AUDIENCE_ENV[l]]));
+  return Boolean(env.RESEND_API_KEY && env.SUBSCRIBE_SECRET && env.SITE_URL && lists.every((l) => env[TOPIC_ENV[l]]));
 }
 
 export function confirmationEmail(data: SubscribeRequest, link: string, from: string) {
@@ -142,15 +144,23 @@ export async function handleConfirm(token: string | null, env: Env, fetchImpl: t
   if (!read.ok) return `/subscribed?status=${read.reason}`;
   if (!configured(env, read.data.lists)) return "/subscribed?status=error";
 
+  const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" };
+  const topics = read.data.lists.map((l) => ({ id: env[TOPIC_ENV[l]]!, subscription: "opt_in" as const }));
   try {
-    for (const list of read.data.lists) {
-      const res = await fetchImpl(`https://api.resend.com/audiences/${env[AUDIENCE_ENV[list]]}/contacts`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ email: read.data.email, unsubscribed: false }),
-      });
-      if (!res.ok) {
-        console.error(`[subscribe] Resend audience add returned ${res.status}`);
+    // New subscriber: one contact, opted in to the chosen Topics.
+    const created = await fetchImpl("https://api.resend.com/contacts", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ email: read.data.email, unsubscribed: false, topics }),
+    });
+    if (!created.ok) {
+      // Most likely an existing contact (e.g. adding another list later): confirmed
+      // consent, so make sure they're subscribed and opt them in to these Topics.
+      const id = encodeURIComponent(read.data.email);
+      const resub = await fetchImpl(`https://api.resend.com/contacts/${id}`, { method: "PATCH", headers, body: JSON.stringify({ unsubscribed: false }) });
+      const upd = await fetchImpl(`https://api.resend.com/contacts/${id}/topics`, { method: "PATCH", headers, body: JSON.stringify({ topics }) });
+      if (!resub.ok || !upd.ok) {
+        console.error(`[subscribe] Resend contact create ${created.status}, update ${resub.status}/${upd.status}`);
         return "/subscribed?status=error";
       }
     }

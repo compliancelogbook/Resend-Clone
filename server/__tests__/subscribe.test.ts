@@ -5,9 +5,9 @@ const env = {
   RESEND_API_KEY: "re_test",
   SUBSCRIBE_SECRET: "a-long-random-secret",
   SITE_URL: "http://localhost:5173/",
-  RESEND_AUDIENCE_WEEKLY: "aud_weekly",
-  RESEND_AUDIENCE_DAILY: "aud_daily",
-  RESEND_AUDIENCE_UPDATES: "aud_updates",
+  RESEND_TOPIC_WEEKLY: "topic_weekly",
+  RESEND_TOPIC_DAILY: "topic_daily",
+  RESEND_TOPIC_UPDATES: "topic_updates",
 };
 const okFetch = () => vi.fn(async () => new Response("{}", { status: 200 })) as unknown as typeof fetch;
 const calls = (f: typeof fetch) => (f as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls;
@@ -36,14 +36,34 @@ describe("newsletter sign-up", () => {
     expect(sent.text).toContain("http://localhost:5173/api/subscribe/confirm?token=");
   });
 
-  it("only adds people to their chosen lists once they click the link", async () => {
+  it("creates one contact opted in to only the chosen Topics once they click the link", async () => {
     const token = createToken({ email: "sam@example.com", lists: ["weekly", "updates"] }, env.SUBSCRIBE_SECRET);
     const f = okFetch();
     expect(await handleConfirm(token, env, f)).toBe("/subscribed?status=ok&lists=weekly,updates");
-    expect(calls(f).map(([u]) => u)).toEqual([
-      "https://api.resend.com/audiences/aud_weekly/contacts",
-      "https://api.resend.com/audiences/aud_updates/contacts",
+    expect(calls(f)).toHaveLength(1);
+    const [url, init] = calls(f)[0];
+    expect(url).toBe("https://api.resend.com/contacts");
+    expect(JSON.parse(init.body as string)).toEqual({
+      email: "sam@example.com",
+      unsubscribed: false,
+      topics: [
+        { id: "topic_weekly", subscription: "opt_in" },
+        { id: "topic_updates", subscription: "opt_in" },
+      ],
+    });
+  });
+
+  it("updates an existing contact's Topics instead of failing", async () => {
+    const token = createToken({ email: "sam@example.com", lists: ["daily"] }, env.SUBSCRIBE_SECRET);
+    const f = vi.fn(async (url: string) => new Response("{}", { status: url === "https://api.resend.com/contacts" ? 409 : 200 })) as unknown as typeof fetch;
+    expect(await handleConfirm(token, env, f)).toBe("/subscribed?status=ok&lists=daily");
+    const c = calls(f);
+    expect(c.map(([u, i]) => `${i.method} ${u}`)).toEqual([
+      "POST https://api.resend.com/contacts",
+      "PATCH https://api.resend.com/contacts/sam%40example.com",
+      "PATCH https://api.resend.com/contacts/sam%40example.com/topics",
     ]);
+    expect(JSON.parse(c[2][1].body as string)).toEqual({ topics: [{ id: "topic_daily", subscription: "opt_in" }] });
   });
 
   it("rejects edited, forged and expired links", async () => {
