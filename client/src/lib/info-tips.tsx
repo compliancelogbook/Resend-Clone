@@ -3,6 +3,7 @@
  * Rates quoted here must match the fee data in client/src/data.
  */
 import type { ReactNode } from "react";
+import { sellerTypeHelp } from "@/lib/seller-type";
 
 export const TIPS: Record<string, Record<string, ReactNode>> = {
   etsy: {
@@ -30,12 +31,7 @@ export const TIPS: Record<string, Record<string, ReactNode>> = {
     ),
   },
   ebay: {
-    sellerType: (
-      <>
-        <p><b>Private:</b> selling your own belongings. UK private sellers pay no selling fees, except on vehicles.</p>
-        <p><b>Business:</b> buying to resell, making items to sell, or selling regularly for profit. eBay requires a business account, and fees depend on the category.</p>
-      </>
-    ),
+    sellerType: sellerTypeHelp(<p><b>On eBay:</b> private sellers in the UK pay no selling fees, except on vehicles. Business sellers need an eBay business account, and fees depend on the category.</p>),
     category: <p>eBay's final value fee depends on the category you list in. Choose the same category as your eBay listing.</p>,
     regionBusiness: (
       <p>eBay adds an international fee when the buyer's delivery address is outside the UK: 1.05% for the Eurozone and Northern Europe, 1.8% for the US and Canada, and 2% elsewhere.</p>
@@ -69,12 +65,7 @@ export const TIPS: Record<string, Record<string, ReactNode>> = {
     vat: <p>TikTok Shop's commission rates already include VAT. VAT-registered sellers may be able to reclaim it.</p>,
   },
   vinted: {
-    sellerType: (
-      <>
-        <p><b>Private:</b> selling your own things. Vinted charges sellers no selling fee. The buyer pays a Buyer Protection fee instead.</p>
-        <p><b>Pro:</b> a registered business on Vinted Pro. Your prices must already include any VAT you owe.</p>
-      </>
-    ),
+    sellerType: sellerTypeHelp(<p><b>On Vinted:</b> business sellers use Vinted Pro, and prices must already include any VAT you owe. Neither type pays Vinted a selling fee; the buyer pays a Buyer Protection fee.</p>),
     bump: <p>Bumps and Showcase are optional paid boosts that move your items up in search. Vinted shows the price when you buy one.</p>,
   },
 };

@@ -38,7 +38,7 @@ export function calculateEbayPrivate(input: EbayPrivateInput): CalculationResult
   const assumptions: string[] = [
     'Private seller: eBay charges UK private sellers no final value fee, order fee or regulatory fee (vehicles excluded).',
     "On private sales the buyer pays eBay's Buyer Protection fee. It doesn't come out of your money, and this calculator doesn't estimate it.",
-    'For selling your own belongings only. If you trade as a business, eBay requires a business account and business fees apply.',
+    'For selling pre-owned items you no longer need. If you buy to resell or make to sell, eBay requires a business account and business fees apply.',
   ];
   const exclusionsBase = [
     "Optional listing upgrades (such as a £2 subtitle, reserve price, Gallery Plus or Promoted Listings), an eBay Shop subscription, and the dispute fee eBay charges only if you're found responsible for a chargeback.",

@@ -32,7 +32,7 @@ const EXAMPLE_NOTES: Record<ComparePlatform, string> = {
   EBAY: "Business seller, Everything Else category",
   ETSY: "No Offsite Ads, no VAT number",
   TIKTOK: "Womenswear & Underwear, 9% commission",
-  VINTED: "Pro seller, no Bump",
+  VINTED: "Business seller (Vinted Pro), no Bump",
 };
 
 export default function HeroResultCard() {

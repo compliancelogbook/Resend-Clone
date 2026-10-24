@@ -20,7 +20,9 @@ import {
   Segmented,
   TextField,
   Toggle,
+  InfoTip,
 } from "@/components/calculator/CalculatorParts";
+import { SELLER_TYPE, sellerTypeHelp } from "@/lib/seller-type";
 import {
   CALCULATOR_PATHS,
   calculatorHref,
@@ -206,10 +208,14 @@ function SalePanel({ state, setState }: { state: CompareState; setState: (fn: (s
           value={s.sellerType}
           onChange={(v) => setState((st) => ({ ...st, sale: { ...st.sale, sellerType: v } }))}
           options={[
-            { value: "PRIVATE", label: "Private seller" },
-            { value: "BUSINESS", label: "Business" },
+            { value: "PRIVATE", label: SELLER_TYPE.PRIVATE.title },
+            { value: "BUSINESS", label: SELLER_TYPE.BUSINESS.title },
           ]}
         />
+        <div className="calc-help-row">
+          <p className="calc-fine">{SELLER_TYPE[s.sellerType].detail}</p>
+          <InfoTip label="seller types" trigger="Not sure which?">{sellerTypeHelp(<p><b>In this comparison:</b> it changes eBay's fees, and on Vinted business sellers use Vinted Pro.</p>)}</InfoTip>
+        </div>
         <Segmented
           label="VAT"
           value={s.vatProfile}
@@ -731,7 +737,7 @@ function VintedEditor({ isPrivate, cost, onCommit }: { isPrivate: boolean; cost:
   const [on, setOn] = useState(cost !== null);
   return (
     <EditorGrid>
-      <p className="calc-fine">{isPrivate ? "Private seller" : "Pro seller"}, set by "How you sell" on the left.</p>
+      <p className="calc-fine">{isPrivate ? SELLER_TYPE.PRIVATE.title : `${SELLER_TYPE.BUSINESS.title} (Vinted Pro)`}, set by "How you sell" on the left.</p>
       <Toggle
         checked={on}
         onChange={(v) => {

@@ -1,6 +1,7 @@
 /** Saved calculations, Settings and Billing. Example data only. */
 import { useState } from "react";
 import PlanCards from "@/components/PlanCards";
+import { SELLER_TYPE, type SellerKind } from "@/lib/seller-type";
 import { ArrowUpRight, Check, CircleAlert, Download, Mail, Scale, Calculator } from "lucide-react";
 
 /* ---------- Saved ---------- */
@@ -72,6 +73,7 @@ function Switch({ on, onChange, label, text, locked }: { on: boolean; onChange?:
 }
 
 export function SettingsPage() {
+  const [seller, setSeller] = useState<SellerKind>("BUSINESS");
   const [vat, setVat] = useState(false);
   const [mail, setMail] = useState({ weekly: true, daily: false, updates: true });
   return (
@@ -90,7 +92,18 @@ export function SettingsPage() {
           <Field label="Shop name" value="Jade's Shop" />
           <Field label="Website" value="https://jadesshop.co.uk" />
         </div>
-        <Switch on={vat} onChange={() => setVat((v) => !v)} label="VAT registered" text="Changes how fees and profit are worked out in calculators and scans." />
+        <div className="db-seller">
+          <span>How you sell</span>
+          <div className="db-seg">
+            {(["PRIVATE", "BUSINESS"] as const).map((k) => (
+              <button key={k} type="button" className={seller === k ? "on" : ""} onClick={() => setSeller(k)}>{SELLER_TYPE[k].title}</button>
+            ))}
+          </div>
+          <small>{SELLER_TYPE[seller].detail}. Sets eBay's fees and Vinted Pro in your calculators and Compare.</small>
+        </div>
+        {seller === "BUSINESS" && (
+          <Switch on={vat} onChange={() => setVat((v) => !v)} label="VAT registered" text="Changes how fees and profit are worked out in calculators and scans." />
+        )}
       </section>
 
       <section className="db-card db-pad">

@@ -187,7 +187,7 @@ export function Step({ number, title, intro, children }: { number: number; title
  * Small ⓘ that explains a choice. Opens on hover or keyboard focus on desktop,
  * and on tap on touch screens. Never toggles the control it sits next to.
  */
-export function InfoTip({ label, children }: { label: string; children: ReactNode }) {
+export function InfoTip({ label, children, trigger }: { label: string; children: ReactNode; trigger?: string }) {
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<number | null>(null);
   const show = () => {
@@ -202,8 +202,8 @@ export function InfoTip({ label, children }: { label: string; children: ReactNod
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="calc-info"
-          aria-label={`About ${label}`}
+          className={`calc-info ${trigger ? "has-text" : ""}`}
+          aria-label={trigger ? undefined : `About ${label}`}
           onMouseEnter={show}
           onMouseLeave={hide}
           onFocus={show}
@@ -215,7 +215,7 @@ export function InfoTip({ label, children }: { label: string; children: ReactNod
             setOpen((o) => !o);
           }}
         >
-          <Info size={14} />
+          {trigger ? <>{trigger} <Info size={13} /></> : <Info size={14} />}
         </button>
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal>

@@ -241,7 +241,7 @@ export function settingsSummary(platform: ComparePlatform, state: CompareState):
     }
     case "VINTED": {
       const s = c.VINTED;
-      return `${s.sellerRoute === "PRIVATE" ? "Private seller" : "Pro seller"} · ${s.visibilityServiceCost ? "Bump/Showcase paid" : "No Bump"}`;
+      return `${s.sellerRoute === "PRIVATE" ? "Private seller" : "Business seller (Vinted Pro)"} · ${s.visibilityServiceCost ? "Bump/Showcase paid" : "No Bump"}`;
     }
   }
 }

@@ -11,7 +11,7 @@ const CALCULATOR_DESCRIPTIONS: Record<string, string> = {
   eBay: "Private and business sellers",
   Etsy: "Listing, transaction and Offsite Ads fees",
   "TikTok Shop": "Commission, discounts and creators",
-  Vinted: "Private and Pro sellers",
+  Vinted: "Private and business sellers",
 };
 
 const MENUS: NavMenu[] = [

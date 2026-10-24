@@ -266,3 +266,11 @@ i.seg-revenue { background: transparent; box-shadow: inset 0 0 0 1.5px #d9d9d9; 
 .calc-embedded .calc-footnote { padding: 26px 0 20px; }
 .calc-embedded .calc-aside, .calc-embedded .cmp-sale { top: 24px; }
 .cmp-share { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+/* "Not sure which?" help link */
+.calc-info.has-text { display: inline-flex; align-items: center; gap: 5px; width: auto; height: auto; padding: 0; border: 0; background: none; color: #8ff0c6; font-size: 13px; cursor: pointer; }
+.calc-info.has-text:hover { color: #c5f8e1; text-decoration: underline; text-underline-offset: 3px; }
+.calc-help-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.calc-help-row .calc-fine { margin: 0; }
+.calc-info-pop a { color: #8ff0c6; text-decoration: underline; text-underline-offset: 2px; }
+.calc-info.has-text { flex: 0 0 auto; white-space: nowrap; }

@@ -445,3 +445,9 @@ a.db-tr:hover .db-row-arrow { opacity: 1; transform: none; }
 .db-content .calc-embedded { min-width: 0; }
 
 .db-compare-partner { max-width: 640px; margin-left: auto; }
+
+.db-seller { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--db-line); }
+.db-seller > span { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+.db-seller .db-seg { display: inline-flex; }
+.db-seller small { display: block; margin-top: 8px; color: var(--db-copy); font-size: 13px; }
+.db-seller + .db-switch-row { margin-top: 14px; }

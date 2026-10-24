@@ -21,7 +21,9 @@ import {
   TextField,
   Toggle,
   useCalculatorFlow,
+  InfoTip,
 } from "@/components/calculator/CalculatorParts";
+import { SELLER_TYPE } from "@/lib/seller-type";
 import { calculateMarketplace } from "@/lib/compare/adapters";
 import { readCalculatorLink } from "@/lib/compare/compare-state";
 import { EBAY_CATEGORY_OPTIONS } from "@/lib/category-options";
@@ -141,13 +143,14 @@ export default function EbayCalculator() {
                 value={sellerType}
                 onChange={setSellerType}
                 options={[
-                  { value: "PRIVATE", title: "Private seller", detail: "Selling your own things", extra: "No selling fees" },
-                  { value: "BUSINESS", title: "Business seller", detail: "Registered eBay business account", extra: "Fees depend on category" },
+                  { value: "PRIVATE", title: SELLER_TYPE.PRIVATE.title, detail: SELLER_TYPE.PRIVATE.detail, extra: "No selling fees" },
+                  { value: "BUSINESS", title: SELLER_TYPE.BUSINESS.title, detail: SELLER_TYPE.BUSINESS.detail, extra: "Fees depend on category" },
                 ]}
               />
+              <div className="calc-help-row"><InfoTip label="seller types" trigger="Not sure which?">{TIPS.ebay.sellerType}</InfoTip></div>
               {isPrivate && (
                 <Note>
-                  Private selling is for your own belongings. If you buy to resell or trade regularly, eBay requires a business account. Vehicles aren't free to sell and aren't covered here.
+                  Private selling is for pre-owned items you no longer need. If you buy to resell or make to sell, eBay requires a business account. Vehicles aren't free to sell and aren't covered here.
                 </Note>
               )}
             </Step>

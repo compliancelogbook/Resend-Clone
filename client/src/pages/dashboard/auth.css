@@ -64,3 +64,18 @@
 .au-hint { margin: 10px 0 0; color: #8f8f8f; font-size: 13px; text-align: center; }
 .au-continue { width: 100%; margin-top: 28px; }
 .au-skip { display: block; margin: 14px auto 0; }
+
+/* How do you sell? */
+.au-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.au-options button { display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: #0b0b0b; color: #e6e6e6; font: inherit; text-align: left; cursor: pointer; transition: border-color 150ms var(--ease-out), background 150ms var(--ease-out); }
+.au-options button:hover { border-color: rgba(255,255,255,.3); }
+.au-options button.on { border-color: rgba(48,230,157,.6); background: rgba(48,230,157,.07); }
+.au-options b { font-size: 14px; font-weight: 500; }
+.au-options small { color: #8f8f8f; font-size: 12.5px; line-height: 1.4; }
+.au-options .au-unsure { grid-column: 1 / -1; align-items: center; padding: 9px; }
+.au-explain { margin-top: 10px; padding: 12px 14px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: #080808; }
+.au-explain p { margin: 0 0 8px; color: #a8a8a8; font-size: 13px; line-height: 1.5; }
+.au-explain p:last-child { margin-bottom: 0; }
+.au-explain b { color: #e6e6e6; font-weight: 500; }
+.au-explain a { color: #8ff0c6; text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 480px) { .au-options { grid-template-columns: 1fr; } }

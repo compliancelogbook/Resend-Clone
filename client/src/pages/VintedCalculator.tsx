@@ -20,7 +20,9 @@ import {
   Step,
   Toggle,
   useCalculatorFlow,
+  InfoTip,
 } from "@/components/calculator/CalculatorParts";
+import { SELLER_TYPE } from "@/lib/seller-type";
 import { calculateMarketplace } from "@/lib/compare/adapters";
 import { readCalculatorLink } from "@/lib/compare/compare-state";
 import type { VintedSellerRoute } from "@/lib/engines/vinted";
@@ -110,7 +112,7 @@ export default function VintedCalculator() {
               <p className="calc-fine">With Vinted's prepaid labels the buyer pays for delivery, so both are usually £0.</p>
             </Step>
 
-            <Step number={2} title="Your seller account" intro="Private and Pro sellers are treated differently for tax.">
+            <Step number={2} title="Your seller account" intro="Neither pays Vinted a selling fee, but business sellers have VAT to think about.">
               <OptionCards
                 label="Seller type"
                 heading="Seller type"
@@ -118,13 +120,14 @@ export default function VintedCalculator() {
                 value={sellerRoute}
                 onChange={setSellerRoute}
                 options={[
-                  { value: "PRIVATE", title: "Private seller", detail: "Selling your own things" },
-                  { value: "PRO", title: "Pro seller", detail: "Registered Vinted Pro business" },
+                  { value: "PRIVATE", title: SELLER_TYPE.PRIVATE.title, detail: SELLER_TYPE.PRIVATE.detail },
+                  { value: "PRO", title: `${SELLER_TYPE.BUSINESS.title} · Vinted Pro`, detail: SELLER_TYPE.BUSINESS.detail },
                 ]}
               />
+              <div className="calc-help-row"><InfoTip label="seller types" trigger="Not sure which?">{TIPS.vinted.sellerType}</InfoTip></div>
               {sellerRoute === "PRO" && (
                 <Note>
-                  Pro sellers must list at prices that already include any VAT. This calculator doesn't work out VAT or the second-hand margin scheme on your sale.
+                  On Vinted Pro, your prices must already include any VAT. This calculator doesn't work out VAT or the second-hand margin scheme on your sale.
                 </Note>
               )}
             </Step>

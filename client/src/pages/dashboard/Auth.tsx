@@ -6,6 +6,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { ArrowLeft, Check, Mail, MailCheck } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { BASE } from "./Shell";
+import { SELLER_TYPE, sellerTypeHelp } from "@/lib/seller-type";
 import "./auth.css";
 
 function GoogleMark() {
@@ -155,6 +156,7 @@ const WHERE = ["Shopify", "eBay", "Etsy", "TikTok Shop", "Vinted", "Amazon", "My
 export function Welcome() {
   const [, navigate] = useLocation();
   const [where, setWhere] = useState<string[]>([]);
+  const [seller, setSeller] = useState<"PRIVATE" | "BUSINESS" | "UNSURE" | null>(null);
   const [vat, setVat] = useState<"yes" | "no" | "unsure" | null>(null);
   useEffect(() => { document.title = "Welcome · EasyFeezy"; }, []);
 
@@ -176,13 +178,36 @@ export function Welcome() {
         })}
       </div>
 
-      <p className="au-q">Are you VAT registered?</p>
-      <div className="au-seg" role="radiogroup" aria-label="VAT registered">
-        {([["no", "No"], ["yes", "Yes"], ["unsure", "Not sure"]] as const).map(([v, label]) => (
-          <button key={v} type="button" role="radio" aria-checked={vat === v} className={vat === v ? "on" : ""} onClick={() => setVat(v)}>{label}</button>
+      <p className="au-q">How do you sell?</p>
+      <div className="au-options" role="radiogroup" aria-label="How you sell">
+        {(["PRIVATE", "BUSINESS"] as const).map((k) => (
+          <button key={k} type="button" role="radio" aria-checked={seller === k} className={seller === k ? "on" : ""} onClick={() => setSeller(k)}>
+            <b>{SELLER_TYPE[k].title}</b>
+            <small>{SELLER_TYPE[k].detail}</small>
+          </button>
         ))}
+        <button type="button" role="radio" aria-checked={seller === "UNSURE"} className={`au-unsure ${seller === "UNSURE" ? "on" : ""}`} onClick={() => setSeller("UNSURE")}>
+          <b>Not sure</b>
+        </button>
       </div>
-      {vat === "unsure" && <p className="au-hint">That's fine. We'll assume not, and show where VAT would change the result.</p>}
+      {seller === "UNSURE" && (
+        <div className="au-explain">
+          {sellerTypeHelp()}
+          <p>No problem. You can choose later in Settings, and switch any time in the eBay and Vinted calculators.</p>
+        </div>
+      )}
+
+      {seller === "BUSINESS" && (
+        <>
+          <p className="au-q">Are you VAT registered?</p>
+          <div className="au-seg" role="radiogroup" aria-label="VAT registered">
+            {([["no", "No"], ["yes", "Yes"], ["unsure", "Not sure"]] as const).map(([v, label]) => (
+              <button key={v} type="button" role="radio" aria-checked={vat === v} className={vat === v ? "on" : ""} onClick={() => setVat(v)}>{label}</button>
+            ))}
+          </div>
+          {vat === "unsure" && <p className="au-hint">That's fine. We'll assume not, and show where VAT would change the result.</p>}
+        </>
+      )}
 
       <button type="button" className="au-btn au-continue" onClick={done}>Continue</button>
       <button type="button" className="au-link au-skip" onClick={done}>Skip for now</button>

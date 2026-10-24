@@ -136,7 +136,7 @@ export function calculateVinted(input: VintedInput): CalculationResult {
 
   if (input.sellerRoute === 'PRO') {
     exclusions.push(
-      "Pro seller: output VAT, the second-hand VAT margin scheme, and any other tax on this sale are not calculated. The correct VAT/tax treatment depends on you, the item, and whether a margin scheme applies — Vinted's Pro guide requires your listing price to already include applicable VAT/taxes. Vinted charging no mandatory seller platform fee does not mean this sale is free of VAT/tax obligations."
+      "Business seller (Vinted Pro): output VAT, the second-hand VAT margin scheme, and any other tax on this sale are not calculated. The correct VAT/tax treatment depends on you, the item, and whether a margin scheme applies — Vinted's Pro guide requires your listing price to already include applicable VAT/taxes. Vinted charging no mandatory seller platform fee does not mean this sale is free of VAT/tax obligations."
     );
     signals.push('EXCLUDES_VARIABLE_FEES');
   }
