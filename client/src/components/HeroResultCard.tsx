@@ -9,7 +9,7 @@ import { Link } from "wouter";
 import { formatGBP } from "@/lib/format";
 import {
   calculatorHref,
-  COMPARE_PLATFORMS,
+  comparedPlatforms,
   defaultCompareState,
   PLATFORM_LABELS,
   runComparison,
@@ -38,6 +38,8 @@ const EXAMPLE_NOTES: Record<ComparePlatform, string> = {
 export default function HeroResultCard() {
   const state = useMemo(exampleState, []);
   const rows = useMemo(() => runComparison(state), [state]);
+  // Same marketplaces as Compare (Vinted is off by default there too).
+  const platforms = useMemo(() => comparedPlatforms(state), [state]);
   const [active, setActive] = useState<ComparePlatform>("SHOPIFY");
   const [paused, setPaused] = useState(false);
 
@@ -45,12 +47,12 @@ export default function HeroResultCard() {
   useEffect(() => {
     if (paused) return;
     const t = window.setInterval(() => {
-      setActive((a) => COMPARE_PLATFORMS[(COMPARE_PLATFORMS.indexOf(a) + 1) % COMPARE_PLATFORMS.length]);
+      setActive((a) => platforms[(platforms.indexOf(a) + 1) % platforms.length]);
     }, 3200);
     return () => window.clearInterval(t);
-  }, [paused]);
+  }, [paused, platforms]);
 
-  const row = rows.find((r) => r.platform === active)!;
+  const row = rows.find((r) => r.platform === active) ?? rows[0];
   const r = row.result!;
   const scale = r.grossRevenue || 1;
   const parts = [
@@ -68,7 +70,7 @@ export default function HeroResultCard() {
       <p className="hero-card-sale">£30.00 item · cost you £10.00</p>
 
       <div className="hero-card-tabs" role="tablist" aria-label="Marketplace">
-        {COMPARE_PLATFORMS.map((p) => (
+        {platforms.map((p) => (
           <button key={p} type="button" role="tab" aria-selected={p === active} className={p === active ? "active" : ""} onClick={() => { setActive(p); setPaused(true); }}>
             {PLATFORM_LABELS[p]}
           </button>
