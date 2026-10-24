@@ -44,8 +44,8 @@ export interface ListingPartner {
 }
 
 export const LISTING_PARTNER: ListingPartner = {
-  name: "",
-  url: "",
+  name: "LitCommerce", // chosen 24 Oct 2026; for product businesses
+  url: "", // Add the LitCommerce affiliate link once approved.
   headline: "Selling on more than one marketplace?",
   text: "A cross-listing tool lists each product on all your marketplaces at once, and takes it down everywhere when it sells.",
   points: ["Create a listing once, post it everywhere", "Stock updates across marketplaces", "Fewer double sales"],

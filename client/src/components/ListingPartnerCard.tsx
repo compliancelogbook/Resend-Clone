@@ -7,7 +7,7 @@ import "./listing-partner.css";
 /** `example` shows the layout with placeholder text, for design previews only. */
 export default function ListingPartnerCard({ example = false }: { example?: boolean }) {
   const live = listingPartner();
-  const p = live ?? (example ? { ...LISTING_PARTNER, name: "Partner name" } : null);
+  const p = live ?? (example ? { ...LISTING_PARTNER, name: LISTING_PARTNER.name || "Partner name" } : null);
   if (!p) return null;
   return (
     <aside className="lp" aria-label={`Ad: ${p.name}`}>
