@@ -28,7 +28,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
       { label: "Early access", href: "/early-access" },
       { label: "Blog", href: "/blog" },
       { label: "Newsletter", href: "/blog#subscribe" },
-      { label: "Pricing", href: "/early-access#pricing" },
+      { label: "Pricing", href: "/pricing" },
       { label: "Contact", href: "/contact" },
       { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },

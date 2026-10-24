@@ -94,8 +94,8 @@ function PlanAction({ plan, mode, isCurrent, showPrices }: { plan: Plan; mode: "
   if (isCurrent) return <span className="pc-current">Current plan</span>;
   if (mode === "site") {
     if (plan.monthly === 0) return <Link href="/compare" className="pc-btn primary">Start for free</Link>;
-    if (!showPrices) return <a href="#signup" className="pc-btn">Join early access</a>;
-    return <a href="#signup" className="pc-btn">Choose {plan.name}</a>;
+    if (!showPrices) return <Link href="/early-access#signup" className="pc-btn">Join early access</Link>;
+    return <Link href="/early-access#signup" className="pc-btn">Choose {plan.name}</Link>;
   }
   return (
     <button type="button" className="pc-btn">

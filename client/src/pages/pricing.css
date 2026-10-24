@@ -1,0 +1,29 @@
+/* Pricing page */
+.pr-hero { padding-bottom: 54px; }
+.pr-hero h1 { font-size: clamp(42px, 5vw, 76px); }
+.pr-jump { display: inline-flex; align-items: center; gap: 6px; margin-top: 26px; color: #8ff0c6; font-size: 15px; transition: color 150ms var(--ease-out); }
+.pr-jump:hover { color: #c5f8e1; }
+.pr-section { width: min(1160px, calc(100% - 48px)); margin: 0 auto; padding: 30px 0 60px; scroll-margin-top: 80px; }
+.pr-section > h2 { margin: 30px 0 22px; color: #f2f2f2; font-size: clamp(28px, 3vw, 42px); font-weight: 400; letter-spacing: -.045em; }
+
+.pr-faq-list { border-top: 1px solid rgba(255,255,255,.1); }
+.pr-faq details { border-bottom: 1px solid rgba(255,255,255,.1); }
+.pr-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 4px; color: #ececec; font-size: 17px; cursor: pointer; list-style: none; }
+.pr-faq summary::-webkit-details-marker { display: none; }
+.pr-faq summary svg { flex: 0 0 auto; color: #8f8f8f; transition: transform 200ms var(--ease-out); }
+.pr-faq details[open] summary svg { transform: rotate(180deg); }
+.pr-faq details > div { padding: 0 4px 20px; }
+.pr-faq details p { max-width: 760px; margin: 0; color: #a6a6a6; font-size: 15.5px; line-height: 1.6; }
+.pr-faq details a { color: #8ff0c6; text-decoration: underline; text-underline-offset: 2px; }
+
+.pr-cta { position: relative; width: min(1160px, calc(100% - 48px)); margin: 40px auto 0; padding: 90px 0 140px; text-align: center; }
+.pr-cta::before { content: ""; position: absolute; top: 0; left: 50%; width: min(560px, 80%); height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, rgba(48,230,157,.85), transparent); }
+.pr-cta h2 { margin: 0 0 12px; color: #f2f2f2; font-size: clamp(30px, 3.4vw, 48px); font-weight: 400; letter-spacing: -.045em; }
+.pr-cta p { margin: 0; color: #9a9a9a; font-size: 17px; }
+.pr-cta-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+.pr-ghost { display: inline-flex; align-items: center; height: 46px; padding: 0 20px; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; color: #ececec; font-size: 15px; transition: border-color 150ms var(--ease-out); }
+.pr-ghost:hover { border-color: rgba(255,255,255,.45); }
+
+@media (max-width: 640px) {
+  .pr-section, .pr-cta { width: calc(100% - 32px); }
+}

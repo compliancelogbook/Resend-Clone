@@ -129,7 +129,7 @@ export default function SiteHeader() {
         {MENUS.map((menu) => (
           <Fragment key={menu.label}>
           {/* Pricing sits just before Resources, which is last. */}
-          {menu.label === "Resources" && <Link href="/early-access#pricing" className="nav-plain">Pricing</Link>}
+          {menu.label === "Resources" && <Link href="/pricing" className="nav-plain">Pricing</Link>}
           <div className="nav-menu" onMouseEnter={() => setOpenMenu(menu.label)} onMouseLeave={() => setOpenMenu(null)}>
             <button type="button" aria-expanded={openMenu === menu.label} onClick={() => setOpenMenu(openMenu === menu.label ? null : menu.label)}>
               {menu.label}

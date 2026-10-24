@@ -19,6 +19,7 @@ import EbayCalculator from "./pages/EbayCalculator";
 import EtsyCalculator from "./pages/EtsyCalculator";
 import ShopifyCalculator from "./pages/ShopifyCalculator";
 import DashboardPreview from "./pages/dashboard/DashboardPreview";
+import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
 import Subscribed from "./pages/Subscribed";
 import TikTokCalculator from "./pages/TikTokCalculator";
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/vinted-fee-calculator" component={VintedCalculator} />
       <Route path="/compare" component={ComparePage} />
       <Route path="/early-access" component={EarlyAccess} />
+      <Route path="/pricing" component={Pricing} />
       <Route path="/contact" component={Contact} />
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />

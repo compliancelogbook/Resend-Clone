@@ -4,11 +4,11 @@
  */
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Bot, ScanSearch } from "lucide-react";
+import { ArrowRight, Bot, ScanSearch } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import SubscribeForm from "@/components/SubscribeForm";
-import PlanCards from "@/components/PlanCards";
+import { Link } from "wouter";
 import "./early-access.css";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -67,9 +67,10 @@ export default function EarlyAccess() {
       </section>
 
       <section className="ea-pricing" id="pricing">
-        <h2>Pricing</h2>
-        <p className="ea-pricing-intro">Fee calculators and Compare are free. Paid plans add Scan, alt text and, later, Readiness.</p>
-        <PlanCards mode="site" />
+        <div className="ea-pricing-link">
+          <p>Fee calculators and Compare are free. Paid plans add Scan, alt text and, later, Readiness.</p>
+          <Link href="/pricing" className="button">See pricing <ArrowRight size={15} /></Link>
+        </div>
       </section>
 
       <SiteFooter />
